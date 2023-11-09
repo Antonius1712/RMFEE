@@ -1,0 +1,104 @@
+/*================================================================================
+	Item Name: Vuexy - Vuejs, HTML & Laravel Admin Dashboard Template
+	Version: 2.0
+	Author: PIXINVENT
+	Author URL: http://www.themeforest.net/user/pixinvent
+================================================================================
+
+NOTE:
+------
+PLACE HERE YOUR OWN SCSS CODES AND IF NEEDED, OVERRIDE THE STYLES FROM THE OTHER STYLESHEETS.
+WE WILL RELEASE FUTURE UPDATES SO IN ORDER TO NOT OVERWRITE YOUR STYLES IT'S BETTER LIKE THIS.  */
+
+.bg-default-2 {
+	background-color:#f8f8f8;
+}
+
+.error {
+	color:red;
+	font-size:12px;
+	font-style:italic;
+}
+
+/*  !!UNTUK PDF SHEET LEGAL!! */
+
+.header-quotation {
+	width: 100%;
+}
+
+.borderless td, .borderless tr {
+    border: none;
+}
+
+.default {
+	background-color: #f8f8f8;
+}
+
+.white {
+	background-color: white;
+}
+
+.card-default > .card-heading {
+	background-color: #f8f8f8;
+	padding: 10px;
+	margin: 10px;
+}
+
+.dropdown-menu {
+	border-radius: 20px;
+}
+a.dropdown-item {
+	padding: 10px;
+}
+
+a.dropdown-item > i {
+	padding: 10px;
+}
+
+table > thead > tr > th {
+	text-align: center;
+}
+
+.radius {
+	border-radius: 10px;
+}
+
+.radius-100 {
+	border-radius: 100px;
+}
+
+.divider {
+	font-size: 14px;
+	display: flex;
+	align-items: center;
+	opacity: 0.5;
+}
+
+.divider::before, .divider::after {
+	flex: 1;
+	content: '';
+	padding: 1px;
+	background-color: #ccc;
+	margin: 5px;
+	opacity: 0.5;
+}
+
+.border-left-0 {
+	border-left: 0 !important;
+}
+
+.border-right-0 {
+	border-right: 0 !important;
+}
+
+.border-top-0 {
+	border-top: 0 !important;
+}
+
+.border-bottom-0 {
+	border-bottom: 0 !important;
+}
+
+.border-radius-0 {
+	border-radius: 0 !important;
+}
