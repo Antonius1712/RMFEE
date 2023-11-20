@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -16,6 +17,7 @@
     <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/style.css') }}">
     <!-- END: Custom CSS-->
 </head>
+
 <body>
     <div class="row" style="height: 100%; max-height: 100%;">
         @yield('content')
@@ -26,6 +28,7 @@
     <script src="{{ asset('app-assets/js/core/app-menu.js') }}"></script>
     <script src="{{ asset('app-assets/js/core/app.js') }}"></script>
     <script src="{{ asset('app-assets/js/scripts/components.js') }}"></script>
+
     <!-- END: Theme JS-->
 
     <!-- BEGIN: Page JS-->
@@ -37,4 +40,5 @@
 
     @yield('script')
 </body>
+
 </html>

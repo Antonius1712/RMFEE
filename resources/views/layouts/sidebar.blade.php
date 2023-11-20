@@ -3,14 +3,15 @@
         <ul class="nav navbar-nav flex-row">
             <li class="nav-item mr-auto">
                 <a class="navbar-brand" href="{{ Route('home') }}">
-                    <i class="feather icon-dollar-sign"></i>
+                    <i class="fa fa-balance-scale"></i>
                     <h2 class="brand-text mb-0">Engineering Fee</h2>
                 </a>
             </li>
             <li class="nav-item nav-toggle">
                 <a class="nav-link modern-nav-toggle pr-0" data-toggle="collapse">
                     <i class="feather icon-x d-block d-xl-none font-medium-4 primary toggle-icon"></i>
-                    <i class="toggle-icon feather icon-disc font-medium-4 d-none d-xl-block collapse-toggle-icon primary" data-ticon="icon-disc"></i>
+                    <i class="toggle-icon feather icon-disc font-medium-4 d-none d-xl-block collapse-toggle-icon primary"
+                        data-ticon="icon-disc"></i>
                 </a>
             </li>
         </ul>
@@ -78,7 +79,8 @@
                     <li class="{{ Request()->segment(2) == 'report-realization' ? 'active' : '' }}">
                         <a class="d-flex align-items-center" href="#">
                             <i data-feather="corner-down-right" class="feather icon-corner-down-right"></i>
-                            <span class="menu-item text-truncate" data-i18n="Report Realization">Report Realization</span>
+                            <span class="menu-item text-truncate" data-i18n="Report Realization">Report
+                                Realization</span>
                         </a>
                     </li>
                 </ul>

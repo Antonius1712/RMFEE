@@ -11,13 +11,13 @@ PLACE HERE YOUR OWN SCSS CODES AND IF NEEDED, OVERRIDE THE STYLES FROM THE OTHER
 WE WILL RELEASE FUTURE UPDATES SO IN ORDER TO NOT OVERWRITE YOUR STYLES IT'S BETTER LIKE THIS.  */
 
 .bg-default-2 {
-	background-color:#f8f8f8;
+	background-color: #f8f8f8;
 }
 
 .error {
-	color:red;
-	font-size:12px;
-	font-style:italic;
+	color: red;
+	font-size: 12px;
+	font-style: italic;
 }
 
 /*  !!UNTUK PDF SHEET LEGAL!! */
@@ -26,8 +26,9 @@ WE WILL RELEASE FUTURE UPDATES SO IN ORDER TO NOT OVERWRITE YOUR STYLES IT'S BET
 	width: 100%;
 }
 
-.borderless td, .borderless tr {
-    border: none;
+.borderless td,
+.borderless tr {
+	border: none;
 }
 
 .default {
@@ -38,7 +39,7 @@ WE WILL RELEASE FUTURE UPDATES SO IN ORDER TO NOT OVERWRITE YOUR STYLES IT'S BET
 	background-color: white;
 }
 
-.card-default > .card-heading {
+.card-default>.card-heading {
 	background-color: #f8f8f8;
 	padding: 10px;
 	margin: 10px;
@@ -47,15 +48,16 @@ WE WILL RELEASE FUTURE UPDATES SO IN ORDER TO NOT OVERWRITE YOUR STYLES IT'S BET
 .dropdown-menu {
 	border-radius: 20px;
 }
+
 a.dropdown-item {
 	padding: 10px;
 }
 
-a.dropdown-item > i {
+a.dropdown-item>i {
 	padding: 10px;
 }
 
-table > thead > tr > th {
+table>thead>tr>th {
 	text-align: center;
 }
 
@@ -74,7 +76,8 @@ table > thead > tr > th {
 	opacity: 0.5;
 }
 
-.divider::before, .divider::after {
+.divider::before,
+.divider::after {
 	flex: 1;
 	content: '';
 	padding: 1px;
@@ -101,4 +104,134 @@ table > thead > tr > th {
 
 .border-radius-0 {
 	border-radius: 0 !important;
+}
+
+.div-login-image {
+	padding: 0;
+	max-height: 100%;
+	max-width: 100%;
+}
+
+.image-login {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	padding: 0;
+	margin: 0;
+	/* flex: 100%;
+	display: block;
+	overflow: hidden; */
+}
+
+.form-login {
+	background-color: white;
+	width: auto;
+	height: auto;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 0;
+	margin: 0;
+}
+
+.table-budget>thead>tr>th,
+.table-realization>thead>tr>th {
+	text-transform: uppercase;
+	white-space: nowrap;
+	width: 1%;
+	font-size: 18px;
+}
+
+.table-budget>thead>tr>th>span,
+.table-realization>thead>tr>th>span {
+	font-size: 12px;
+	color: #c4bebe;
+	align-items: center;
+	vertical-align: middle;
+	text-align: center;
+}
+
+.table-budget>thead>tr>th>span:before,
+.table-realization>thead>tr>th>span:before {
+	content: "\a";
+	white-space: pre;
+	vertical-align: middle;
+	text-align: center;
+}
+
+.table-budget>tbody>tr>td,
+.table-realization>tbody>tr>td {
+	color: black;
+	vertical-align: middle;
+	text-align: center;
+	font-size: 14px;
+}
+
+.table-budget>thead>tr>th,
+.table-budget>tbody>tr>td,
+.table-realization>thead>tr>th,
+.table-realization>tbody>tr>td {
+	border: 1px solid #f3f0f0;
+}
+
+.tr-budget,
+.tr-realization {
+	width: 100%;
+	padding: 0;
+}
+
+.badge-status-budget,
+.badge-status-realization {
+	font-size: 18px;
+}
+
+.badge-tomatto {
+	background-color: lightsalmon;
+	color: darkslategray;
+	padding: 4%;
+	width: 100%;
+}
+
+.badge-palegreen {
+	background-color: palegreen;
+	color: darkslategray;
+	padding: 4%;
+	width: 100%;
+}
+
+.badge-gold {
+	background-color: gold;
+	color: darkslategray;
+	padding: 4%;
+	width: 100%;
+}
+
+.badge-blue {
+	background-color: powderblue;
+	color: darkslategray;
+	padding: 4%;
+	width: 100%;
+}
+
+.numbers {
+	text-align: right !important;
+	vertical-align: middle;
+}
+
+.card-body>div>label {
+	font-weight: bolder;
+}
+
+.icon-btn-group {
+	font-size: 22px;
+}
+
+.btn-spacing {
+	margin-right: 20px;
+	float: left;
+}
+
+.paging-fixed-left {
+	position: fixed;
+	float: left;
 }

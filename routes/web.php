@@ -17,20 +17,18 @@ Route::get('/sf', 'HomeController@sf')->name('sf');
 Route::get('/logout', 'Auth\LoginController@logout');
 
 Route::middleware(['breadcrumbs', 'auth'])->group(function(){
-
-    // Route::view('/', 'index')->name('home');
-
     Route::get('/', 'HomeController@index')->name('home');
-    
-    Route::prefix('budget')->group(function(){
-        // Route::view('/list-budget', 'pages.budget.list')->name('budget.list');
-        Route::view('/archive', 'pages.budget.archive')->name('budget.archive');
 
-        Route::get('list-budget', 'BudgetController@index')->name('budget.list');
+    Route::prefix('budget')->group(function(){
+        Route::get('/archive', 'BudgetController@archiveList')->name('budget.archive');
+        Route::get('/list-budget', 'BudgetController@index')->name('budget.list');
+        Route::get('/edit-budget/{id}', 'BudgetController@edit')->name('budget.edit');
+        Route::post('/reject', 'BudgetController@reject')->name('budget.reject');
+        Route::get('/data-table', 'BudgetController@BudgetDataTable')->name('budget.data-table');
     });
 
     Route::prefix('realization')->group(function(){
-        Route::view('/', 'pages.realization.index')->name('realization.index');
+        Route::get('/', 'RealizationController@index')->name('realization.index');
 
         Route::prefix('form-realization')->group(function(){
             Route::view('/', 'pages.realization.create')->name('realization.create');

@@ -90,6 +90,18 @@ return [
             'pooling' => env('APP_POOLING_DB', false)
         ],
 
+        'ReportGenerator181' => [
+            'driver' => 'sqlsrv',
+            'host' => env('DB_HOST_REPORT_GENERATOR_181', 'localhost'),
+            'port' => env('DB_PORT_REPORT_GENERATOR_181', '1433'),
+            'database' => env('DB_DATABASE_REPORT_GENERATOR_181', 'forge'),
+            'username' => env('DB_USERNAME_REPORT_GENERATOR_181', 'forge'),
+            'password' => env('DB_PASSWORD_REPORT_GENERATOR_181', ''),
+            'charset' => 'utf8',
+            'prefix' => '',
+            'pooling' => env('APP_POOLING_DB', false)
+        ],
+
     ],
 
     /*
