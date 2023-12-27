@@ -2,14 +2,14 @@
 namespace App\Helpers;
 
 use App\Enums\Database;
-use App\Model\LgiGlobal_User;
+use App\Model\LGIGlobal_User;
 use Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
     class Setting {
         public static function GetUserList(){
-            $userList = LgiGlobal_User::whereHas('getUserGroup', function($query1){
+            $userList = LGIGlobal_User::whereHas('getUserGroup', function($query1){
                 $query1->where('GroupCode', 'USER_RMFEE')
                 ->whereHas('getGroup', function($query2){
                     $query2->whereHas('getApp', function($query3){
@@ -35,7 +35,7 @@ use Illuminate\Support\Facades\Log;
         }
 
         public static function GetApprovalListBU(){
-            $approvalList = LgiGlobal_User::whereHas('getUserGroup', function($query1){
+            $approvalList = LGIGlobal_User::whereHas('getUserGroup', function($query1){
                 $query1->where('GroupCode', '=', 'HEAD_BU_RMFEE')
                 ->whereHas('getGroup', function($query2){
                     $query2->whereHas('getApp', function($query3){
@@ -54,7 +54,7 @@ use Illuminate\Support\Facades\Log;
         }
 
         public static function GetApprovalListFinance(){
-            $approvalList = LgiGlobal_User::whereHas('getUserGroup', function($query1){
+            $approvalList = LGIGlobal_User::whereHas('getUserGroup', function($query1){
                 $query1->where('GroupCode', '=', 'HEAD_FINANCE_RMFEE')
                 ->whereHas('getGroup', function($query2){
                     $query2->whereHas('getApp', function($query3){

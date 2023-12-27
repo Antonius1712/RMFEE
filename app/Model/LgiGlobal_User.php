@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use PgSql\Lob;
 
-class LgiGlobal_User extends Authenticatable
+class LGIGlobal_User extends Authenticatable
 {
     protected $connection = 'LGIGlobal';
     protected $table = 'Users';
