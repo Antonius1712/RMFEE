@@ -76,12 +76,14 @@ class LoginController extends Controller
         $lgi = LGIGlobal_User::where('NIK', $request->nik)
         ->where('password', $this->EncryptLgiGlobalPassword($request->password));
 
+        // dd($lgi->first(), $request->nik, $request->password, $this->EncryptLgiGlobalPassword($request->password));
+
         /* CHECK IF USER EXIST */
         if( $lgi->first() ){
-
             /* CHECK IF USER HAS ACCESS TO APPS LEGAL */
             $lgi = $lgi->whereHas('getUserGroup', function($query1){
                 $query1->whereHas('getGroup', function($query2){
+                    $query2->where('AppCode', 'RMFEE');
                     $query2->whereHas('getApp', function($query3){
                         $query3->where('AppCode', 'RMFEE');
                     });
@@ -89,10 +91,11 @@ class LoginController extends Controller
             })
             ->with('getDept')
             ->with('getBranch')
+            ->with('getUserGroup')
+            ->with('getUserGroup.getGroup')
+            ->with('getUserGroup.getGroup.getApp')
             ->first();
-
-            // dd($lgi);
-
+            
             /* THROW ERROR IF DOESN'T HAVE ACCESS */
             if( !$lgi ){
                 throw ValidationException::withMessages([
@@ -108,7 +111,7 @@ class LoginController extends Controller
             
         }else{
 
-            dd('else?');
+            // dd('else?');
             /* THROW ERROR IF CREDENTIAL NOT MATCH */
             throw ValidationException::withMessages([
                 "error" => "Wrong credentials",

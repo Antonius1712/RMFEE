@@ -2,9 +2,275 @@
 
 namespace App\Helpers;
 
+use App\Enums\BudgetStatus;
+use App\Enums\Database;
+use App\Enums\RealizationStatus;
+use App\Pipeline\Pipes;
+use Exception;
+use Illuminate\Pipeline\Pipeline;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+
+// ! Only Put Function that used only in Realization. (usuallly method to Select, Insert, Update, Delete, and some customization).
 class Realization {
-    public static function GetRealization(){
-        return [];
+    // !For DataTable Purposes only.
+    public static function GetRealizationDataTable(){
+        try {
+            // ! Parameters : '@BrokerName', '@Branch', '@Type', '@StartDate', '@StatusPremium','@AgingRealization', '@StatusRealization', '@Voucher';
+            return DB::connection(Database::REPORT_GENERATOR)
+            ->select("
+                EXECUTE [dbo].[SP_Get_Data_Engineering_Fee] 
+                '', '', '', '', '', '', '', '', '', '', 'APPROVED', 0
+            ");
+        } catch (Exception $e) {
+            return $e->getMessage();
+        }
+    }
+
+    public static function GetRealization($invoice_no = null){
+        $UserGroup = auth()->user()->getUserGroup->GroupCode;
+        try {
+            $RealizationData = DB::connection(Database::REPORT_GENERATOR)->select("EXECUTE [dbo].[SP_Get_Group_Realization_Engineering_Fee] '$invoice_no'");
+            $CountRealization = count($RealizationData);
+
+            switch ($CountRealization) {
+                case 0:
+                    $RealizationData = null;
+                    return $RealizationData;
+                    break;
+                // case 1:
+                //     $RealizationData = $RealizationData[0];
+                //     return $RealizationData;
+                //     break;
+                default:
+                    return $RealizationData;
+                    break;
+            }
+        } catch (Exception $e) {
+            return $e->getMessage();
+        }
+    }
+
+    public static function GetDetailRealization($realization_id){
+        try {
+            return DB::connection(Database::REPORT_GENERATOR)->select("EXECUTE [dbo].[SP_Get_Detail_Realization_Engineering_Fee] '$realization_id'");
+        } catch (Exception $e) {
+            Log::error('Error while getting Detail Realization Data on Realization_id = ' . $realization_id . ' Exception = ' . $e->getMessage());
+        }
+    }
+
+    // ! Realization Group Function
+    public static function InsertRealizationGroup($param){
+        try {
+            $invoice_no = $param->invoice_no;
+            $type_of_invoice = $param->type_of_invoice;
+            $currency = $param->currency;
+            $invoice_date = date('Y-m-d H:i:s.000', strtotime($param->invoice_date));
+            $broker_id = $param->broker_id;
+            $payment_to = $param->payment_to;
+            $approval_bu = $param->approval_bu;
+            $approval_finance = $param->approval_finance;
+            $epo_checker = $param->epo_checker;
+            $epo_approval = $param->epo_approval;
+            $status_realization = $param->StatusRealization;
+            $remarks = $param->remarks;
+            $CreatedBy = auth()->user()->UserId;
+            $CreatedDate = now()->format('Y-m-d');
+
+            // $upload_invoice = $param->upload_invoice;
+            // $upload_survey_report = $param->upload_survey_report;
+
+            $DocumentPath_upload_invoice = null;
+            if( $param->hasFile('upload_invoice') ){
+                $upload_invoice = $param->file('upload_invoice');
+                $destination_path = env('PUBLIC_PATH').'images/Realization/Invoice/';
+                $filename = preg_replace("/[^a-z0-9\_\-\.]/i", '-', time() . '-' . $upload_invoice->getClientOriginalName());
+                $upload_invoice->move($destination_path, $filename);
+                $DocumentPath_upload_invoice = 'images/Realization/Invoice/'.$filename;
+            }
+
+            $DocumentPath_upload_survey_report = null;
+            if( $param->hasFile('upload_survey_report') ){
+                $upload_survey_report = $param->file('upload_survey_report');
+                $destination_path = env('PUBLIC_PATH').'images/Realization/Survey_Report/';
+                $filename = preg_replace("/[^a-z0-9\_\-\.]/i", '-', time() . '-' . $upload_survey_report->getClientOriginalName());
+                $upload_survey_report->move($destination_path, $filename);
+                $DocumentPath_upload_survey_report = 'images/Realization/Survey_Report/'.$filename;
+            }
+
+            return DB::connection(Database::REPORT_GENERATOR)->select("EXECUTE [dbo].[SP_Insert_Group_Realization_Engineering_Fee] '$invoice_no', '$type_of_invoice', '$currency', '$invoice_date', '$broker_id', '$payment_to', '$DocumentPath_upload_invoice', '$DocumentPath_upload_survey_report', '$approval_bu', '$approval_finance', '$epo_checker', '$epo_approval', '$status_realization', '$remarks', '$CreatedBy', '$CreatedDate'");
+
+        } catch (Exception $e) {
+            Log::error('Error while inserting New Realization Exception = '.$e->getMessage());
+        }
+    }
+
+    public static function UpdateRealizationGroup($param = null, $InvoiceNumber = null, $status_realization = RealizationStatus::DRAFT){
+        try {
+            $invoice_no = isset($param->invoice_no) ? $param->invoice_no : (isset($InvoiceNumber) ? $InvoiceNumber : null);
+            $type_of_invoice = isset($param->type_of_invoice) ? $param->type_of_invoice : null;
+            $currency = isset($param->currency) ? $param->currency : null;
+            $invoice_date = isset($param->invoice_date) ? $param->invoice_date : null;
+            $broker_id = isset($param->broker_id) ? $param->broker_id : null;
+            $payment_to = isset($param->payment_to) ? $param->payment_to : null;
+            $approval_bu = isset($param->approval_bu) ? $param->approval_bu : null;
+            $approval_finance = isset($param->approval_finance) ? $param->approval_finance : null;
+            $epo_checker = isset($param->epo_checker) ? $param->epo_checker : null;
+            $epo_approval = isset($param->epo_approval) ? $param->epo_approval : null;
+            // $status_realization = RealizationStatus::DRAFT;
+            $remarks = $param->remarks;
+
+            $DocumentPath_upload_invoice = null;
+            if( $param->hasFile('upload_invoice') ){
+                $upload_invoice = $param->file('upload_invoice');
+                $destination_path = env('PUBLIC_PATH').'images/Realization/Invoice/';
+                $filename = preg_replace("/[^a-z0-9\_\-\.]/i", '-', time() . '-' . $upload_invoice->getClientOriginalName());
+                $upload_invoice->move($destination_path, $filename);
+                $DocumentPath_upload_invoice = 'images/Realization/Invoice/'.$filename;
+            }
+
+            $DocumentPath_upload_survey_report = null;
+            if( $param->hasFile('upload_survey_report') ){
+                $upload_survey_report = $param->file('upload_survey_report');
+                $destination_path = env('PUBLIC_PATH').'images/Realization/Survey_Report/';
+                $filename = preg_replace("/[^a-z0-9\_\-\.]/i", '-', time() . '-' . $upload_survey_report->getClientOriginalName());
+                $upload_survey_report->move($destination_path, $filename);
+                $DocumentPath_upload_survey_report = 'images/Realization/Survey_Report/'.$filename;
+            }
+
+            // TODO kalo upload_invoice / upload_survey dari request kosong, cek db. ambil value path dari db save variable.
+            // TODO lalu masukan variable ke dalam SP_Update dibawah.
+
+            if( $DocumentPath_upload_invoice == null || $DocumentPath_upload_survey_report == null ) {
+                $RealizationFileData = DB::connection(Database::REPORT_GENERATOR)->select("EXECUTE [dbo].[SP_Get_Group_Realization_Engineering_Fee] '$invoice_no'")[0];
+
+                if( $DocumentPath_upload_invoice == null ) {
+                    $DocumentPath_upload_invoice = $RealizationFileData->Upload_Invoice_Path;
+                }
+
+                if( $DocumentPath_upload_survey_report == null ) {
+                    $DocumentPath_upload_survey_report = $RealizationFileData->Upload_Survey_Report_Path;
+                }
+            }
+
+
+            //! INI UNTUK SAVE PATH UPLOAD_INVOICE
+            try {
+                DB::connection(Database::REPORT_GENERATOR)->statement("EXECUTE [dbo].[SP_Update_Invoice_Group_Realization_Engineering_Fee] '$invoice_no', '$DocumentPath_upload_invoice'");
+            } catch(Exception $e) {
+                Log::error('Error Update Realization Invoice Exception = ' . $e->getMessage());
+            }
+
+            //! INI UNTUK SAVE PATH UPLOAD_SURBEY_REPORT 
+            try {
+                DB::connection(Database::REPORT_GENERATOR)->statement("EXECUTE [dbo].[SP_Update_Survey_Group_Realization_Engineering_Fee] '$invoice_no', '$DocumentPath_upload_survey_report'");   
+            } catch(Exception $e) {
+                Log::error('Error Update Realization Survey Exception = ' . $e->getMessage());
+            }
+
+            //! INI UNTUK UPDATE REALISASI TANPA UPDATE KOLOM UPLOAD_INVOICE DAN UPLOAD_SURVEY.
+            //? KOLOM UPLOAD _INVOICE DAN _SURVEY DI UPDATE DI ATAS.
+            return DB::connection(Database::REPORT_GENERATOR)->statement("EXECUTE [dbo].[SP_Update_Group_Realization_Engineering_Fee] '$invoice_no', '$type_of_invoice', '$currency', '$invoice_date', '$broker_id', '$payment_to', '$approval_bu', '$approval_finance', '$epo_checker', '$epo_approval', '$status_realization', '$remarks'");
+        } catch (Exception $e) {
+            Log::error('Error Update Realization Group on Realization Helper Update Exception = ' . $e->getMessage());
+        }
+    }
+
+    public static function UpdateRealizationGroupStatus($status, $InvoiceNumber = null){
+        try {
+            DB::connection(Database::REPORT_GENERATOR)->statement("EXECUTE [dbo].[SP_Update_Group_Status_Realization_Engineering_Fee] '$InvoiceNumber', '$status'");
+        } catch (Exception $e) {
+            Log::error('Error Update Realization Group on Realization Helper Update Exception = ' . $e->getMessage());
+        }
+    }
+
+    public static function UpdateBudgetRealization($RealizationData){
+        $TypeOfInvoice = $RealizationData->Type_Of_Invoice;
+        $DetailRealizationData = DetailRealization::GetDetailRealization($RealizationData->ID);
+
+        $IsOverLimit = false;
+        foreach( $DetailRealizationData as $val ){
+            if( $val->total_amount_realization > $val->REMAIN_BUDGET ) {
+                $IsOverLimit = true;
+                break;
+            }
+        }
+        
+        if( $IsOverLimit ) {
+            return BudgetStatus::OVERLIMIT;
+        }
+        
+        foreach( $DetailRealizationData as $val ){
+            $IsOverLimit = false;
+            switch ($TypeOfInvoice) {
+                case 'RMF':
+                    $IsOverLimit = $val->total_amount_realization > $val->REMAIN_BUDGET ? true : false;
+                    try {
+                        $RemainBudget = ($val->REMAIN_BUDGET - $val->total_amount_realization);
+
+                        DB::connection(Database::REPORT_GENERATOR)->statement("EXECUTE [dbo].[SP_Update_Budget_Realization_RMF_Engineering_Fee] $val->total_amount_realization, '$val->VOUCHER', '' ");
+
+                        DB::connection(Database::REPORT_GENERATOR)->statement("EXECUTE [dbo].[SP_Update_Budget_Realization_Remain_Budget_Engineering_Fee] $RemainBudget, '$val->VOUCHER', '' ");
+                    } catch (Exception $e) {
+                        Log::error('Error While Updating Budget on Realization Type ' . $TypeOfInvoice . ' Exception = ' . $e->getMessage());
+                    }
+                    
+                    break;
+                case 'Sponsorship':
+                    $IsOverLimit = $val->total_amount_realization > $val->REMAIN_BUDGET ? true : false;
+                    try {
+                        $RemainBudget = ($val->REMAIN_BUDGET - $val->total_amount_realization);
+
+                        DB::connection(Database::REPORT_GENERATOR)->statement("EXECUTE [dbo].[SP_Update_Budget_Realization_Sponsorship_Engineering_Fee] $val->total_amount_realization, '$val->VOUCHER', '' ");
+
+                        DB::connection(Database::REPORT_GENERATOR)->statement("EXECUTE [dbo].[SP_Update_Budget_Realization_Remain_Budget_Engineering_Fee] $RemainBudget, '$val->VOUCHER', '' ");
+                    } catch (Exception $e) {
+                        Log::error('Error While Updating Budget on Realization Type ' . $TypeOfInvoice . ' Exception = ' . $e->getMessage());
+                    }
+                    break;
+                default:
+                break;
+            }
+        }
+
+        return BudgetStatus::NOTOVERLIMIT;
+    }
+
+    public static function UpdateRealizationGroupEpo($invoice_no, $PID) {
+        try {
+            DB::connection(Database::REPORT_GENERATOR)->statement("EXECUTE [dbo].[SP_Update_Group_ePO_Realization_Engineering_Fee] '$invoice_no', '$PID'");
+        } catch(Exception $e) {
+            Log::error('Error Update Realization Group on Realization Helper Update Epo_No Exception = ' . $e->getMessage());
+        }
+    }
+
+
+    // ! Untuk EPO
+    public static function InsertEpo($RealizationData){
+        $LinkApproval = Utils::getRandomString(50, 'lower-string');
+        $LinkChecker = Utils::getRandomString(50, 'lower-string');
+
+        $DetailRealizationData = DetailRealization::GetDetailRealization($RealizationData->ID);
+        $TotalRealization = 0;
+        foreach( $DetailRealizationData as $val ) {
+            $TotalRealization += $val->total_amount_realization;
+        }
+        $InvoiceNo = $RealizationData->Invoice_No;
+        $FileSize = $RealizationData->Upload_Invoice_Path != '' ? filesize($RealizationData->Upload_Invoice_Path) : 0;
+
+        //! to save the image using SP, on the SP ImgFile will be converted to VARBINARY().
+        $filePath = $RealizationData->Upload_Invoice_Path;
+        $fileContent = file_get_contents(asset($filePath));
+        $ImgFile = unpack("H*hex", $fileContent);
+        $ImgFile = '0x'.$ImgFile['hex'];
+        
+        try {
+            DB::connection("EPO114")->statement("EXECUTE [dbo].[SP_Insert_ePO_Engineering_Fee] '$InvoiceNo', $TotalRealization, $FileSize, $ImgFile, '$LinkApproval', '$LinkChecker' ");
+            return ['status' => true, 'message' => 'ok',];
+        } catch (Exception $e) {
+            Log::error('Error While Inserting EPO When Finance Approve Invoice ' .$InvoiceNo . ' Exception = ' . $e->getMessage());
+            return ['status' => false, 'message' => $e->getMessage()];
+        }
     }
 }
 

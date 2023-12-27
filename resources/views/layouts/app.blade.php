@@ -144,11 +144,82 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
     <script src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/select/1.7.0/js/dataTables.select.min.js"></script>
     <script src="{{ asset('assets/js/moment.js') }}"></script>
     
+    {{-- UNTUK AUTOCOMPLETE --}}
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+
+    {{-- SWAL --}}
+    <script type="text/javascript" src="{{ asset('vendor/js/select2.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('vendor/js/sweetalert.min.js') }}"></script>
 
     <script>
         var url = "{{ ENV('APP_URL') }}";
+        var ImageLoading = `<img id="imgLoading" style="width: 100%; height: auto; z-index: 1; position: relative; max-width: 100%; max-height: 100vh; margin: auto;" src="{{ asset('images/loader.gif') }}"/>`;
+        const serach_profile_url = '{{ route("utils.search_profile") }}';
+        const AuthUser = "{{ auth()->user()->NIK }}";
+        const AuthUserGroup = "{{ auth()->user()->getUserGroup->GroupCode }}";
+        const ConfigUserGroupHeadFinance = "{{ config('GroupCodeApplication.HEAD_FINANCE_RMFEE') }}";
+        const ConfigUserGroupHeadBU = "{{ config('GroupCodeApplication.HEAD_BU_RMFEE') }}";
+        const ConfigUserGroupUser = "{{ config('GroupCodeApplication.USER_RMFEE') }}";
+        function number_format (number, decimals, dec_point, thousands_sep) {
+            number = (number + '').replace(/[^0-9+\-Ee.]/g, '');
+            var n = !isFinite(+number) ? 0 : +number,
+                prec = !isFinite(+decimals) ? 0 : Math.abs(decimals),
+                sep = (typeof thousands_sep === 'undefined') ? ',' : thousands_sep,
+                dec = (typeof dec_point === 'undefined') ? '.' : dec_point,
+                s = '',
+                toFixedFix = function (n, prec) {
+                    var k = Math.pow(10, prec);
+                    return '' + Math.round(n * k) / k;
+                };
+            s = (prec ? toFixedFix(n, prec) : '' + Math.round(n)).split('.');
+            if (s[0].length > 3) {
+                s[0] = s[0].replace(/\B(?=(?:\d{3})+(?!\d))/g, sep);
+            }
+            if ((s[1] || '').length < prec) {
+                s[1] = s[1] || '';
+                s[1] += new Array(prec - s[1].length + 1).join('0');
+            }
+            return s.join(dec);
+        }
+
+        function clear_number_format (numbers){
+            return numbers.replace(new RegExp(',', 'g'),'');
+        }
+
+        function clear_form_elements(idName) {
+            jQuery("#"+idName).find(':input').not('#type_of_payment').each(function() {
+                switch(this.type) {
+                    case 'password':
+                        jQuery(this).val('');
+                        break;
+                    case 'text':
+                        jQuery(this).val('');
+                        break;
+                    case 'textarea':
+                    case 'file':
+                    case 'select-one':
+                        jQuery(this).prop('selectedIndex', 0);
+                        break;
+                    case 'select-multiple':
+                    case 'date':
+                        jQuery(this).val('');
+                        break;
+                    case 'number':
+                    case 'tel':
+                    case 'email':
+                        jQuery(this).val('');
+                        break;
+                    case 'checkbox':
+                    case 'radio':
+                        this.checked = false;
+                        break;
+                }
+            });
+        }
     </script>
 
     @yield('script')

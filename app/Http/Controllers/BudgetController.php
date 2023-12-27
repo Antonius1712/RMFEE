@@ -2,70 +2,204 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\BudgetStatus;
+use App\Enums\HardCoded;
 use App\Helpers\Budget;
 use App\Helpers\Logger;
+use App\Helpers\GetData;
+use App\Helpers\Utils;
+use Exception;
 use Illuminate\Http\Request;
 use Yajra\Datatables\Datatables;
 
 class BudgetController extends Controller
 {
-    public $brokerName, $startDate, $endDate, $class, $branch, $noPolicy, $agingRmf, $nBrn, $theInsured, $statusPremi, $statusRealisasi, $toDoList;
+    public $brokerName, $startDate, $endDate, $class, $branch, $noPolicy, $agingRmf, $nBrn, $theInsured, $statusPremi, $statusRealisasi, $toDoList, $statusBudget;
 
     public $NBRN;
 
     public function __construct(){
-        $this->NBRN = [
-            'NB' => 'NB',
-            'RN' => 'RN'
-        ];
-
-        $this->statusPremi = [
-            'PAID',
-            'UNPAID'
-        ];
-
-        $this->statusRealisasi = [
-            'PAID',
-            'UNPAID'
-        ];
+        
     }
 
     public function index(){
         $this->toDoList = isset( request()->to_do_list ) ? request()->to_do_list : '';
-        $this->branch = Budget::GetBranch();
-        $this->class = Budget::GetClass();
+        $this->branch = Utils::GetBranch();
 
-        $NBRN = $this->NBRN;
+        $NBRN = HardCoded::NBRN;
+        $statusPremi = HardCoded::statusPremi;
+        $statusRealisasi = HardCoded::statusRealisasi;
+        $statusBudget = HardCoded::statusBudget;
+
         $branch = $this->branch;
-        $statusPremi = $this->statusPremi;
-        $statusRealisasi = $this->statusRealisasi;
 
-        return view('pages.budget.list', compact('NBRN', 'branch', 'statusPremi', 'statusRealisasi'));
+        return view('pages.budget.list', compact('NBRN', 'branch', 'statusPremi', 'statusRealisasi', 'statusBudget'));
     }
 
-    public function edit($id){
-        $Budgets = collect(Budget::GetBudget($id));
-        // dd($Budgets);
-        return view('pages.budget.edit', $Budgets);
+    public function edit($voucher){
+        $Budget = Budget::GetBudget($voucher);
+        $BudgetInAmount = ($Budget->Budget/100) * $Budget->LGI_PREMIUM;
+        $VoucherId = str_replace("/", "-", $Budget->VOUCHER);
+        $BrokerId = explode('-', $Budget->BROKERNAME, 2)[0];
+        $BrokerName = explode('-', $Budget->BROKERNAME, 2)[1];
+        return view('pages.budget.edit', compact('Budget', 'BudgetInAmount', 'VoucherId', 'BrokerName', 'BrokerId'));
+    }
+
+    public function update(Request $request, $voucher){
+        $action = $request->action;
+        if( $action == 'save' ) {
+            $desc = 'Saved';
+        } else if( $action == 'propose' ) {
+            $desc = 'Proposed';
+        }
+        $RedirectVoucher = str_replace('-', '/', $voucher);
+        Budget::UpdateBudget($request, $voucher);
+        return redirect()->route('budget.list')->with('noticication', 'Voucher <b>'.$RedirectVoucher.'</b> Successfully '. $desc);
     }
 
     public function archiveList(){
-        
-        return view('pages.budget.archive');
+        $BudgetStatus = BudgetStatus::ARCHIVED;
+        return view('pages.budget.archive', compact('BudgetStatus'));
     }
 
-    public function reject(Request $request){
-        // dd($request->all(), Logger::SaveLog());
-        return redirect()->route('budget.list');
-        
+    public function archive($voucher){
+        $RedirectVoucher = str_replace('-', '/', $voucher);
+        Budget::UpdateBudgetOnlyStatus('archive', $voucher, null);
+        return redirect()->route('budget.archive-list')->with('noticication', 'Voucher <b>'.$RedirectVoucher.'</b> Successfully Archived');
     }
 
-    public function BudgetDataTable(){
-        $Budgets = collect(Budget::GetBudget());
-        $Budgets = Datatables::of($Budgets)->addColumn('ACTION', function($row){
-            $BtnAction = "<div class='btn-group' role='group' aria-label='Button group with nested dropdown'><div class='btn-group' role='group'><a href='#' id='BtnActionGroup' data-toggle='dropdown' aria-haspopup='true'aria-expanded='false' style=''><i class='feather icon-plus-circle icon-btn-group'></i></a><div class='dropdown-menu' aria-labelledby='BtnActionGroup'><a class='dropdown-item success' href='#'><i class='feather icon-check-circle'></i>Approve</a><a class='dropdown-item success' href='#'><i class='feather icon-delete'></i>Undro Approval</a><a class='dropdown-item success' href='".route('budget.edit', $row->BROKERNAME)."'><i class='feather icon-edit-2'></i>Edit</a><a class='dropdown-item success' href='#'><i class='feather icon-eye'></i>View Document</a><div class='dropdown-divider'></div><a class='dropdown-item danger' href='#' data-toggle='modal'data-target='#ModalReject'><i class='feather icon-x-circle'></i>Reject</a><a class='dropdown-item danger' href='#'><i class='feather icon-archive'></i>Archive</a></div></div></div>";
-            return $BtnAction;
-        })->make(true);
+    public function reject($voucher){
+        $RedirectVoucher = str_replace('-', '/', $voucher);
+        Budget::UpdateBudgetOnlyStatus('reject', $voucher, null);
+        return redirect()->route('budget.list')->with('noticication', 'Voucher <b>'.$RedirectVoucher.'</b> Successfully Rejected');
+    }
+
+    public function approve($voucher){
+        $RedirectVoucher = str_replace('-', '/', $voucher);
+        Budget::UpdateBudgetOnlyStatus('approve', $voucher, null);
+        return redirect()->route('budget.list')->with('noticication', 'Voucher <b>'.$RedirectVoucher.'</b> Successfully Approved');
+    }
+
+    public function BudgetDataTable(Request $request){
+        $type = isset($request->type) && $request->type != '' ? $request->type : '';
+        $Budgets = collect(Budget::GetBudgetDataTable($type));
+        $Budgets = Datatables::of($Budgets)
+            ->addColumn('ACTION', function($row){
+                $BtnApprove = '';
+                $BtnUndoApproval = '';
+                $BtnEdit = '';
+                $BtnViewDocument = '';
+                $BtnReject = '';
+                $BtnArchive = '';
+                $Divider = '';
+                $Voucher = str_replace('/','-',$row->VOUCHER);
+
+                $BtnShowHide['BtnApprove'] = null;
+                $BtnShowHide['BtnUndoApproval'] = null;
+                $BtnShowHide['BtnEdit'] = null;
+                $BtnShowHide['BtnViewDocument'] = null;
+                $BtnShowHide['BtnReject'] = null;
+                $BtnShowHide['BtnArchive'] = null;
+
+                $BtnShowHide = Budget::ShowHideButtonBudget($row->STATUS_BUDGET, auth()->user()->getUserGroup->GroupCode);
+
+                if( $BtnShowHide['BtnApprove'] ){
+                    $BtnApprove = "<a class='dropdown-item success' href='".route('budget.approve', $Voucher)."'><i class='feather icon-check-circle'></i>Approve</a>";
+                }
+
+                if( $BtnShowHide['BtnUndoApproval'] ){
+                    $BtnUndoApproval = "<a class='dropdown-item success' href='#'><i class='feather icon-delete'></i>Undro Approval</a>";
+                }
+
+                if( $BtnShowHide['BtnEdit'] ){
+                    $BtnEdit = "<a class='dropdown-item success' href='".route('budget.edit', $Voucher)."'><i class='feather icon-edit-2'></i>Edit</a>";
+                }
+
+                if( $BtnShowHide['BtnViewDocument'] ){
+                    $BtnViewDocument = "<a class='dropdown-item success btnViewDocumentBudget' href='#' data-toggle='modal' data-path='$row->Document_Path'><i class='feather icon-eye'></i>View Document</a>";
+                }
+
+                if( $BtnShowHide['BtnReject'] || $BtnShowHide['BtnArchive'] ){
+                    $Divider = "<div class='dropdown-divider'></div>";
+                }
+
+                if( $BtnShowHide['BtnReject'] ){
+                    $BtnReject = "<a class='dropdown-item danger' href=".route('budget.reject', $Voucher)." data-toggle='modal'data-target='#ModalReject'><i class='feather icon-x-circle'></i>Reject</a>";
+                }
+
+                if( $BtnShowHide['BtnArchive'] ){
+                    $BtnArchive = "<a class='dropdown-item danger' href=".route('budget.archive', $Voucher)."><i class='feather icon-archive'></i>Archive</a>";
+                }
+
+                $BtnAction = "<div class='btn-group' role='group' aria-label='Button group with nested dropdown'><div class='btn-group' role='group'><a href='#' id='BtnActionGroup' data-toggle='dropdown' aria-haspopup='true'aria-expanded='false' style=''><i class='feather icon-plus-circle icon-btn-group'></i></a><div class='dropdown-menu' aria-labelledby='BtnActionGroup'>".$BtnApprove.$BtnUndoApproval.$BtnEdit.$BtnViewDocument.$Divider.$BtnReject.$BtnArchive."</div></div></div>";
+
+                // dd($BtnAction);
+                return $BtnAction;
+            })
+            ->editColumn('Start_Date', function($row){
+                return date('Y-m-d', strtotime($row->Start_Date));
+            })
+            ->editColumn('End_Date', function($row){
+                return date('Y-m-d', strtotime($row->End_Date));
+            })
+            ->editColumn('LGI_PREMIUM', function($row){
+                return number_format($row->LGI_PREMIUM);
+            })
+            ->editColumn('PREMIUM', function($row){
+                return number_format($row->PREMIUM);
+            })
+            ->editColumn('ADMIN', function($row){
+                return number_format($row->ADMIN);
+            })
+            ->editColumn('DISCOUNT', function($row){
+                return number_format($row->DISCOUNT);
+            })
+            ->editColumn('OTHERINCOME', function($row){
+                return number_format($row->OTHERINCOME);
+            })
+            ->editColumn('PAYMENT', function($row){
+                return number_format($row->PAYMENT);
+            })
+            ->editColumn('PAYMENT_DATE', function($row){
+                return date('Y-m-d', strtotime($row->PAYMENT_DATE));
+            })
+            ->editColumn('Budget', function($row){
+                return number_format($row->Budget);
+            })
+            ->editColumn('REALIZATION_RMF', function($row){
+                return number_format($row->REALIZATION_RMF);
+            })
+            ->editColumn('REALIZATION_SPONSORSHIP', function($row){
+                return number_format($row->REALIZATION_SPONSORSHIP);
+            })
+            ->editColumn('REMAIN_BUDGET', function($row){
+                return number_format($row->REMAIN_BUDGET);
+            })
+            ->editColumn('STATUS_BUDGET', function($row){
+                if( $row->STATUS_BUDGET == 'NEW' ){
+                    return '<div class="badge badge-pill badge-info" style="font-size: 16px;">
+                        <li>'.$row->STATUS_BUDGET.'</li>
+                    </div>';
+                } else if ( $row->STATUS_BUDGET == BudgetStatus::DRAFT ){
+                    return '<div class="badge badge-pill badge-info" style="font-size: 16px;">
+                        <li>'.$row->STATUS_BUDGET.'</li>
+                    </div>'; 
+                } else if ( $row->STATUS_BUDGET == BudgetStatus::WAITING_APPROVAL ){
+                    return '<div class="badge badge-pill badge-warning" style="font-size: 16px;">
+                        <li>'.$row->STATUS_BUDGET.'</li>
+                    </div>'; 
+                } else if ( $row->STATUS_BUDGET == BudgetStatus::ARCHIVED ){
+                    return '<div class="badge badge-pill badge-danger" style="font-size: 16px;">
+                        <li>'.$row->STATUS_BUDGET.'</li>
+                    </div>'; 
+                } else if ( $row->STATUS_BUDGET == BudgetStatus::APPROVED ){
+                    return '<div class="badge badge-pill badge-success" style="font-size: 16px;">
+                        <li>'.$row->STATUS_BUDGET.'</li>
+                    </div>'; 
+                }
+            })
+        ->make(true);
+        
         // dd($Budgets);
         return $Budgets;
     }

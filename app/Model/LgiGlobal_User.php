@@ -7,6 +7,7 @@ use App\Model\LGIGlobal_Dept;
 use App\Model\LGIGlobal_UserGroup;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use PgSql\Lob;
 
 class LgiGlobal_User extends Authenticatable
 {
@@ -37,6 +38,10 @@ class LgiGlobal_User extends Authenticatable
     }
     
     public function getUserGroup(){
-        return $this->hasMany(LGIGlobal_UserGroup::class, 'UserId', 'UserId');
+        return $this->hasOne(LGIGlobal_UserGroup::class, 'UserId', 'UserId')->where('GroupCode', 'like', '%RMFEE%');
+    }
+
+    public function getUserSetting(){
+        return $this->hasOne(ReportGenerator_UserSetting::class, 'UserID', 'UserId');
     }
 }

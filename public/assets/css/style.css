@@ -235,3 +235,8 @@ table>thead>tr>th {
 	position: fixed;
 	float: left;
 }
+
+.dataTables_scrollBody {
+	height: 500px;
+	min-height: 500px;
+}

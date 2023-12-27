@@ -47,7 +47,7 @@
                         </a>
                     </li>
                     <li class="{{ Request()->segment(2) == 'archive' ? 'active' : '' }}">
-                        <a class="d-flex align-items-center" href="{{ route('budget.archive') }}">
+                        <a class="d-flex align-items-center" href="{{ route('budget.archive-list') }}">
                             <i data-feather="corner-down-right" class="feather icon-corner-down-right"></i>
                             <span class="menu-item text-truncate" data-i18n="Archive">Archive</span>
                         </a>
@@ -103,12 +103,14 @@
             </li>
 
             {{-- !SIDEBAR MENU REALIZATION --}}
+            @if( auth()->user()->getUserGroup->getGroup->GroupCode != config('GroupCodeApplication.USER_RMFEE') )
             <li class=" nav-item">
-                <a class="d-flex align-items-center" href="#">
+                <a class="d-flex align-items-center" href="{{ route('setting.user.index') }}">
                     <i data-feather="users" class="feather icon-users"></i>
                     <span class="menu-title text-truncate" data-i18n="User">User</span>
                 </a>
             </li>
+            @endif
         </ul>
     </div>
 </div>

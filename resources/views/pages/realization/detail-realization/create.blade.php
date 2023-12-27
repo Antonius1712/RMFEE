@@ -7,9 +7,16 @@
 <div class="card">
     <div class="card-body">
         {{-- <form action="{{ route('realization.store') }}" method="post"> --}}
-        <form action="javscript:;" method="post">
+        <form action="{{ route('realization.detail-realization.store') }}" method="post">
             {{ csrf_field() }}
             <div class="row">
+                <div class="col-lg-12">
+                    @foreach ($errors->all() as $error)
+                    <div class="alert alert-danger text-center">
+                        <strong>*{{ $error }}</strong>
+                    </div>
+                    @endforeach
+                </div>
                 <div class="col-lg-6">
                     <div class="card">
                         <div class="card-header default">
@@ -19,95 +26,72 @@
                         <hr />
                         <div class="card-body">
                             <div class="form-group row">
-                                <label for="invoice_no" class="col-lg-3 col-form-label-lg">Invoice No</label>
+                                <label for="branch" class="col-lg-3 col-form-label-lg">Branch</label>
                                 <label class="col-lg-1 col-form-label-lg">:</label>
-                                <input type="text" name="invoice_no" id="invoice_no" class="form-control col-lg-8" placeholder="Invoice No">
+                                <input type="text" name="branch" id="branch" class="form-control col-lg-8" placeholder="Branch" readonly>
                             </div>
                             <div class="form-group row">
-                                <label for="type_of_invoice" class="col-lg-3 col-form-label-lg">Type of Invoice</label>
+                                <label for="policy_no" class="col-lg-3 col-form-label-lg">Policy No</label>
                                 <label class="col-lg-1 col-form-label-lg">:</label>
-                                <input type="text" name="type_of_invoice" id="type_of_invoice" class="form-control col-lg-8" placeholder="Type of Invoice">
+                                <input type="text" name="policy_no" id="policy_no" class="form-control col-lg-8" placeholder="Policy No" readonly>
                             </div>
                             <div class="form-group row">
-                                <label for="currency" class="col-lg-3 col-form-label-lg">Currency</label>
+                                <label for="policy_holder" class="col-lg-3 col-form-label-lg">Policy Holder</label>
                                 <label class="col-lg-1 col-form-label-lg">:</label>
-                                <input type="text" name="currency" id="currency" class="form-control col-lg-8" placeholder="Currency">
+                                <input type="text" name="policy_holder" id="policy_holder" class="form-control col-lg-8" placeholder="Policy Holder" readonly>
                             </div>
                             <div class="form-group row">
-                                <label for="invoice_date" class="col-lg-3 col-form-label-lg">Invoice Date</label>
+                                <label for="start_date" class="col-lg-3 col-form-label-lg">Start Date</label>
                                 <label class="col-lg-1 col-form-label-lg">:</label>
-                                <input type="text" name="invoice_date" id="invoice_date" class="form-control col-lg-8" placeholder="Invoice Date">
+                                <input type="text" name="start_date" id="start_date" class="form-control col-lg-8" placeholder="Start Date" readonly>
                             </div>
                             <div class="form-group row">
-                                <label for="broker_id" class="col-lg-3 col-form-label-lg">Broker ID</label>
+                                <label for="end_date" class="col-lg-3 col-form-label-lg">End Date</label>
                                 <label class="col-lg-1 col-form-label-lg">:</label>
-                                <input type="text" name="broker_id" id="broker_id" class="form-control col-lg-8" placeholder="Broker ID">
+                                <input type="text" name="end_date" id="end_date" class="form-control col-lg-8" placeholder="End Date" readonly>
                             </div>
                             <div class="form-group row">
-                                <label for="broker" class="col-lg-3 col-form-label-lg">Broker</label>
+                                <label for="occupation_code" class="col-lg-3 col-form-label-lg">Occupation Code</label>
                                 <label class="col-lg-1 col-form-label-lg">:</label>
-                                <input type="text" name="broker" id="broker" class="form-control col-lg-8" placeholder="Broker" readonly>
+                                <input type="text" name="occupation_code" id="occupation_code" class="form-control col-lg-8" placeholder="Occupation Code" readonly>
                             </div>
                             <div class="form-group row">
-                                <label for="total_amount_invoice" class="col-lg-3 col-form-label-lg">Total Amount Invoice</label>
+                                <label for="occupation_description" class="col-lg-3 col-form-label-lg">Occupation Description</label>
                                 <label class="col-lg-1 col-form-label-lg">:</label>
-                                <input type="text" name="total_amount_invoice" id="total_amount_invoice" class="form-control col-lg-8" placeholder="Total Amount Invoice" readonly>
+                                <input type="text" name="occupation_description" id="occupation_description" class="form-control col-lg-8" placeholder="Occupation Description" readonly>
                             </div>
                             <div class="form-group row">
-                                <label for="type_of_payment" class="col-lg-3 col-form-label-lg">Type of Payment </label>
+                                <label for="real_currency" class="col-lg-3 col-form-label-lg">Currency</label>
                                 <label class="col-lg-1 col-form-label-lg">:</label>
-                                <input type="text" name="type_of_payment" id="type_of_payment" class="form-control col-lg-8" placeholder="Type of Payment">
+                                <input type="text" name="real_currency" id="real_currency" class="form-control col-lg-8" placeholder="Currency" readonly>
                             </div>
                             <div class="form-group row">
-                                <label for="payment_to" class="col-lg-3 col-form-label-lg">Payment To</label>
+                                <label for="gross_premi" class="col-lg-3 col-form-label-lg">Gross Premi</label>
                                 <label class="col-lg-1 col-form-label-lg">:</label>
-                                <input type="text" name="payment_to" id="payment_to" class="form-control col-lg-8" placeholder="Payment To">
+                                <input type="text" name="gross_premi" id="gross_premi" class="form-control col-lg-8" placeholder="Gross Premi" readonly>
                             </div>
                             <div class="form-group row">
-                                <label for="account_name" class="col-lg-3 col-form-label-lg">Account Name</label>
+                                <label for="status_premi" class="col-lg-3 col-form-label-lg">Status Premi</label>
                                 <label class="col-lg-1 col-form-label-lg">:</label>
-                                <input type="text" name="account_name" id="account_name" class="form-control col-lg-8" placeholder="Account Name" readonly>
+                                <input type="text" name="status_premi" id="status_premi" class="form-control col-lg-8" placeholder="Status Premi" readonly>
                             </div>
                             <div class="form-group row">
-                                <label for="account_no" class="col-lg-3 col-form-label-lg">Account No</label>
+                                <label for="os_premi" class="col-lg-3 col-form-label-lg">OS Premi</label>
                                 <label class="col-lg-1 col-form-label-lg">:</label>
-                                <input type="text" name="account_no" id="account_no" class="form-control col-lg-8" placeholder="Account No" readonly>
+                                <input type="text" name="os_premi" id="os_premi" class="form-control col-lg-8" placeholder="OS Premi" readonly>
                             </div>
                             <div class="form-group row">
-                                <label for="bank_name" class="col-lg-3 col-form-label-lg">Bank Name</label>
+                                <label for="date_of_premium_paid" class="col-lg-3 col-form-label-lg">Date of Premium Paid</label>
                                 <label class="col-lg-1 col-form-label-lg">:</label>
-                                <input type="text" name="bank_name" id="bank_name" class="form-control col-lg-8" placeholder="Bank Name" readonly>
+                                <input type="text" name="date_of_premium_paid" id="date_of_premium_paid" class="form-control col-lg-8" placeholder="Date of Premium Paid" readonly>
                             </div>
-                            <div class="form-group row">
-                                <label for="vat" class="col-lg-3 col-form-label-lg">VAT</label>
+                            {{-- <div class="form-group row">
+                                <label for="premium_note" class="col-lg-3 col-form-label-lg">Premium Note</label>
                                 <label class="col-lg-1 col-form-label-lg">:</label>
-                                <input type="text" name="vat" id="vat" class="form-control col-lg-8" placeholder="VAT" readonly>
-                            </div>
-                            <div class="form-group row">
-                                <label for="vat_subsidies" class="col-lg-3 col-form-label-lg">VAT Subsidies</label>
-                                <label class="col-lg-1 col-form-label-lg">:</label>
-                                <input type="text" name="vat_subsidies" id="vat_subsidies" class="form-control col-lg-8" placeholder="VAT Subsidies" readonly>
-                            </div>
-                            <div class="form-group row">
-                                <label for="tax" class="col-lg-3 col-form-label-lg">Tax</label>
-                                <label class="col-lg-1 col-form-label-lg">:</label>
-                                <input type="text" name="tax" id="tax" class="form-control col-lg-8" placeholder="Tax" readonly>
-                            </div>
-                            <div class="form-group row">
-                                <label for="total_realization" class="col-lg-3 col-form-label-lg">Total Realization</label>
-                                <label class="col-lg-1 col-form-label-lg">:</label>
-                                <input type="text" name="total_realization" id="total_realization" class="form-control col-lg-8" placeholder="Total Realization" readonly>
-                            </div>
-                            <div class="form-group row">
-                                <label for="upload_invoice" class="col-lg-3 col-form-label-lg">Upload Invoice</label>
-                                <label class="col-lg-1 col-form-label-lg">:</label>
-                                <input type="file" name="upload_invoice" id="upload_invoice" class="form-control col-lg-8" placeholder="Upload Invoice">
-                            </div>
-                            <div class="form-group row">
-                                <label for="upload_survey_report" class="col-lg-3 col-form-label-lg">Upload Survey Report</label>
-                                <label class="col-lg-1 col-form-label-lg">:</label>
-                                <input type="file" name="upload_survey_report" id="upload_survey_report" class="form-control col-lg-8" placeholder="Upload Survey Report">
-                            </div>
+                                <input type="text" name="premium_note" id="premium_note" class="form-control col-lg-8" placeholder="Premium Note" readonly>
+                            </div> --}}
+
+                            <input id="voucher" type="hidden" name="voucher"/>
                         </div>
                     </div>
                 </div>
@@ -117,26 +101,51 @@
                             <input type="text" name="search_policy" id="search_policy" class="form-control radius" placeholder="Seach Policy">
                         </div>
                         <hr />
-                        <div class="card-body">
+                        <div id="ClearForm" class="card-body">
                             <div class="form-group row">
-                                <label for="approval_bu" class="col-lg-3 col-form-label-lg">Approval BU</label>
+                                <label for="budget" class="col-lg-3 col-form-label-lg">Budget</label>
                                 <label class="col-lg-1 col-form-label-lg">:</label>
-                                <input type="text" name="approval_bu" id="approval_bu" class="form-control col-lg-8" placeholder="Approval BU">
+                                <input type="text" name="budget" id="budget" class="form-control col-lg-8" placeholder="Budget" readonly>
                             </div>
                             <div class="form-group row">
-                                <label for="approval_finance" class="col-lg-3 col-form-label-lg">Approval Finance</label>
+                                <label for="budget_in_amount" class="col-lg-3 col-form-label-lg">Budget in Amount</label>
                                 <label class="col-lg-1 col-form-label-lg">:</label>
-                                <input type="text" name="approval_finance" id="approval_finance" class="form-control col-lg-8" placeholder="Approval Finance">
+                                <input type="text" name="budget_in_amount" id="budget_in_amount" class="form-control col-lg-8" placeholder="Budget in Amount" readonly>
                             </div>
                             <div class="form-group row">
-                                <label for="epo_checker" class="col-lg-3 col-form-label-lg">EPO Checker</label>
+                                <label for="remain_budget" class="col-lg-3 col-form-label-lg">Remain Budget</label>
                                 <label class="col-lg-1 col-form-label-lg">:</label>
-                                <input type="text" name="epo_checker" id="epo_checker" class="form-control col-lg-8" placeholder="EPO Checker">
+                                <input type="text" name="remain_budget" id="remain_budget" class="form-control col-lg-8" placeholder="Remain Budget" readonly>
                             </div>
                             <div class="form-group row">
-                                <label for="epo_approval" class="col-lg-3 col-form-label-lg">EPO Approval</label>
+                                <label for="ending_balance" class="col-lg-3 col-form-label-lg">Ending Balance</label>
                                 <label class="col-lg-1 col-form-label-lg">:</label>
-                                <input type="text" name="epo_approval" id="epo_approval" class="form-control col-lg-8" placeholder="EPO Approval">
+                                <input type="text" name="ending_balance" id="ending_balance" class="form-control col-lg-8" placeholder="Ending Balance" readonly>
+                            </div>
+                            <div class="form-group row">
+                                <label for="amount_realization" class="col-lg-3 col-form-label-lg">Amount Realization</label>
+                                <label class="col-lg-1 col-form-label-lg">:</label>
+                                <input type="text" name="amount_realization" id="amount_realization" class="form-control col-lg-8" placeholder="Amount Realization" reaonly>
+                            </div>
+                            <div class="form-group row">
+                                <label for="currency_realization" class="col-lg-3 col-form-label-lg">Currency Realization</label>
+                                <label class="col-lg-1 col-form-label-lg">:</label>
+                                <select name="currency_realization" id="currency_realization" class="form-control col-lg-8">
+                                    <option value="">Select Currency</option>
+                                    @foreach ($Currencies as $Currency)
+                                        <option value="{{ $Currency->Currency }}">{{ $Currency->Description }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="form-group row">
+                                <label for="exchange_rate" class="col-lg-3 col-form-label-lg">Exchange Rate</label>
+                                <label class="col-lg-1 col-form-label-lg">:</label>
+                                <input type="text" name="exchange_rate" id="exchange_rate" class="form-control col-lg-8" placeholder="Exchange Rate" readonly>
+                            </div>
+                            <div class="form-group row">
+                                <label for="total_amount_realization" class="col-lg-3 col-form-label-lg">Total Amount Realization</label>
+                                <label class="col-lg-1 col-form-label-lg">:</label>
+                                <input type="text" name="total_amount_realization" id="total_amount_realization" class="form-control col-lg-8" placeholder="Total Amount Realization" readonly>
                             </div>
                             <div class="row">
                                 <div class="col-lg-12 mb-2">
@@ -144,33 +153,108 @@
                                         <b style="font-size: 18px;">Save</b>
                                     </button>
                                 </div>
-                                <div class="col-lg-12 mb-2">
-                                    <a href="{{ route('realization.detail-realization') }}" style="width: 100%; height: 60px;" class="btn btn-outline-primary radius-100">
-                                        <i class="feather icon-plus-square"></i>
-                                        <b style="font-size: 18px;">Add Detail</b>
-                                    </a>
-                                </div>
-
-                                <div class="col-lg-12 mb-2">
-                                    <div class="divider">OR</div>
-                                </div>
-
-                                <div class="col-lg-12 mb-2">
-                                    <button type="submit" style="width: 100%; height: 60px;" class="btn btn-primary radius-100">
-                                        <i class="feather icon-upload"></i>
-                                        <b style="font-size: 18px;">Propose</b>
-                                    </button>
-                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+            <input type="hidden" name="invoice_no" value="{{ $RealizationData->Invoice_No }}">
         </form>
     </div>
 </div>
 @endsection
 
 @section('script')
-    
+    <script>
+        var search_budget_url = '{{ route("utils.search_budget_by_policy_no_and_broker_name") }}';
+        var broker_name = '{{ $BrokerName }}';
+
+        $(document).ready(function(){
+            $('#start_date, #end_date, #date_of_premium_paid').datepicker({
+                format: 'dd M yy',
+                autoclose: true,
+                todayHighlight: true,
+            });
+        });
+
+        $('#search_policy').autocomplete({
+            source: function(req, res){
+                $.ajax({
+                    url: search_budget_url,
+                    data: {
+                        keywords: req.term,
+                        broker_name: broker_name
+                    },
+                    success: function( data ) {
+                        console.log(data);
+                        res($.map(data, function (item) {
+                            return {
+                                label: `${item.POLICYNO}`,
+                                value: item.POLICYNO,
+                                data: item
+                            };
+                        }));
+                    },
+                });
+            },
+            minLength: 4,
+            select: function( event, ui ) {
+                let data = ui.item.data;
+                $('#branch').val(data.BRANCH);
+                $('#policy_no').val(data.POLICYNO);
+                $('#policy_holder').val(data.Holder_Name);
+                $('#start_date').val(data.Start_Date);
+                $('#end_date').val(data.End_Date);
+                $('#occupation_code').val(data.OCCUPATION.split(' - ')[0]);
+                $('#occupation_description').val(data.OCCUPATION.split(' - ')[1]);
+                $('#real_currency').val(data.CURRENCY);
+                $('#gross_premi').val(data.PREMIUM);
+                $('#status_premi').val(data.Status_Premium);
+                $('#os_premi').val(data.OS);
+                $('#date_of_premium_paid').val(data.PAYMENT_DATE);
+                $('#premium_note').val(data.COMMENT);
+                $('#budget').val(data.Persentage);
+                $('#budget_in_amount').val(number_format(data.Budget));
+                $('#remain_budget').val(number_format(data.REMAIN_BUDGET));
+                $('#voucher').val(data.VOUCHER);
+
+                $('#amount_realization').attr('readonly', false);
+                $('#exchange_rate').attr('readonly', false);
+            },
+        });
+
+        $('#amount_realization, #exchange_rate').change(function(){
+            let amount_realization = $('#amount_realization').val();
+            let exchange_rate = $('#exchange_rate').val();
+            let gross_premi = $('#gross_premi').val();
+            let remain_budget = $('#remain_budget').val();
+            let budget_in_amount = $('#budget_in_amount').val();
+            let total_amount_realization = 0;
+
+            budget_in_amount = clear_number_format(budget_in_amount);
+            amount_realization = clear_number_format(amount_realization);
+            exchange_rate = clear_number_format(exchange_rate);
+
+            total_amount_realization = amount_realization * exchange_rate;
+
+            if( total_amount_realization > budget_in_amount ) {
+                swal(
+                    'Whoops!',
+                    `Total Amount Realization Exceeding Remain Budget.`,
+                    'warning'
+                );
+                amount_realization = 0;
+                exchange_rate = 0;
+                total_amount_realization = 0;
+            }
+
+            amount_realization = number_format(amount_realization);
+            exchange_rate = number_format(exchange_rate);
+            total_amount_realization = number_format(total_amount_realization);
+
+            $('#amount_realization').val(amount_realization);
+            $('#exchange_rate').val(exchange_rate);
+            $('#total_amount_realization').val(total_amount_realization);
+        });
+    </script>
 @endsection

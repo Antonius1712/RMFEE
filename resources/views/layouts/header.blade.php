@@ -1,5 +1,5 @@
 <nav class="header-navbar navbar-expand-lg navbar navbar-with-menu floating-nav navbar-light navbar-shadow">
-    <div style="width: 50%;">
+    <div style="width: 100%;">
         <ol class="breadcrumb">
             @if( isset($Segments) && count($Segments) > 0 )
                 @php
@@ -43,7 +43,7 @@
                                     {{ Auth()->check() ? Auth()->user()->Name : 'test' }}
                                 </span>
                                 <span class="user-status">
-                                    {{ Auth()->check() ? Auth()->user()->getDept->DeptName : 'test' }}
+                                    {{ Auth()->check() ? Auth()->user()->getUserGroup->getGroup->GroupName : 'test' }}
                                     /
                                     {{ Auth()->check() ? Auth()->user()->getBranch->BranchName : 'test' }}
                                 </span>

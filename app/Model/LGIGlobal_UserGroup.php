@@ -10,6 +10,6 @@ class LGIGlobal_UserGroup extends Model
     protected $table = 'UserGroup';
 
     public function getGroup(){
-        return $this->hasMany(LGIGlobal_Group::class, 'GroupCode', 'GroupCode');
+        return $this->hasOne(LGIGlobal_Group::class, 'GroupCode', 'GroupCode');
     }
 }
