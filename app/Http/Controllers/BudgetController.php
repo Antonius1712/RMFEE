@@ -11,6 +11,7 @@ use App\Helpers\Utils;
 use Exception;
 use Illuminate\Http\Request;
 use Yajra\Datatables\Datatables;
+use Yajra\Datatables\Services\DataTable;
 
 class BudgetController extends Controller
 {
@@ -83,6 +84,8 @@ class BudgetController extends Controller
     public function BudgetDataTable(Request $request){
         $type = isset($request->type) && $request->type != '' ? $request->type : '';
         $Budgets = collect(Budget::GetBudgetDataTable($type));
+        // $Budgets = DataTables::of($Budgets)->make();
+        // dd($Budgets);
         $Budgets = Datatables::of($Budgets)
             ->addColumn('ACTION', function($row){
                 $BtnApprove = '';
@@ -198,6 +201,7 @@ class BudgetController extends Controller
                     </div>'; 
                 }
             })
+            ->rawColumns(['ACTION'])
         ->make(true);
         
         // dd($Budgets);
