@@ -37,8 +37,8 @@ class BudgetController extends Controller
         return view('pages.budget.list', compact('NBRN', 'branch', 'statusPremi', 'statusRealisasi', 'statusBudget'));
     }
 
-    public function edit($voucher){
-        $Budget = Budget::GetBudget($voucher);
+    public function edit($voucher, $archived = 0){
+        $Budget = Budget::GetBudget($voucher, $archived);
         $BudgetInAmount = ($Budget->Budget/100) * $Budget->LGI_PREMIUM;
         $VoucherId = str_replace("/", "-", $Budget->VOUCHER);
         $BrokerId = explode('-', $Budget->BROKERNAME, 2)[0];
@@ -87,7 +87,7 @@ class BudgetController extends Controller
         // $Budgets = DataTables::of($Budgets)->make();
         // dd($Budgets);
         $Budgets = Datatables::of($Budgets)
-            ->addColumn('ACTION', function($row){
+            ->addColumn('ACTION', function($row) use($type){
                 $BtnApprove = '';
                 $BtnUndoApproval = '';
                 $BtnEdit = '';
@@ -115,7 +115,11 @@ class BudgetController extends Controller
                 }
 
                 if( $BtnShowHide['BtnEdit'] ){
-                    $BtnEdit = "<a class='dropdown-item success' href='".route('budget.edit', $Voucher)."'><i class='feather icon-edit-2'></i>Edit</a>";
+                    if( $type == BudgetStatus::ARCHIVED ) {
+                        $BtnEdit = "<a class='dropdown-item success' href='".route('budget.edit', [$Voucher, 1])."'><i class='feather icon-edit-2'></i>Edit</a>";
+                    } else {
+                        $BtnEdit = "<a class='dropdown-item success' href='".route('budget.edit', [$Voucher, 0])."'><i class='feather icon-edit-2'></i>Edit</a>";
+                    }
                 }
 
                 if( $BtnShowHide['BtnViewDocument'] ){

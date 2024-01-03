@@ -31,14 +31,14 @@ class Budget {
         }
     }
 
-    public static function GetBudget($voucher = ''){
+    public static function GetBudget($voucher = '', $archive = 0){
         $voucher = $voucher != "" ? str_replace("-", "/", $voucher) : "";
         try {
             // ! Parameters : '@BrokerName', '@Branch', '@Type', '@StartDate', '@StatusPremium','@AgingRealization', '@StatusRealization', '@Voucher';
             $Datas =  DB::connection(Database::REPORT_GENERATOR)
             ->select("
                 EXECUTE [dbo].[SP_Get_Data_Engineering_Fee] 
-                '', '', '', '', '', '', '', '', '', '".$voucher."', '', 0
+                '', '', '', '', '', '', '', '', '', '".$voucher."', '', $archive
             ");
 
             return $voucher != '' ? $Datas[0] : $Datas;

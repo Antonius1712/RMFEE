@@ -24,11 +24,11 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // //! setiap hari jam 19:00 buat call & register.
-        // $schedule->command('generate:asset-number')->dailyAt('19:00');
-        
-        // //! setiap hari jam 22:00 buat email.
-        // $schedule->command('send:email-epo')->dailyAt('22:00');
+        // setiap hari jam 08:00 Generate Attachment Epo. //* ( Jalan sebelum command send:email-epo. lihat command send:email-epo. )
+        // $schedule->command('generate:attachment-epo')->dailyAt('07:45');
+
+        //! setiap hari jam 08:00 buat call & register.
+        $schedule->command('send:email-epo')->dailyAt('08:00');
     }
 
     /**
