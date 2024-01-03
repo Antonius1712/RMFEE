@@ -33,7 +33,7 @@
                                     <strong>:</strong>
                                 </div>
                                 <div class="col-xs-8 col-s-8 col-md-8 col-lg-8">
-                                    <strong>To</strong>
+                                    <strong>{{ $PDF_Epo->Name }}</strong>
                                 </div>
                             </div>
                             <div class="form-group" style="margin-top: 2%;">
@@ -44,7 +44,7 @@
                                     <strong>:</strong>
                                 </div>
                                 <div class="col-xs-8 col-s-8 col-md-8 col-lg-8">
-                                    <strong>To</strong>
+                                    <strong>{{ $PDF_Epo->Address }}</strong>
                                 </div>
                             </div>
                             <div class="form-group" style="margin-top: 2%;">
@@ -55,7 +55,7 @@
                                     <strong>:</strong>
                                 </div>
                                 <div class="col-xs-8 col-s-8 col-md-8 col-lg-8">
-                                    <strong>To</strong>
+                                    <strong>{{ $PDF_Epo->Phone }} / {{ $PDF_Epo->Fax }}</strong>
                                 </div>
                             </div>
                             <div class="form-group" style="margin-top: 2%;">
@@ -66,7 +66,7 @@
                                     <strong>:</strong>
                                 </div>
                                 <div class="col-xs-8 col-s-8 col-md-8 col-lg-8">
-                                    <strong>To</strong>
+                                    <strong>{{ $PDF_Epo->PIC }}</strong>
                                 </div>
                             </div>
                         </div>

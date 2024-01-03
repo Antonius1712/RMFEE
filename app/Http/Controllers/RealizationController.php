@@ -235,7 +235,7 @@ class RealizationController extends Controller
     }
 
     public function show($invoice_no){
-        $RealizationData = Realization::GetRealization($invoice_no);
+        $RealizationData = Realization::GetRealization($invoice_no)[0];
         $Currencies = Utils::GetCurrencies();
         $BrokerData = null;
         $PaymentToData = null;

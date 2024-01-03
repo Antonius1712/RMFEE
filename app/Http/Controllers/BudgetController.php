@@ -148,6 +148,7 @@ class BudgetController extends Controller
             ->editColumn('LGI_PREMIUM', function($row){
                 return number_format($row->LGI_PREMIUM);
             })
+            
             ->editColumn('PREMIUM', function($row){
                 return number_format($row->PREMIUM);
             })
@@ -201,7 +202,7 @@ class BudgetController extends Controller
                     </div>'; 
                 }
             })
-            ->rawColumns(['ACTION'])
+            ->rawColumns(['ACTION', 'STATUS_BUDGET'])
         ->make(true);
         
         // dd($Budgets);
