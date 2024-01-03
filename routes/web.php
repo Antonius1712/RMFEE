@@ -25,7 +25,8 @@ Route::middleware(['breadcrumbs', 'auth'])->group(function(){
         Route::get('/list-budget', 'BudgetController@index')->name('budget.list');
 
         // Edit & Update
-        Route::get('/edit-budget/{voucher}', 'BudgetController@edit')->name('budget.edit');
+        Route::get('/edit-budget-archived/{voucher}/{archived}', 'BudgetController@edit')->name('budget-archived.edit');
+        Route::get('/edit-budget/{voucher}/{archived}', 'BudgetController@edit')->name('budget.edit');
         Route::post('/edit-budget/{voucher}', 'BudgetController@update')->name('budget.update');
 
         // Propose

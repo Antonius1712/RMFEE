@@ -42,7 +42,10 @@ class SendEmailEpo extends Command
      */
     public function handle()
     {
+        //! Generating Attachment EPO.
         $test = $this->call('generate:attachment-epo');
+
+        //! Preparing Email.
         $LogEmailEpo = ReportGenerator_LogEmailEpo::where('Email_Sent', null)->get();
         $Files = [];
         foreach( $LogEmailEpo as $val ){
@@ -57,7 +60,12 @@ class SendEmailEpo extends Command
 
             $Files['Realization_Survey_Report'] = env('PUBLIC_PATH').$RealizationData->upload_survey_report_path;
 
-            $LINK = DB::connection(Database::EPO)->select("EXECUTE [dbo].[SP_Email_ePO_Engineering_Fee] '$val->PID'")[0]->CheckerLink;
+            $EMAIL_EPO = DB::connection(Database::EPO)->select("EXECUTE [dbo].[SP_Email_ePO_Engineering_Fee] '$val->PID'")[0];
+
+            $PARAM3 = $EMAIL_EPO->UserId;
+            $PARAM4 = $EMAIL_EPO->CheckerLink;
+
+            $LINK = "https://epo.lippoinsurance.com/post.Default2.wgx?param1=1&param2=JESSY&param3=".$PARAM3."&param4=".$PARAM4."&param5=1";
 
             $PARAM = [
                 'PID' => $val->PID,
