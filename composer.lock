@@ -246,6 +246,7 @@
             ],
             "support": {
                 "issues": "https://github.com/doctrine/lexer/issues",
+<<<<<<< HEAD
                 "source": "https://github.com/doctrine/lexer/tree/2.1.0"
             },
             "funding": [
@@ -263,6 +264,11 @@
                 }
             ],
             "time": "2022-12-14T08:49:07+00:00"
+=======
+                "source": "https://github.com/doctrine/lexer/tree/1.0.2"
+            },
+            "time": "2019-06-08T11:03:04+00:00"
+>>>>>>> e6499a7fdf8ba7ba1539a762e5ffe9a4644101d2
         },
         {
             "name": "egulias/email-validator",
@@ -903,6 +909,7 @@
             "time": "2022-10-04T09:16:37+00:00"
         },
         {
+<<<<<<< HEAD
             "name": "league/mime-type-detection",
             "version": "1.14.0",
             "source": {
@@ -959,6 +966,8 @@
             "time": "2023-10-17T14:13:20+00:00"
         },
         {
+=======
+>>>>>>> e6499a7fdf8ba7ba1539a762e5ffe9a4644101d2
             "name": "monolog/monolog",
             "version": "1.27.1",
             "source": {
