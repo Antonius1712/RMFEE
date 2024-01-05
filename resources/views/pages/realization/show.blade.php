@@ -64,7 +64,7 @@
                             <div class="form-group row">
                                 <label for="type_of_payment" class="col-lg-3 col-form-label-lg">Type of Payment </label>
                                 <label class="col-lg-1 col-form-label-lg">:</label>
-                                <input type="text" name="type_of_payment" id="type_of_payment" class="form-control col-lg-8" value="{{ Auth()->user()->getUserSetting->Type_Of_Payment }}" readonly>
+                                <input type="text" name="type_of_payment" id="type_of_payment" class="form-control col-lg-8" value="{{ $TypeOfPayment }}" readonly>
                             </div>
                             <div class="form-group row">
                                 <label for="payment_to" class="col-lg-3 col-form-label-lg">Payment To</label>
@@ -138,22 +138,22 @@
                             <div class="form-group row">
                                 <label for="approval_bu" class="col-lg-3 col-form-label-lg">Approval BU</label>
                                 <label class="col-lg-1 col-form-label-lg">:</label>
-                                <input type="text" name="approval_bu" id="approval_bu" class="form-control col-lg-8" placeholder="Approval BU" value="{{ Auth()->user()->getUserSetting->Approval_BU_UserID }}" readonly>
+                                <input type="text" name="approval_bu" id="approval_bu" class="form-control col-lg-8" placeholder="Approval BU" value="{{ $ApprovalBU }}" readonly>
                             </div>
                             <div class="form-group row">
                                 <label for="approval_finance" class="col-lg-3 col-form-label-lg">Approval Finance</label>
                                 <label class="col-lg-1 col-form-label-lg">:</label>
-                                <input type="text" name="approval_finance" id="approval_finance" class="form-control col-lg-8" placeholder="Approval Finance" value="{{ Auth()->user()->getUserSetting->Approval_Finance_UserID }}" readonly>
+                                <input type="text" name="approval_finance" id="approval_finance" class="form-control col-lg-8" placeholder="Approval Finance" value="{{ $ApprovalFinance }}" readonly>
                             </div>
                             <div class="form-group row">
                                 <label for="epo_checker" class="col-lg-3 col-form-label-lg">EPO Checker</label>
                                 <label class="col-lg-1 col-form-label-lg">:</label>
-                                <input type="text" name="epo_checker" id="epo_checker" class="form-control col-lg-8" placeholder="EPO Checker" value="{{ Auth()->user()->getUserSetting->CheckerID_ePO }}" readonly>
+                                <input type="text" name="epo_checker" id="epo_checker" class="form-control col-lg-8" placeholder="EPO Checker" value="{{ $EpoChecker }}" readonly>
                             </div>
                             <div class="form-group row">
                                 <label for="epo_approval" class="col-lg-3 col-form-label-lg">EPO Approval</label>
                                 <label class="col-lg-1 col-form-label-lg">:</label>
-                                <input type="text" name="epo_approval" id="epo_approval" class="form-control col-lg-8" placeholder="EPO Approval" value="{{ Auth()->user()->getUserSetting->ApprovalID_ePO }}" readonly>
+                                <input type="text" name="epo_approval" id="epo_approval" class="form-control col-lg-8" placeholder="EPO Approval" value="{{ $EpoApproval }}" readonly>
                             </div>
                             <div class="row">
                                 <div class="col-lg-12 mb-2">
