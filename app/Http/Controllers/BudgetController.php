@@ -93,13 +93,14 @@ class BudgetController extends Controller
         // $Budgets = DataTables::of($Budgets)->make();
         // dd($Budgets);
         $Budgets = Datatables::of($Budgets)
-            ->addColumn('ACTION', function($row) use($type){
+            ->addColumn('ACTION', function($row){
                 $BtnApprove = '';
                 $BtnUndoApproval = '';
                 $BtnEdit = '';
                 $BtnViewDocument = '';
                 $BtnReject = '';
                 $BtnArchive = '';
+                $BtnUnArchive = '';
                 $Divider = '';
                 $Voucher = str_replace('/','-',$row->VOUCHER);
 
@@ -112,6 +113,8 @@ class BudgetController extends Controller
                 $BtnShowHide['BtnUnArchive'] = null;
 
                 $BtnShowHide = Budget::ShowHideButtonBudget($row->STATUS_BUDGET, auth()->user()->getUserGroup->GroupCode);
+
+                // dd($BtnShowHide);
 
                 if( $BtnShowHide['BtnApprove'] ){
                     $BtnApprove = "<a class='dropdown-item success' href='".route('budget.approve', $Voucher)."'><i class='feather icon-check-circle'></i>Approve</a>";
@@ -142,10 +145,10 @@ class BudgetController extends Controller
                 }
 
                 if( $BtnShowHide['BtnUnArchive'] ){
-                    $BtnArchive = "<a class='dropdown-item success' href=".route('budget.unarchive', $Voucher)."><i class='feather icon-archive'></i>Unarchive</a>";
+                    $BtnUnArchive = "<a class='dropdown-item success' href=".route('budget.unarchive', $Voucher)."><i class='feather icon-archive'></i>Unarchive</a>";
                 }
 
-                $BtnAction = "<div class='btn-group' role='group' aria-label='Button group with nested dropdown'><div class='btn-group' role='group'><a href='#' id='BtnActionGroup' data-toggle='dropdown' aria-haspopup='true'aria-expanded='false' style=''><i class='feather icon-plus-circle icon-btn-group'></i></a><div class='dropdown-menu' aria-labelledby='BtnActionGroup'>".$BtnApprove.$BtnUndoApproval.$BtnEdit.$BtnViewDocument.$Divider.$BtnReject.$BtnArchive."</div></div></div>";
+                $BtnAction = "<div class='btn-group' role='group' aria-label='Button group with nested dropdown'><div class='btn-group' role='group'><a href='#' id='BtnActionGroup' data-toggle='dropdown' aria-haspopup='true'aria-expanded='false' style=''><i class='feather icon-plus-circle icon-btn-group'></i></a><div class='dropdown-menu' aria-labelledby='BtnActionGroup'>".$BtnApprove.$BtnUndoApproval.$BtnEdit.$BtnViewDocument.$Divider.$BtnReject.$BtnArchive.$BtnUnArchive."</div></div></div>";
 
                 // dd($BtnAction);
                 return $BtnAction;

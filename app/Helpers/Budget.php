@@ -169,6 +169,17 @@ class Budget {
                             'BtnUnArchive' => $BtnUnArchive,
                         ];
                         break;
+                    default:
+                        return [
+                            'BtnEdit' => $BtnEdit,
+                            'BtnViewDocument' => $BtnViewDocument,
+                            'BtnArchive' => $BtnArchive,
+                            'BtnApprove' => $BtnApprove,
+                            'BtnUndoApproval' => $BtnUndoApproval,
+                            'BtnReject' => $BtnReject,
+                            'BtnUnArchive' => $BtnUnArchive,
+                        ];
+                        break;
                 }
             case BudgetStatus::WAITING_APPROVAL:
                 switch ($role) {
@@ -188,6 +199,17 @@ class Budget {
                         $BtnViewDocument = true;
                         $BtnApprove = true;
                         $BtnReject = true;
+                        return [
+                            'BtnEdit' => $BtnEdit,
+                            'BtnViewDocument' => $BtnViewDocument,
+                            'BtnArchive' => $BtnArchive,
+                            'BtnApprove' => $BtnApprove,
+                            'BtnUndoApproval' => $BtnUndoApproval,
+                            'BtnReject' => $BtnReject,
+                            'BtnUnArchive' => $BtnUnArchive,
+                        ];
+                        break;
+                    default:
                         return [
                             'BtnEdit' => $BtnEdit,
                             'BtnViewDocument' => $BtnViewDocument,
@@ -226,6 +248,17 @@ class Budget {
                             'BtnUnArchive' => $BtnUnArchive,
                         ];
                         break;
+                    default:
+                        return [
+                            'BtnEdit' => $BtnEdit,
+                            'BtnViewDocument' => $BtnViewDocument,
+                            'BtnArchive' => $BtnArchive,
+                            'BtnApprove' => $BtnApprove,
+                            'BtnUndoApproval' => $BtnUndoApproval,
+                            'BtnReject' => $BtnReject,
+                            'BtnUnArchive' => $BtnUnArchive,
+                        ];
+                        break;
                 }
             case BudgetStatus::REJECTED:
                 switch ($role) {
@@ -245,6 +278,17 @@ class Budget {
                         break;
                     case "HEAD_BU_RMFEE":
                         $BtnViewDocument = true;
+                        return [
+                            'BtnEdit' => $BtnEdit,
+                            'BtnViewDocument' => $BtnViewDocument,
+                            'BtnArchive' => $BtnArchive,
+                            'BtnApprove' => $BtnApprove,
+                            'BtnUndoApproval' => $BtnUndoApproval,
+                            'BtnReject' => $BtnReject,
+                            'BtnUnArchive' => $BtnUnArchive,
+                        ];
+                        break;
+                    default:
                         return [
                             'BtnEdit' => $BtnEdit,
                             'BtnViewDocument' => $BtnViewDocument,
@@ -297,6 +341,17 @@ class Budget {
                             'BtnUnArchive' => $BtnUnArchive,
                         ];
                         break;
+                    default:
+                    return [
+                        'BtnEdit' => $BtnEdit,
+                        'BtnViewDocument' => $BtnViewDocument,
+                        'BtnArchive' => $BtnArchive,
+                        'BtnApprove' => $BtnApprove,
+                        'BtnUndoApproval' => $BtnUndoApproval,
+                        'BtnReject' => $BtnReject,
+                        'BtnUnArchive' => $BtnUnArchive,
+                    ];
+                    break;
                 }
         }
 
