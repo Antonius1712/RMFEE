@@ -260,9 +260,14 @@ class Realization {
 
         //! to save the image using SP, on the SP ImgFile will be converted to VARBINARY().
         $filePath = $RealizationData->Upload_Invoice_Path;
-        $fileContent = file_get_contents(asset($filePath));
-        $ImgFile = unpack("H*hex", $fileContent);
-        $ImgFile = '0x'.$ImgFile['hex'];
+        
+        if( $filePath != '' ){
+            $fileContent = file_get_contents(asset($filePath));
+            $ImgFile = unpack("H*hex", $fileContent);
+            $ImgFile = '0x'.$ImgFile['hex'];
+        }else{
+            $ImgFile = '';
+        }
         
         try {
             DB::connection("EPO114")->statement("EXECUTE [dbo].[SP_Insert_ePO_Engineering_Fee] '$InvoiceNo', $TotalRealization, $FileSize, $ImgFile, '$LinkApproval', '$LinkChecker' ");
