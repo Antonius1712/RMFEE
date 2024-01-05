@@ -41,6 +41,9 @@ Route::middleware(['breadcrumbs', 'auth'])->group(function(){
         // Archive
         Route::get('/archive/{voucher}', 'BudgetController@archive')->name('budget.archive');
 
+        // UnArchive
+        Route::get('/unarchive/{voucher}', 'BudgetController@unarchive')->name('budget.unarchive');
+
         // !Data Table Budget.
         Route::get('/data-table', 'BudgetController@BudgetDataTable')->name('budget.data-table');
     });

@@ -113,6 +113,9 @@ class Budget {
             case 'reject':
                 $statusBudget = BudgetStatus::REJECTED;
                 break;
+            case 'draft':
+                $statusBudget = BudgetStatus::DRAFT;
+                break;
             default:
                 return Log::error('Error Updating Budget Only Status Voucher = ' . $voucher . 'Missing Action.');
                 break;
@@ -135,6 +138,7 @@ class Budget {
         $BtnApprove = false;
         $BtnUndoApproval = false;
         $BtnReject = false;
+        $BtnUnArchive = false;
         
         switch ($status) {
             case BudgetStatus::DRAFT:
@@ -150,6 +154,7 @@ class Budget {
                             'BtnApprove' => $BtnApprove,
                             'BtnUndoApproval' => $BtnUndoApproval,
                             'BtnReject' => $BtnReject,
+                            'BtnUnArchive' => $BtnUnArchive,
                         ];
                         break;
                     case "HEAD_BU_RMFEE":
@@ -161,6 +166,7 @@ class Budget {
                             'BtnApprove' => $BtnApprove,
                             'BtnUndoApproval' => $BtnUndoApproval,
                             'BtnReject' => $BtnReject,
+                            'BtnUnArchive' => $BtnUnArchive,
                         ];
                         break;
                 }
@@ -175,6 +181,7 @@ class Budget {
                             'BtnApprove' => $BtnApprove,
                             'BtnUndoApproval' => $BtnUndoApproval,
                             'BtnReject' => $BtnReject,
+                            'BtnUnArchive' => $BtnUnArchive,
                         ];
                         break;
                     case "HEAD_BU_RMFEE":
@@ -188,6 +195,7 @@ class Budget {
                             'BtnApprove' => $BtnApprove,
                             'BtnUndoApproval' => $BtnUndoApproval,
                             'BtnReject' => $BtnReject,
+                            'BtnUnArchive' => $BtnUnArchive,
                         ];
                         break;
                 }
@@ -202,6 +210,7 @@ class Budget {
                             'BtnApprove' => $BtnApprove,
                             'BtnUndoApproval' => $BtnUndoApproval,
                             'BtnReject' => $BtnReject,
+                            'BtnUnArchive' => $BtnUnArchive,
                         ];
                         break;
                     case "HEAD_BU_RMFEE":
@@ -214,6 +223,7 @@ class Budget {
                             'BtnApprove' => $BtnApprove,
                             'BtnUndoApproval' => $BtnUndoApproval,
                             'BtnReject' => $BtnReject,
+                            'BtnUnArchive' => $BtnUnArchive,
                         ];
                         break;
                 }
@@ -230,6 +240,7 @@ class Budget {
                             'BtnApprove' => $BtnApprove,
                             'BtnUndoApproval' => $BtnUndoApproval,
                             'BtnReject' => $BtnReject,
+                            'BtnUnArchive' => $BtnUnArchive,
                         ];
                         break;
                     case "HEAD_BU_RMFEE":
@@ -241,12 +252,14 @@ class Budget {
                             'BtnApprove' => $BtnApprove,
                             'BtnUndoApproval' => $BtnUndoApproval,
                             'BtnReject' => $BtnReject,
+                            'BtnUnArchive' => $BtnUnArchive,
                         ];
                         break;
                 }
             case BudgetStatus::ARCHIVED:
-                $BtnEdit = true;
-                $BtnViewDocument = true;
+                // $BtnEdit = true;
+                // $BtnViewDocument = true;
+                $BtnUnArchive = true;
                 return [
                     'BtnEdit' => $BtnEdit,
                     'BtnViewDocument' => $BtnViewDocument,
@@ -254,6 +267,7 @@ class Budget {
                     'BtnApprove' => $BtnApprove,
                     'BtnUndoApproval' => $BtnUndoApproval,
                     'BtnReject' => $BtnReject,
+                    'BtnUnArchive' => $BtnUnArchive,
                 ];
                 break;
             default :
@@ -269,8 +283,8 @@ class Budget {
                             'BtnApprove' => $BtnApprove,
                             'BtnUndoApproval' => $BtnUndoApproval,
                             'BtnReject' => $BtnReject,
+                            'BtnUnArchive' => $BtnUnArchive,
                         ];
-                        break;
                     case "HEAD_BU_RMFEE":
                         $BtnViewDocument = true;
                         return [
@@ -280,6 +294,7 @@ class Budget {
                             'BtnApprove' => $BtnApprove,
                             'BtnUndoApproval' => $BtnUndoApproval,
                             'BtnReject' => $BtnReject,
+                            'BtnUnArchive' => $BtnUnArchive,
                         ];
                         break;
                 }
