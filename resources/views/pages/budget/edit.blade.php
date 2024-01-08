@@ -116,8 +116,13 @@
                                 <div class="form-group row">
                                     <label for="document" class="col-lg-3 col-form-label-lg">Document</label>
                                     <label class="col-lg-1 col-form-label-lg">:</label>
-                                    <input type="file" name="document" id="document" class="form-control col-lg-8"
+                                    <input type="file" name="document" id="document" class="form-control {{ $Budget->Document_Path != '' ? 'col-lg-6' : 'col-lg-8' }}"
                                         placeholder="Document" value="">
+                                    @if( $Budget->Document_Path != '' )
+                                    <a href="{{ $Budget->Document_Path != '' ? asset($Budget->Document_Path) : 'javascript:;' }}" class="col-lg-2" target="_blank" download="">
+                                        Download
+                                    </a>
+                                    @endif
                                 </div>
                                 <div class="form-group row">
                                     <label for="proposed_to" class="col-lg-3 col-form-label-lg">Proposed to</label>

@@ -109,20 +109,30 @@
                             <div class="form-group row">
                                 <label for="upload_invoice" class="col-lg-3 col-form-label-lg">Upload Invoice</label>
                                 <label class="col-lg-1 col-form-label-lg">:</label>
-                                <input type="file" name="upload_invoice" id="upload_invoice" class="form-control col-lg-6" placeholder="Upload Invoice" value="">
-                                <a href="javascript:;" data-path="{{ $RealizationData->Upload_Invoice_Path }}" class="primary ViewDocumentRealizationModal col-lg-2">
+                                <input type="file" name="upload_invoice" id="upload_invoice" class="form-control {{ $RealizationData->Upload_Invoice_Path ? 'col-lg-6' : 'col-lg-8' }}" placeholder="Upload Invoice" value="">
+                                {{-- <a href="javascript:;" data-path="{{ $RealizationData->Upload_Invoice_Path }}" class="primary ViewDocumentRealizationModal col-lg-2">
                                     <i class="feather icon-eye"></i>
                                     Show
+                                </a> --}}
+                                @if( $RealizationData->Upload_Invoice_Path != '' )
+                                <a href="{{ $RealizationData->Upload_Invoice_Path ? asset($RealizationData->Upload_Invoice_Path) : 'javascript:;' }}" class="primary col-lg-2" target="_Blank" download="">
+                                    Download
                                 </a>
+                                @endif
                             </div>
                             <div class="form-group row">
                                 <label for="upload_survey_report" class="col-lg-3 col-form-label-lg">Upload Survey Report</label>
                                 <label class="col-lg-1 col-form-label-lg">:</label>
-                                <input type="file" name="upload_survey_report" id="upload_survey_report" class="form-control col-lg-6" placeholder="Upload Survey Report" value="">
-                                <a href="javascript:;" data-path="{{ $RealizationData->Upload_Survey_Report_Path }}" class="primary ViewDocumentRealizationModal col-lg-2">
+                                <input type="file" name="upload_survey_report" id="upload_survey_report" class="form-control {{ $RealizationData->Upload_Survey_Report_Path ? 'col-lg-6' : 'col-lg-8' }}" placeholder="Upload Survey Report" value="">
+                                {{-- <a href="javascript:;" data-path="{{ $RealizationData->Upload_Survey_Report_Path }}" class="primary ViewDocumentRealizationModal col-lg-2">
                                     <i class="feather icon-eye"></i>
                                     Show
+                                </a> --}}
+                                @if( $RealizationData->Upload_Survey_Report_Path != '' )
+                                <a href="{{ $RealizationData->Upload_Survey_Report_Path ? asset($RealizationData->Upload_Survey_Report_Path) : 'javascript:;' }}" class="primary col-lg-2" target="_Blank" download="">
+                                    Download
                                 </a>
+                                @endif
                             </div>
                             <div class="form-group row">
                                 <label for="tax" class="col-lg-3 col-form-label-lg">Remarks</label>
