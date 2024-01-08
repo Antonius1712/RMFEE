@@ -172,17 +172,19 @@
                     <tr class="default">
                         <th>Name</th>
                         <th>Status</th>
+                        <th>Date</th>
                         <th>Time</th>
-                        <th>Comment</th>
                     </tr>
                 </thead>
                 <tbody>
+                    @foreach ($Logs as $Log)
                     <tr class="text-center">
-                        <td>TEST DS</td>
-                        <td>Proposed</td>
-                        <td>2023-11-13</td>
-                        <td>Propose Data</td>
+                        <td>{{ $Log->NIK.' - '.$Log->getUser->Name }}</td>
+                        <td>{{ $Log->Status }}</td>
+                        <td>{{ date('Y-m-d', strtotime($Log->Date)) }}</td>
+                        <td>{{ $Log->Time }}</td>
                     </tr>
+                    @endforeach
                 </tbody>
             </table>
         </div>

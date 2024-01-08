@@ -39,11 +39,12 @@ class BudgetController extends Controller
 
     public function edit($voucher, $archived = 0){
         $Budget = Budget::GetBudget($voucher, $archived);
+        $Logs = Logger::GetLog($voucher);
         $BudgetInAmount = ($Budget->Budget/100) * $Budget->LGI_PREMIUM;
         $VoucherId = str_replace("/", "-", $Budget->VOUCHER);
         $BrokerId = explode('-', $Budget->BROKERNAME, 2)[0];
         $BrokerName = explode('-', $Budget->BROKERNAME, 2)[1];
-        return view('pages.budget.edit', compact('Budget', 'BudgetInAmount', 'VoucherId', 'BrokerName', 'BrokerId'));
+        return view('pages.budget.edit', compact('Budget', 'BudgetInAmount', 'VoucherId', 'BrokerName', 'BrokerId', 'Logs'));
     }
 
     public function update(Request $request, $voucher){
@@ -55,6 +56,7 @@ class BudgetController extends Controller
         }
         $RedirectVoucher = str_replace('-', '/', $voucher);
         Budget::UpdateBudget($request, $voucher);
+        Logger::SaveLog($voucher, $desc);
         return redirect()->route('budget.list')->with('noticication', 'Voucher <b>'.$RedirectVoucher.'</b> Successfully '. $desc);
     }
 
@@ -66,24 +68,28 @@ class BudgetController extends Controller
     public function archive($voucher){
         $RedirectVoucher = str_replace('-', '/', $voucher);
         Budget::UpdateBudgetOnlyStatus('archive', $voucher, null);
+        Logger::SaveLog($voucher, 'Archived');
         return redirect()->route('budget.archive-list')->with('noticication', 'Voucher <b>'.$RedirectVoucher.'</b> Successfully Archived');
     }
 
     public function unarchive($voucher){
         $RedirectVoucher = str_replace('-', '/', $voucher);
         Budget::UpdateBudgetOnlyStatus('draft', $voucher, null);
+        Logger::SaveLog($voucher, 'Unarchived');
         return redirect()->route('budget.archive-list')->with('noticication', 'Voucher <b>'.$RedirectVoucher.'</b> Successfully UnArchived');
     }
 
     public function reject($voucher){
         $RedirectVoucher = str_replace('-', '/', $voucher);
         Budget::UpdateBudgetOnlyStatus('reject', $voucher, null);
+        Logger::SaveLog($voucher, 'Rejected');
         return redirect()->route('budget.list')->with('noticication', 'Voucher <b>'.$RedirectVoucher.'</b> Successfully Rejected');
     }
 
     public function approve($voucher){
         $RedirectVoucher = str_replace('-', '/', $voucher);
         Budget::UpdateBudgetOnlyStatus('approve', $voucher, null);
+        Logger::SaveLog($voucher, 'Approved');
         return redirect()->route('budget.list')->with('noticication', 'Voucher <b>'.$RedirectVoucher.'</b> Successfully Approved');
     }
 
