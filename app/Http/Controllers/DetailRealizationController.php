@@ -46,7 +46,7 @@ class DetailRealizationController extends Controller
 
     public function edit($invoice_no, $id){
         $Currencies = Utils::GetCurrencies();
-        $RealizationData = Realization::GetRealization($invoice_no);
+        $RealizationData = Realization::GetRealization($invoice_no)[0];
         $DetailRealization = DetailRealization::GetDetailRealizationById($id);
         $BrokerName = Utils::GetProfile($RealizationData->Broker_ID, $RealizationData->Currency);
         $BrokerName = $BrokerName != null ? $BrokerName->Name : "";
