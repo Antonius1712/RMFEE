@@ -103,7 +103,7 @@ class BudgetController extends Controller
                 $BtnApprove = '';
                 $BtnUndoApproval = '';
                 $BtnEdit = '';
-                $BtnViewDocument = '';
+                $BtnDownloadDocument = '';
                 $BtnReject = '';
                 $BtnArchive = '';
                 $BtnUnArchive = '';
@@ -113,7 +113,7 @@ class BudgetController extends Controller
                 $BtnShowHide['BtnApprove'] = null;
                 $BtnShowHide['BtnUndoApproval'] = null;
                 $BtnShowHide['BtnEdit'] = null;
-                $BtnShowHide['BtnViewDocument'] = null;
+                $BtnShowHide['BtnDownloadDocument'] = null;
                 $BtnShowHide['BtnReject'] = null;
                 $BtnShowHide['BtnArchive'] = null;
                 $BtnShowHide['BtnUnArchive'] = null;
@@ -134,8 +134,12 @@ class BudgetController extends Controller
                     $BtnEdit = "<a class='dropdown-item success' href='".route('budget.edit', [$Voucher, 0])."'><i class='feather icon-edit-2'></i>Edit</a>";
                 }
 
-                if( $BtnShowHide['BtnViewDocument'] ){
-                    $BtnViewDocument = "<a class='dropdown-item success btnViewDocumentBudget' href='#' data-toggle='modal' data-path='$row->Document_Path'><i class='feather icon-eye'></i>View Document</a>";
+                if( $BtnShowHide['BtnDownloadDocument'] ){
+                    $BtnDownloadDocument = "<a class='dropdown-item success btnViewDocumentBudget' href='#' data-toggle='modal' data-path='$row->Document_Path'><i class='feather icon-eye'></i>View Document</a>";
+
+                    $BtnDownloadDocument = "<a href='$Budget->Document_Path' class='col-lg-2' target='_blank' download='>
+                        Download
+                    </a>";
                 }
 
                 if( $BtnShowHide['BtnReject'] || $BtnShowHide['BtnArchive'] ){
@@ -154,7 +158,7 @@ class BudgetController extends Controller
                     $BtnUnArchive = "<a class='dropdown-item success' href=".route('budget.unarchive', $Voucher)."><i class='feather icon-archive'></i>Unarchive</a>";
                 }
 
-                $BtnAction = "<div class='btn-group' role='group' aria-label='Button group with nested dropdown'><div class='btn-group' role='group'><a href='#' id='BtnActionGroup' data-toggle='dropdown' aria-haspopup='true'aria-expanded='false' style=''><i class='feather icon-plus-circle icon-btn-group'></i></a><div class='dropdown-menu' aria-labelledby='BtnActionGroup'>".$BtnApprove.$BtnUndoApproval.$BtnEdit.$BtnViewDocument.$Divider.$BtnReject.$BtnArchive.$BtnUnArchive."</div></div></div>";
+                $BtnAction = "<div class='btn-group' role='group' aria-label='Button group with nested dropdown'><div class='btn-group' role='group'><a href='#' id='BtnActionGroup' data-toggle='dropdown' aria-haspopup='true'aria-expanded='false' style=''><i class='feather icon-plus-circle icon-btn-group'></i></a><div class='dropdown-menu' aria-labelledby='BtnActionGroup'>".$BtnApprove.$BtnUndoApproval.$BtnEdit.$BtnDownloadDocument.$Divider.$BtnReject.$BtnArchive.$BtnUnArchive."</div></div></div>";
 
                 // dd($BtnAction);
                 return $BtnAction;

@@ -262,7 +262,10 @@ class Realization {
         $filePath = $RealizationData->Upload_Invoice_Path;
         
         if( $filePath != '' ){
-            $fileContent = file_get_contents(asset($filePath));
+
+            // dd( config('app.PUBLIC_PATH').$filePath );
+
+            $fileContent = file_get_contents(config('app.PUBLIC_PATH').'/'.$filePath);
             $ImgFile = unpack("H*hex", $fileContent);
             $ImgFile = '0x'.$ImgFile['hex'];
         }else{
