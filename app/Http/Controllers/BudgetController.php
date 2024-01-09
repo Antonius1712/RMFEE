@@ -137,9 +137,12 @@ class BudgetController extends Controller
                 if( $BtnShowHide['BtnDownloadDocument'] ){
                     // $BtnDownloadDocument = "<a class='dropdown-item success btnViewDocumentBudget' href='#' data-toggle='modal' data-path='$row->Document_Path'><i class='feather icon-eye'></i>View Document</a>";
 
-                    $BtnDownloadDocument = "<a class='dropdown-item success' href='$row->Document_Path' class='col-lg-2' target='_blank' download='>
-                        Download
-                    </a>";
+                    if( $row->Document_Path != '' ){
+                            $BtnDownloadDocument = "<a class='dropdown-item success' href='$row->Document_Path' class='col-lg-2' target='_blank' download=''>
+                            <i class='feather icon-download'></i>
+                            Download
+                        </a>";
+                    }
                 }
 
                 if( $BtnShowHide['BtnReject'] || $BtnShowHide['BtnArchive'] ){
