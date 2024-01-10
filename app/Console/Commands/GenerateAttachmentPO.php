@@ -34,7 +34,7 @@ class GenerateAttachmentPO extends Command
      */
     public function __construct()
     {
-        $this->baseUrl = env('APP_URL');
+        $this->baseUrl = env('APP_PDF_URL');
         $this->publicPath = env('PUBLIC_PATH');
         $this->pageTitle = 'Page';
         $this->pageOfTitle = 'Of';
@@ -52,7 +52,8 @@ class GenerateAttachmentPO extends Command
     {
         $LogEmailEpo = ReportGenerator_LogEmailEpo::where('Email_Sent', null)->get();
         foreach( $LogEmailEpo as $val ) {
-            $url = route('generate-pdf-attachment-epo', $val->PID);
+            // $url = route('generate-pdf-attachment-epo', $val->PID);
+            $url = $this->baseUrl.'/generate-pdf-attachment-epo/'.$val->PID;
 
             if ($this->isReportError($url, $data=[])) continue;
 
