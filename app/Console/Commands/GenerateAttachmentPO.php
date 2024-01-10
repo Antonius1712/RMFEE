@@ -75,6 +75,7 @@ class GenerateAttachmentPO extends Command
                 echo "SUKSES";
                 echo "\n";
                 echo $url;
+                echo "\n";
                 // return true;
             }
         }else{
