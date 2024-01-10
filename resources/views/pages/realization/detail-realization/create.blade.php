@@ -249,7 +249,7 @@
             }
 
             amount_realization = number_format(amount_realization);
-            exchange_rate = number_format(exchange_rate);
+            exchange_rate = number_format(exchange_rate, 2);
             total_amount_realization = number_format(total_amount_realization);
 
             $('#amount_realization').val(amount_realization);

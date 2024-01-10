@@ -53,12 +53,12 @@
                             <div class="form-group row">
                                 <label for="occupation_code" class="col-lg-3 col-form-label-lg">Occupation Code</label>
                                 <label class="col-lg-1 col-form-label-lg">:</label>
-                                <input type="text" name="occupation_code" id="occupation_code" class="form-control col-lg-8" placeholder="Occupation Code" value="{{ $DetailRealization->OCCUPATION != null ? explode('-', $DetailRealization->OCCUPATION)[0] : '' }}" readonly>
+                                <input type="text" name="occupation_code" id="occupation_code" class="form-control col-lg-8" placeholder="Occupation Code" value="{{ $DetailRealization->OCCUPATION != null && $DetailRealization->OCCUPATION != 'Fleet' ? explode('-', $DetailRealization->OCCUPATION)[0] : 'Fleet' }}" readonly>
                             </div>
                             <div class="form-group row">
                                 <label for="occupation_description" class="col-lg-3 col-form-label-lg">Occupation Description</label>
                                 <label class="col-lg-1 col-form-label-lg">:</label>
-                                <input type="text" name="occupation_description" id="occupation_description" class="form-control col-lg-8" placeholder="Occupation Description" value="{{ $DetailRealization->OCCUPATION != null ? explode('-', $DetailRealization->OCCUPATION)[1] : '' }}" readonly>
+                                <input type="text" name="occupation_description" id="occupation_description" class="form-control col-lg-8" placeholder="Occupation Description" value="{{ $DetailRealization->OCCUPATION != null && $DetailRealization->OCCUPATION != 'Fleet' ? explode('-', $DetailRealization->OCCUPATION)[1] : 'Fleet' }}" readonly>
                             </div>
                             <div class="form-group row">
                                 <label for="real_currency" class="col-lg-3 col-form-label-lg">Currency</label>
@@ -140,7 +140,7 @@
                             <div class="form-group row">
                                 <label for="exchange_rate" class="col-lg-3 col-form-label-lg">Exchange Rate</label>
                                 <label class="col-lg-1 col-form-label-lg">:</label>
-                                <input type="text" name="exchange_rate" id="exchange_rate" class="form-control col-lg-8" placeholder="Exchange Rate" value="{{ number_format($DetailRealization->exchange_rate_realization) }}">
+                                <input type="text" name="exchange_rate" id="exchange_rate" class="form-control col-lg-8" placeholder="Exchange Rate" value="{{ number_format($DetailRealization->exchange_rate_realization, 2) }}">
                             </div>
                             <div class="form-group row">
                                 <label for="total_amount_realization" class="col-lg-3 col-form-label-lg">Total Amount Realization</label>
@@ -247,7 +247,7 @@
         }
 
         amount_realization = number_format(amount_realization);
-        exchange_rate = number_format(exchange_rate);
+        exchange_rate = number_format(exchange_rate, 2);
         total_amount_realization = number_format(total_amount_realization);
 
         $('#amount_realization').val(amount_realization);

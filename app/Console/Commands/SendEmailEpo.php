@@ -62,10 +62,15 @@ class SendEmailEpo extends Command
 
             $EMAIL_EPO = DB::connection(Database::EPO)->select("EXECUTE [dbo].[SP_Email_ePO_Engineering_Fee] '$val->PID'")[0];
 
-            $PARAM3 = $EMAIL_EPO->UserId;
+            // $PARAM3 = $EMAIL_EPO->UserId;
+            $PARAM3 = 'APRILIAFIN';
             $PARAM4 = $EMAIL_EPO->CheckerLink;
 
+            // DEMO
             $LINK = "https://epo.lippoinsurance.com/post.Default2.wgx?param1=1&param2=JESSY&param3=".$PARAM3."&param4=".$PARAM4."&param5=1";
+
+            // LIVE
+            // $LINK = "http://172.16.0.57/ePO/post.Default2.wgx?param1=1&param2=JESSY&param3=".$PARAM3."&param4=".$PARAM4."&param5=1";
 
             $PARAM = [
                 'PID' => $val->PID,
@@ -83,13 +88,15 @@ class SendEmailEpo extends Command
                         }
                         $mail->to('it-dba07@lippoinsurance.com');
                         // $mail->to($val->Email_To);
-                        $mail->bcc(['it-dba01@lippoinsurance.com', 'it-dba07@lippoinsurance.com']);
+                        $mail->bcc(['it-dba01@lippoinsurance.com', 'it-dba07@lippoinsurance.com', 'it-dba18@lgi.co.id']);
                         $mail->subject('Purchase Order #'.$val->PID.'# for you to check');
                     }
                 ); 
 
-                $val->Email_Sent = 'yes';
-                $val->save();
+                DB::connection(Database::REPORT_GENERATOR)->statement("exec [SP_Update_Log_Email_Engineering_Fee] '$val->ID', 'Yes', '".date('Y-m-d', strtotime(now()))."', '".date('H:i:s', strtotime(now()))."'");
+
+                // $val->Email_Sent = 'yes';
+                // $val->save();
 
                 echo "Sukses";
             } else {
