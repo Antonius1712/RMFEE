@@ -45,8 +45,6 @@ class SendEmailEpo extends Command
         //! Generating Attachment EPO.
         $test = $this->call('generate:attachment-epo');
 
-        dd($test);
-
         //! Preparing Email.
         $LogEmailEpo = ReportGenerator_LogEmailEpo::where('Email_Sent', null)->get();
         $Files = [];
