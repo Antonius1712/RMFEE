@@ -93,10 +93,7 @@ class SendEmailEpo extends Command
                     }
                 ); 
 
-                DB::connection(Database::REPORT_GENERATOR)->statement("exec [SP_Update_Log_Email_Engineering_Fee] '$val->ID', 'Yes', '".date('Y-m-d', strtotime(now()))."', '".date('H:i:s', strtotime(now()))."'");
-
-                // $val->Email_Sent = 'yes';
-                // $val->save();
+                DB::connection(Database::REPORT_GENERATOR)->statement("EXECUTE [SP_Update_Log_Email_Engineering_Fee] '$val->ID', '1', '".date('Y-m-d', strtotime(now()))."', '".date('H:i:s', strtotime(now()))."'");
 
                 echo "Sukses";
             } else {
