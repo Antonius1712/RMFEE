@@ -133,7 +133,7 @@ class Budget {
 
     public static function ShowHideButtonBudget($status, $role){
         $BtnEdit = false;
-        $BtnViewDocument = false;
+        $BtnDownloadDocument = false;
         $BtnArchive = false;
         $BtnApprove = false;
         $BtnUndoApproval = false;
@@ -145,11 +145,11 @@ class Budget {
                 switch ($role) {
                     case "USER_RMFEE":
                         $BtnEdit = true;
-                        $BtnViewDocument = true;
+                        $BtnDownloadDocument = true;
                         $BtnArchive = true;
                         return [
                             'BtnEdit' => $BtnEdit,
-                            'BtnViewDocument' => $BtnViewDocument,
+                            'BtnDownloadDocument' => $BtnDownloadDocument,
                             'BtnArchive' => $BtnArchive,
                             'BtnApprove' => $BtnApprove,
                             'BtnUndoApproval' => $BtnUndoApproval,
@@ -158,10 +158,21 @@ class Budget {
                         ];
                         break;
                     case "HEAD_BU_RMFEE":
-                        $BtnViewDocument = true;
+                        $BtnDownloadDocument = true;
                         return [
                             'BtnEdit' => $BtnEdit,
-                            'BtnViewDocument' => $BtnViewDocument,
+                            'BtnDownloadDocument' => $BtnDownloadDocument,
+                            'BtnArchive' => $BtnArchive,
+                            'BtnApprove' => $BtnApprove,
+                            'BtnUndoApproval' => $BtnUndoApproval,
+                            'BtnReject' => $BtnReject,
+                            'BtnUnArchive' => $BtnUnArchive,
+                        ];
+                        break;
+                    default:
+                        return [
+                            'BtnEdit' => $BtnEdit,
+                            'BtnDownloadDocument' => $BtnDownloadDocument,
                             'BtnArchive' => $BtnArchive,
                             'BtnApprove' => $BtnApprove,
                             'BtnUndoApproval' => $BtnUndoApproval,
@@ -173,10 +184,10 @@ class Budget {
             case BudgetStatus::WAITING_APPROVAL:
                 switch ($role) {
                     case "USER_RMFEE":
-                        $BtnViewDocument = true;
+                        $BtnDownloadDocument = true;
                         return [
                             'BtnEdit' => $BtnEdit,
-                            'BtnViewDocument' => $BtnViewDocument,
+                            'BtnDownloadDocument' => $BtnDownloadDocument,
                             'BtnArchive' => $BtnArchive,
                             'BtnApprove' => $BtnApprove,
                             'BtnUndoApproval' => $BtnUndoApproval,
@@ -185,12 +196,23 @@ class Budget {
                         ];
                         break;
                     case "HEAD_BU_RMFEE":
-                        $BtnViewDocument = true;
+                        $BtnDownloadDocument = true;
                         $BtnApprove = true;
                         $BtnReject = true;
                         return [
                             'BtnEdit' => $BtnEdit,
-                            'BtnViewDocument' => $BtnViewDocument,
+                            'BtnDownloadDocument' => $BtnDownloadDocument,
+                            'BtnArchive' => $BtnArchive,
+                            'BtnApprove' => $BtnApprove,
+                            'BtnUndoApproval' => $BtnUndoApproval,
+                            'BtnReject' => $BtnReject,
+                            'BtnUnArchive' => $BtnUnArchive,
+                        ];
+                        break;
+                    default:
+                        return [
+                            'BtnEdit' => $BtnEdit,
+                            'BtnDownloadDocument' => $BtnDownloadDocument,
                             'BtnArchive' => $BtnArchive,
                             'BtnApprove' => $BtnApprove,
                             'BtnUndoApproval' => $BtnUndoApproval,
@@ -202,10 +224,10 @@ class Budget {
             case BudgetStatus::APPROVED:
                 switch ($role) {
                     case "USER_RMFEE":
-                        $BtnViewDocument = true;
+                        $BtnDownloadDocument = true;
                         return [
                             'BtnEdit' => $BtnEdit,
-                            'BtnViewDocument' => $BtnViewDocument,
+                            'BtnDownloadDocument' => $BtnDownloadDocument,
                             'BtnArchive' => $BtnArchive,
                             'BtnApprove' => $BtnApprove,
                             'BtnUndoApproval' => $BtnUndoApproval,
@@ -215,10 +237,21 @@ class Budget {
                         break;
                     case "HEAD_BU_RMFEE":
                         $BtnUndoApproval = true;
-                        $BtnViewDocument = true;
+                        $BtnDownloadDocument = true;
                         return [
                             'BtnEdit' => $BtnEdit,
-                            'BtnViewDocument' => $BtnViewDocument,
+                            'BtnDownloadDocument' => $BtnDownloadDocument,
+                            'BtnArchive' => $BtnArchive,
+                            'BtnApprove' => $BtnApprove,
+                            'BtnUndoApproval' => $BtnUndoApproval,
+                            'BtnReject' => $BtnReject,
+                            'BtnUnArchive' => $BtnUnArchive,
+                        ];
+                        break;
+                    default:
+                        return [
+                            'BtnEdit' => $BtnEdit,
+                            'BtnDownloadDocument' => $BtnDownloadDocument,
                             'BtnArchive' => $BtnArchive,
                             'BtnApprove' => $BtnApprove,
                             'BtnUndoApproval' => $BtnUndoApproval,
@@ -231,11 +264,11 @@ class Budget {
                 switch ($role) {
                     case "USER_RMFEE":
                         $BtnEdit = true;
-                        $BtnViewDocument = true;
+                        $BtnDownloadDocument = true;
                         $BtnArchive = true;
                         return [
                             'BtnEdit' => $BtnEdit,
-                            'BtnViewDocument' => $BtnViewDocument,
+                            'BtnDownloadDocument' => $BtnDownloadDocument,
                             'BtnArchive' => $BtnArchive,
                             'BtnApprove' => $BtnApprove,
                             'BtnUndoApproval' => $BtnUndoApproval,
@@ -244,10 +277,21 @@ class Budget {
                         ];
                         break;
                     case "HEAD_BU_RMFEE":
-                        $BtnViewDocument = true;
+                        $BtnDownloadDocument = true;
                         return [
                             'BtnEdit' => $BtnEdit,
-                            'BtnViewDocument' => $BtnViewDocument,
+                            'BtnDownloadDocument' => $BtnDownloadDocument,
+                            'BtnArchive' => $BtnArchive,
+                            'BtnApprove' => $BtnApprove,
+                            'BtnUndoApproval' => $BtnUndoApproval,
+                            'BtnReject' => $BtnReject,
+                            'BtnUnArchive' => $BtnUnArchive,
+                        ];
+                        break;
+                    default:
+                        return [
+                            'BtnEdit' => $BtnEdit,
+                            'BtnDownloadDocument' => $BtnDownloadDocument,
                             'BtnArchive' => $BtnArchive,
                             'BtnApprove' => $BtnApprove,
                             'BtnUndoApproval' => $BtnUndoApproval,
@@ -258,11 +302,11 @@ class Budget {
                 }
             case BudgetStatus::ARCHIVED:
                 // $BtnEdit = true;
-                // $BtnViewDocument = true;
+                // $BtnDownloadDocument = true;
                 $BtnUnArchive = true;
                 return [
                     'BtnEdit' => $BtnEdit,
-                    'BtnViewDocument' => $BtnViewDocument,
+                    'BtnDownloadDocument' => $BtnDownloadDocument,
                     'BtnArchive' => $BtnArchive,
                     'BtnApprove' => $BtnApprove,
                     'BtnUndoApproval' => $BtnUndoApproval,
@@ -274,11 +318,11 @@ class Budget {
                 switch ($role) {
                     case "USER_RMFEE":
                         $BtnEdit = true;
-                        $BtnViewDocument = true;
+                        $BtnDownloadDocument = true;
                         $BtnArchive = true;
                         return [
                             'BtnEdit' => $BtnEdit,
-                            'BtnViewDocument' => $BtnViewDocument,
+                            'BtnDownloadDocument' => $BtnDownloadDocument,
                             'BtnArchive' => $BtnArchive,
                             'BtnApprove' => $BtnApprove,
                             'BtnUndoApproval' => $BtnUndoApproval,
@@ -286,10 +330,10 @@ class Budget {
                             'BtnUnArchive' => $BtnUnArchive,
                         ];
                     case "HEAD_BU_RMFEE":
-                        $BtnViewDocument = true;
+                        $BtnDownloadDocument = true;
                         return [
                             'BtnEdit' => $BtnEdit,
-                            'BtnViewDocument' => $BtnViewDocument,
+                            'BtnDownloadDocument' => $BtnDownloadDocument,
                             'BtnArchive' => $BtnArchive,
                             'BtnApprove' => $BtnApprove,
                             'BtnUndoApproval' => $BtnUndoApproval,
@@ -297,11 +341,22 @@ class Budget {
                             'BtnUnArchive' => $BtnUnArchive,
                         ];
                         break;
+                    default:
+                    return [
+                        'BtnEdit' => $BtnEdit,
+                        'BtnDownloadDocument' => $BtnDownloadDocument,
+                        'BtnArchive' => $BtnArchive,
+                        'BtnApprove' => $BtnApprove,
+                        'BtnUndoApproval' => $BtnUndoApproval,
+                        'BtnReject' => $BtnReject,
+                        'BtnUnArchive' => $BtnUnArchive,
+                    ];
+                    break;
                 }
         }
 
         // if( $status == 'WAITING_APPROVAL' ){
-        //     dd($BtnEdit, $BtnViewDocument, $BtnArchive, $BtnApprove, $BtnUndoApproval, $BtnReject);
+        //     dd($BtnEdit, $BtnDownloadDocument, $BtnArchive, $BtnApprove, $BtnUndoApproval, $BtnReject);
         // }
     }
 

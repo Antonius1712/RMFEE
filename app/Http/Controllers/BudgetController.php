@@ -39,11 +39,12 @@ class BudgetController extends Controller
 
     public function edit($voucher, $archived = 0){
         $Budget = Budget::GetBudget($voucher, $archived);
+        $Logs = Logger::GetLog($voucher);
         $BudgetInAmount = ($Budget->Budget/100) * $Budget->LGI_PREMIUM;
         $VoucherId = str_replace("/", "-", $Budget->VOUCHER);
         $BrokerId = explode('-', $Budget->BROKERNAME, 2)[0];
         $BrokerName = explode('-', $Budget->BROKERNAME, 2)[1];
-        return view('pages.budget.edit', compact('Budget', 'BudgetInAmount', 'VoucherId', 'BrokerName', 'BrokerId'));
+        return view('pages.budget.edit', compact('Budget', 'BudgetInAmount', 'VoucherId', 'BrokerName', 'BrokerId', 'Logs'));
     }
 
     public function update(Request $request, $voucher){
@@ -55,6 +56,7 @@ class BudgetController extends Controller
         }
         $RedirectVoucher = str_replace('-', '/', $voucher);
         Budget::UpdateBudget($request, $voucher);
+        Logger::SaveLog($voucher, $desc);
         return redirect()->route('budget.list')->with('noticication', 'Voucher <b>'.$RedirectVoucher.'</b> Successfully '. $desc);
     }
 
@@ -66,24 +68,28 @@ class BudgetController extends Controller
     public function archive($voucher){
         $RedirectVoucher = str_replace('-', '/', $voucher);
         Budget::UpdateBudgetOnlyStatus('archive', $voucher, null);
+        Logger::SaveLog($voucher, 'Archived');
         return redirect()->route('budget.archive-list')->with('noticication', 'Voucher <b>'.$RedirectVoucher.'</b> Successfully Archived');
     }
 
     public function unarchive($voucher){
         $RedirectVoucher = str_replace('-', '/', $voucher);
         Budget::UpdateBudgetOnlyStatus('draft', $voucher, null);
+        Logger::SaveLog($voucher, 'Unarchived');
         return redirect()->route('budget.archive-list')->with('noticication', 'Voucher <b>'.$RedirectVoucher.'</b> Successfully UnArchived');
     }
 
     public function reject($voucher){
         $RedirectVoucher = str_replace('-', '/', $voucher);
         Budget::UpdateBudgetOnlyStatus('reject', $voucher, null);
+        Logger::SaveLog($voucher, 'Rejected');
         return redirect()->route('budget.list')->with('noticication', 'Voucher <b>'.$RedirectVoucher.'</b> Successfully Rejected');
     }
 
     public function approve($voucher){
         $RedirectVoucher = str_replace('-', '/', $voucher);
         Budget::UpdateBudgetOnlyStatus('approve', $voucher, null);
+        Logger::SaveLog($voucher, 'Approved');
         return redirect()->route('budget.list')->with('noticication', 'Voucher <b>'.$RedirectVoucher.'</b> Successfully Approved');
     }
 
@@ -93,25 +99,28 @@ class BudgetController extends Controller
         // $Budgets = DataTables::of($Budgets)->make();
         // dd($Budgets);
         $Budgets = Datatables::of($Budgets)
-            ->addColumn('ACTION', function($row) use($type){
+            ->addColumn('ACTION', function($row){
                 $BtnApprove = '';
                 $BtnUndoApproval = '';
                 $BtnEdit = '';
-                $BtnViewDocument = '';
+                $BtnDownloadDocument = '';
                 $BtnReject = '';
                 $BtnArchive = '';
+                $BtnUnArchive = '';
                 $Divider = '';
                 $Voucher = str_replace('/','-',$row->VOUCHER);
 
                 $BtnShowHide['BtnApprove'] = null;
                 $BtnShowHide['BtnUndoApproval'] = null;
                 $BtnShowHide['BtnEdit'] = null;
-                $BtnShowHide['BtnViewDocument'] = null;
+                $BtnShowHide['BtnDownloadDocument'] = null;
                 $BtnShowHide['BtnReject'] = null;
                 $BtnShowHide['BtnArchive'] = null;
                 $BtnShowHide['BtnUnArchive'] = null;
 
                 $BtnShowHide = Budget::ShowHideButtonBudget($row->STATUS_BUDGET, auth()->user()->getUserGroup->GroupCode);
+
+                // dd($BtnShowHide);
 
                 if( $BtnShowHide['BtnApprove'] ){
                     $BtnApprove = "<a class='dropdown-item success' href='".route('budget.approve', $Voucher)."'><i class='feather icon-check-circle'></i>Approve</a>";
@@ -125,8 +134,15 @@ class BudgetController extends Controller
                     $BtnEdit = "<a class='dropdown-item success' href='".route('budget.edit', [$Voucher, 0])."'><i class='feather icon-edit-2'></i>Edit</a>";
                 }
 
-                if( $BtnShowHide['BtnViewDocument'] ){
-                    $BtnViewDocument = "<a class='dropdown-item success btnViewDocumentBudget' href='#' data-toggle='modal' data-path='$row->Document_Path'><i class='feather icon-eye'></i>View Document</a>";
+                if( $BtnShowHide['BtnDownloadDocument'] ){
+                    // $BtnDownloadDocument = "<a class='dropdown-item success btnViewDocumentBudget' href='#' data-toggle='modal' data-path='$row->Document_Path'><i class='feather icon-eye'></i>View Document</a>";
+
+                    if( $row->Document_Path != '' ){
+                            $BtnDownloadDocument = "<a class='dropdown-item success' href='".asset($row->Document_Path)."' class='col-lg-2' target='_blank' download=''>
+                            <i class='feather icon-download'></i>
+                            Download
+                        </a>";
+                    }
                 }
 
                 if( $BtnShowHide['BtnReject'] || $BtnShowHide['BtnArchive'] ){
@@ -142,10 +158,10 @@ class BudgetController extends Controller
                 }
 
                 if( $BtnShowHide['BtnUnArchive'] ){
-                    $BtnArchive = "<a class='dropdown-item success' href=".route('budget.unarchive', $Voucher)."><i class='feather icon-archive'></i>Unarchive</a>";
+                    $BtnUnArchive = "<a class='dropdown-item success' href=".route('budget.unarchive', $Voucher)."><i class='feather icon-archive'></i>Unarchive</a>";
                 }
 
-                $BtnAction = "<div class='btn-group' role='group' aria-label='Button group with nested dropdown'><div class='btn-group' role='group'><a href='#' id='BtnActionGroup' data-toggle='dropdown' aria-haspopup='true'aria-expanded='false' style=''><i class='feather icon-plus-circle icon-btn-group'></i></a><div class='dropdown-menu' aria-labelledby='BtnActionGroup'>".$BtnApprove.$BtnUndoApproval.$BtnEdit.$BtnViewDocument.$Divider.$BtnReject.$BtnArchive."</div></div></div>";
+                $BtnAction = "<div class='btn-group' role='group' aria-label='Button group with nested dropdown'><div class='btn-group' role='group'><a href='#' id='BtnActionGroup' data-toggle='dropdown' aria-haspopup='true'aria-expanded='false' style=''><i class='feather icon-plus-circle icon-btn-group'></i></a><div class='dropdown-menu' aria-labelledby='BtnActionGroup'>".$BtnApprove.$BtnUndoApproval.$BtnEdit.$BtnDownloadDocument.$Divider.$BtnReject.$BtnArchive.$BtnUnArchive."</div></div></div>";
 
                 // dd($BtnAction);
                 return $BtnAction;

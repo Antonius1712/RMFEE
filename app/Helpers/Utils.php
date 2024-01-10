@@ -128,5 +128,12 @@ class Utils {
     public static function GetEmailEpo(){
         return config('app.EMAIL_EPO');
     }
+
+    public static function numberPrecision($number, $decimals = 0)
+    {
+        $negation = ($number < 0) ? (-1) : 1;
+        $coefficient = 10 ** $decimals;
+        return $negation * floor((string)(abs($number) * $coefficient)) / $coefficient;
+    }
 }
 ?>

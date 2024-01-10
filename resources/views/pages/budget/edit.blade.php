@@ -116,8 +116,13 @@
                                 <div class="form-group row">
                                     <label for="document" class="col-lg-3 col-form-label-lg">Document</label>
                                     <label class="col-lg-1 col-form-label-lg">:</label>
-                                    <input type="file" name="document" id="document" class="form-control col-lg-8"
+                                    <input type="file" name="document" id="document" class="form-control {{ $Budget->Document_Path != '' ? 'col-lg-6' : 'col-lg-8' }}"
                                         placeholder="Document" value="">
+                                    @if( $Budget->Document_Path != '' )
+                                    <a href="{{ $Budget->Document_Path != '' ? asset($Budget->Document_Path) : 'javascript:;' }}" class="col-lg-2" target="_blank" download="">
+                                        Download
+                                    </a>
+                                    @endif
                                 </div>
                                 <div class="form-group row">
                                     <label for="proposed_to" class="col-lg-3 col-form-label-lg">Proposed to</label>
@@ -167,17 +172,19 @@
                     <tr class="default">
                         <th>Name</th>
                         <th>Status</th>
+                        <th>Date</th>
                         <th>Time</th>
-                        <th>Comment</th>
                     </tr>
                 </thead>
                 <tbody>
+                    @foreach ($Logs as $Log)
                     <tr class="text-center">
-                        <td>TEST DS</td>
-                        <td>Proposed</td>
-                        <td>2023-11-13</td>
-                        <td>Propose Data</td>
+                        <td>{{ $Log->NIK.' - '.$Log->getUser->Name }}</td>
+                        <td>{{ $Log->Status }}</td>
+                        <td>{{ date('Y-m-d', strtotime($Log->Date)) }}</td>
+                        <td>{{ $Log->Time }}</td>
                     </tr>
+                    @endforeach
                 </tbody>
             </table>
         </div>
