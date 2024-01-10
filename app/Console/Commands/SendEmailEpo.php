@@ -62,8 +62,8 @@ class SendEmailEpo extends Command
 
             $EMAIL_EPO = DB::connection(Database::EPO)->select("EXECUTE [dbo].[SP_Email_ePO_Engineering_Fee] '$val->PID'")[0];
 
-            // $PARAM3 = $EMAIL_EPO->UserId;
-            $PARAM3 = 'APRILIAFIN';
+            // $PARAM3 = 'APRILIAFIN';
+            $PARAM3 = $EMAIL_EPO->UserId;
             $PARAM4 = $EMAIL_EPO->CheckerLink;
 
             // DEMO
