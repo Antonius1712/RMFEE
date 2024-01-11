@@ -3,7 +3,7 @@
     <div class="modal-dialog modal-sm modal-dialog-centered">
         <!-- Modal Content-->
         <div class="modal-content">
-            <form id="form-reject-budget" action="{{ route('budget.reject', 1) }}" method="get" style="width: 100%;">
+            <form id="form-reject-budget" action="" method="get" style="width: 100%;">
                 {{ csrf_field() }}
                 <div class="modal-header" style="background-color:white;">
                     <h2 class="modal-title font-weight-bold">Reject this?</h2>
