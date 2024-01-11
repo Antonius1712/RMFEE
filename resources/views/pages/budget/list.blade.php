@@ -203,6 +203,13 @@
 
 @section('script')
     <script>
+        $('body').on('click', '#RejectModal', function(e){
+            e.preventDefault();
+            let Voucher = $(this).data('voucher');
+            let Action = `${url}/budget/reject/${Voucher}`;
+            $('#form-reject-budget').attr('action', Action);
+            $('#ModalReject').modal('toggle');
+        });
         // Define Variable of Auth User NIK, Group Code, Datatable of Budget.
             var DataTableBudget = '';
 
