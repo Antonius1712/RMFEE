@@ -84,7 +84,7 @@ class BudgetController extends Controller
         $RedirectVoucher = str_replace('-', '/', $voucher);
         Budget::UpdateBudgetOnlyStatus('reject', $voucher, null);
         $message = $message != null ? ' | '.$message : null;
-        Logger::SaveLog($voucher, 'Rejected'.$message);
+        Logger::SaveLog($voucher, 'Rejected', $message);
         return redirect()->route('budget.list')->with('noticication', 'Voucher <b>'.$RedirectVoucher.'</b> Successfully Rejected');
     }
 

@@ -22,9 +22,9 @@ class DetailRealizationController extends Controller
     public function create($invoice_no){
         $Currencies = Utils::GetCurrencies();
         $RealizationData = Realization::GetRealization($invoice_no)[0];
-        $BrokerName = Utils::GetProfile($RealizationData->Broker_ID, $RealizationData->Currency);
-        $BrokerName = $BrokerName != null ? $BrokerName->Name : "";
-        return view('pages.realization.detail-realization.create', compact('RealizationData', 'BrokerName', 'Currencies'));
+        $Broker = Utils::GetProfile($RealizationData->Broker_ID, $RealizationData->Currency);
+        $BrokerName = $Broker != null ? $Broker->Name : "";
+        return view('pages.realization.detail-realization.create', compact('RealizationData', 'Broker', 'BrokerName', 'Currencies'));
     }
 
     public function store(Request $request){        

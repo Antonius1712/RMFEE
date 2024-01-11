@@ -175,6 +175,13 @@
                 autoclose: true,
                 todayHighlight: true,
             });
+
+            $(window).keydown(function(event){
+                if(event.keyCode == 13) {
+                    event.preventDefault();
+                    return false;
+                }
+            });
         });
 
         $('#search_policy').autocomplete({
@@ -230,12 +237,22 @@
             let remain_budget = $('#remain_budget').val();
             let budget_in_amount = $('#budget_in_amount').val();
             let total_amount_realization = 0;
+            let vat = `{{ $Broker->VAT }}`;
+            let tax = `{{ $Broker->TAX }}`;
+
+            let total_vat = 0;
+            let total_tax = 0;
 
             budget_in_amount = clear_number_format(budget_in_amount);
             amount_realization = clear_number_format(amount_realization);
             exchange_rate = clear_number_format(exchange_rate);
 
             total_amount_realization = amount_realization * exchange_rate;
+
+            total_vat = (total_amount_realization * vat) / 100;
+            total_tax = (total_amount_realization * tax) / 100;
+
+            total_amount_realization = (total_amount_realization - total_tax) + total_vat;
 
             if( total_amount_realization > budget_in_amount ) {
                 swal(

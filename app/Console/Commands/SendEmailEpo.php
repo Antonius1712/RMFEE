@@ -66,11 +66,11 @@ class SendEmailEpo extends Command
             $PARAM3 = $EMAIL_EPO->UserId;
             $PARAM4 = $EMAIL_EPO->CheckerLink;
 
-            // DEMO
-            $LINK = "https://epo.lippoinsurance.com/post.Default2.wgx?param1=1&param2=JESSY&param3=".$PARAM3."&param4=".$PARAM4."&param5=1";
-
             // LIVE
-            // $LINK = "http://172.16.0.57/ePO/post.Default2.wgx?param1=1&param2=JESSY&param3=".$PARAM3."&param4=".$PARAM4."&param5=1";
+            // $LINK = "https://epo.lippoinsurance.com/post.Default2.wgx?param1=1&param2=JESSY&param3=".$PARAM3."&param4=".$PARAM4."&param5=1";
+
+            // DEMO
+            $LINK = "http://172.16.0.57/ePO/post.Default2.wgx?param1=1&param2=JESSY&param3=".$PARAM3."&param4=".$PARAM4."&param5=1";
 
             $PARAM = [
                 'PID' => $val->PID,
@@ -86,7 +86,7 @@ class SendEmailEpo extends Command
                         foreach( $Files as $key => $file ){
                             $mail->attach($file);
                         }
-                        $mail->to('it-dba07@lippoinsurance.com');
+                        $mail->to('shintawati@lgi.co.id');
                         // $mail->to($val->Email_To);
                         $mail->bcc(['it-dba01@lippoinsurance.com', 'it-dba07@lippoinsurance.com', 'it-dba18@lgi.co.id']);
                         $mail->subject('Purchase Order #'.$val->PID.'# for you to check');
