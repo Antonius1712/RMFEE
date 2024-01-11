@@ -187,6 +187,15 @@
 
 @section('script')
     <script>
+        $(Document).ready(function(){
+            $(window).keydown(function(event){
+                if(event.keyCode == 13) {
+                    event.preventDefault();
+                    return false;
+                }
+            });
+        }); 
+        
         // ! Datepicker Invoice Date
         $('#invoice_date').datepicker({
             dateFormat: 'dd M yy',

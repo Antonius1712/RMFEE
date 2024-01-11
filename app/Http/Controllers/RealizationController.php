@@ -212,7 +212,7 @@ class RealizationController extends Controller
         return view('pages.realization.edit', compact('RealizationData', 'Currencies', 'TypeOfInvoice', 'TypeOfPayment', 'BrokerData', 'PaymentToData', 'TotalAmountRealized', 'TotalAmountRealization'));
     }
 
-    public function update(Request $request){
+    public function update(Request $request, $InvoiceNumber){
         $action = $request->action;
         switch ($action) {
             case 'add_detail':
@@ -220,7 +220,7 @@ class RealizationController extends Controller
                 $redirect = redirect()->route('realization.detail-realization.index', $request->invoice_no);
                 break;
             case 'save':
-                Realization::UpdateRealizationGroup($request, null, RealizationStatus::DRAFT);
+                Realization::UpdateRealizationGroup($request, $InvoiceNumber, RealizationStatus::DRAFT);
                 $redirect = redirect()->route('realization.index');
                 break;
             case 'propose':
@@ -292,11 +292,16 @@ class RealizationController extends Controller
                             return redirect()->back()->withErrors('You Have an Overlimit Budget inside this Invoice. <strong>'.$invoice_no.'</strong>');
                         }
                         $StatusRealisasi = RealizationStatus::APPROVED_BY_FINANCE;
-                        $InsertEpo = Realization::InsertEpo($RealizationData);
-                        if( !$InsertEpo['status'] ){
-                            return redirect()->back()->withErrors($InsertEpo['message']);
+
+                        // TODO IF OFFSET TIDAK PERLU INSERT EPO. HANYA REIMBURSE.
+                        $UserSetting = ReportGenerator_UserSetting::where('UserID', $RealizationData->CreatedBy)->first();
+                        if( $UserSetting->Type_Of_Payment == 'Reimbursement' ){
+                            $InsertEpo = Realization::InsertEpo($RealizationData);
+                            if( !$InsertEpo['status'] ){
+                                return redirect()->back()->withErrors($InsertEpo['message']);
+                            }
                         }
-                        
+
                         $PID = Epo_PO_Header::orderBy('PID', 'Desc')->value('PID');
                         Realization::UpdateRealizationGroupEpo($invoice_no, $PID);
 

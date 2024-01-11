@@ -19,7 +19,7 @@
                             <div class="form-group row">
                                 <label for="invoice_no" class="col-lg-3 col-form-label-lg">Invoice No</label>
                                 <label class="col-lg-1 col-form-label-lg">:</label>
-                                <input type="text" name="invoice_no" id="invoice_no" class="form-control col-lg-8" placeholder="Invoice No" value="{{ $RealizationData->Invoice_No }}">
+                                <input type="text" name="invoice_no" id="invoice_no" class="form-control col-lg-8" placeholder="Invoice No" value="{{ $RealizationData->Invoice_No }}" readonly>
                             </div>
                             <div class="form-group row">
                                 <label for="type_of_invoice" class="col-lg-3 col-form-label-lg">Type of Invoice</label>
@@ -211,6 +211,14 @@
 
 @section('script')
     <script>
+        $(Document).ready(function(){
+            $(window).keydown(function(event){
+                if(event.keyCode == 13) {
+                    event.preventDefault();
+                    return false;
+                }
+            });
+        }); 
         // ! Datepicker Invoice Date
         $('#invoice_date').datepicker({
             dateFormat: 'dd M yy',
@@ -259,6 +267,7 @@
 
         // ! Autocomplete Payment_to Search Profile by BrokerID to put default data.
         $('#payment_to').autocomplete({
+            minLength: 3,
             source: function(req, res){
                 $('#error_currency').addClass('hidden');
                 let currency = $('#currency option:selected').val();
@@ -288,7 +297,6 @@
                     },
                 });
             },
-            minLength: 3,
             select: function( event, ui ) {
                 let data = ui.item.data;
                 $('#account_name').val(data.BankAccount);

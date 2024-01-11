@@ -28,7 +28,7 @@
                                     <label for="broker_name" class="col-lg-3 col-form-label-lg">Broker Name</label>
                                     <label class="col-lg-1 col-form-label-lg">:</label>
                                     <input type="text" name="broker_name" id="broker_name" class="form-control col-lg-8"
-                                        placeholder="Broker Name" value={{ $BrokerName }}" readonly>
+                                        placeholder="Broker Name" value="{{ $BrokerName }}" readonly>
                                 </div>
                                 <div class="form-group row">
                                     <label for="policy_no" class="col-lg-3 col-form-label-lg">Policy Number</label>

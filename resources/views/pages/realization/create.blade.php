@@ -17,7 +17,7 @@
 @endif
 <div class="card">
     <div class="card-body">
-        <form action="{{ route('realization.store') }}" method="post" enctype="multipart/form-data">
+        <form id="form-realization" action="{{ route('realization.store') }}" method="post" enctype="multipart/form-data">
             {{ csrf_field() }}
             <div class="row">
                 <div class="col-lg-6">
@@ -148,12 +148,12 @@
                             <div class="form-group row">
                                 <label for="approval_bu" class="col-lg-3 col-form-label-lg">Approval BU</label>
                                 <label class="col-lg-1 col-form-label-lg">:</label>
-                                <input type="text" name="approval_bu" id="approval_bu" class="form-control col-lg-8" placeholder="Approval BU" value="{{ Auth()->user()->getUserSetting->Approval_BU_UserID }}" readonly>
+                                <input type="text" name="approval_bu" id="approval_bu" class="form-control col-lg-8" placeholder="Approval BU" value="{{ Auth()->user()->getUserSetting->Approval_BU_UserID.' - '.Auth()->user()->getUserSetting->getApprovalBUName() }}" readonly>
                             </div>
                             <div class="form-group row">
                                 <label for="approval_finance" class="col-lg-3 col-form-label-lg">Approval Finance</label>
                                 <label class="col-lg-1 col-form-label-lg">:</label>
-                                <input type="text" name="approval_finance" id="approval_finance" class="form-control col-lg-8" placeholder="Approval Finance" value="{{ Auth()->user()->getUserSetting->Approval_Finance_UserID }}" readonly>
+                                <input type="text" name="approval_finance" id="approval_finance" class="form-control col-lg-8" placeholder="Approval Finance" value="{{ Auth()->user()->getUserSetting->Approval_Finance_UserID.' - '.Auth()->user()->getUserSetting->getApprovalFinanceName() }}" readonly>
                             </div>
                             <div class="form-group row">
                                 <label for="epo_checker" class="col-lg-3 col-form-label-lg">EPO Checker</label>
@@ -205,6 +205,14 @@
 
 @section('script')
     <script>
+        $(Document).ready(function(){
+            $(window).keydown(function(event){
+                if(event.keyCode == 13) {
+                    event.preventDefault();
+                    return false;
+                }
+            });
+        }); 
         // ! Datepicker Invoice Date
             $('#invoice_date').datepicker({
                 dateFormat: 'dd M yy',

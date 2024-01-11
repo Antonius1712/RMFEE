@@ -84,7 +84,7 @@ class BudgetController extends Controller
         $RedirectVoucher = str_replace('-', '/', $voucher);
         Budget::UpdateBudgetOnlyStatus('reject', $voucher, null);
         $message = $message != null ? ' | '.$message : null;
-        Logger::SaveLog($voucher, 'Rejected'.$message);
+        Logger::SaveLog($voucher, 'Rejected', $message);
         return redirect()->route('budget.list')->with('noticication', 'Voucher <b>'.$RedirectVoucher.'</b> Successfully Rejected');
     }
 
@@ -177,10 +177,12 @@ class BudgetController extends Controller
                 return $BtnAction;
             })
             ->editColumn('Start_Date', function($row){
-                return date('Y-m-d', strtotime($row->Start_Date));
+                // return date('Y-m-d', strtotime($row->Start_Date));
+                return date('d-M-Y', strtotime($row->Start_Date));
             })
             ->editColumn('End_Date', function($row){
-                return date('Y-m-d', strtotime($row->End_Date));
+                // return date('Y-m-d', strtotime($row->End_Date));
+                return date('d-M-Y', strtotime($row->End_Date));
             })
             ->editColumn('LGI_PREMIUM', function($row){
                 return number_format($row->LGI_PREMIUM);
@@ -202,7 +204,8 @@ class BudgetController extends Controller
                 return number_format($row->PAYMENT);
             })
             ->editColumn('PAYMENT_DATE', function($row){
-                return date('Y-m-d', strtotime($row->PAYMENT_DATE));
+                // return date('Y-m-d', strtotime($row->PAYMENT_DATE));
+                return date('d-M-Y', strtotime($row->PAYMENT_DATE));
             })
             ->editColumn('Budget', function($row){
                 return number_format($row->Budget);
