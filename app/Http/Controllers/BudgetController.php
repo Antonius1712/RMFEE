@@ -79,10 +79,12 @@ class BudgetController extends Controller
         return redirect()->route('budget.archive-list')->with('noticication', 'Voucher <b>'.$RedirectVoucher.'</b> Successfully UnArchived');
     }
 
-    public function reject($voucher){
+    public function reject($voucher, Request $request){
+        $message = $request->comment;
         $RedirectVoucher = str_replace('-', '/', $voucher);
         Budget::UpdateBudgetOnlyStatus('reject', $voucher, null);
-        Logger::SaveLog($voucher, 'Rejected');
+        $message = $message != null ? ' | '.$message : null;
+        Logger::SaveLog($voucher, 'Rejected'.$message);
         return redirect()->route('budget.list')->with('noticication', 'Voucher <b>'.$RedirectVoucher.'</b> Successfully Rejected');
     }
 
@@ -150,7 +152,8 @@ class BudgetController extends Controller
                 }
 
                 if( $BtnShowHide['BtnReject'] ){
-                    $BtnReject = "<a class='dropdown-item danger' href=".route('budget.reject', $Voucher)." data-toggle='modal'data-target='#ModalReject'><i class='feather icon-x-circle'></i>Reject</a>";
+                    // $BtnReject = "<a class='dropdown-item danger' id='RejectModal' href=".route('budget.reject', $Voucher)." data-toggle='modal'data-target='#ModalReject' data-voucher='$Voucher'><i class='feather icon-x-circle'></i>Reject</a>";
+                    $BtnReject = "<a class='dropdown-item danger' id='RejectModal' data-voucher='$Voucher'><i class='feather icon-x-circle'></i>Reject</a>";
                 }
 
                 if( $BtnShowHide['BtnArchive'] ){
@@ -225,6 +228,10 @@ class BudgetController extends Controller
                     </div>'; 
                 } else if ( $row->STATUS_BUDGET == BudgetStatus::APPROVED ){
                     return '<div class="badge badge-pill badge-success" style="font-size: 16px;">
+                        <li>'.$row->STATUS_BUDGET.'</li>
+                    </div>'; 
+                } else if ( $row->STATUS_BUDGET == BudgetStatus::REJECTED ){
+                    return '<div class="badge badge-pill badge-danger" style="font-size: 16px;">
                         <li>'.$row->STATUS_BUDGET.'</li>
                     </div>'; 
                 }
