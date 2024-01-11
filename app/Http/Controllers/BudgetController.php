@@ -95,6 +95,13 @@ class BudgetController extends Controller
         return redirect()->route('budget.list')->with('noticication', 'Voucher <b>'.$RedirectVoucher.'</b> Successfully Approved');
     }
 
+    public function undo_approve($voucher){
+        $RedirectVoucher = str_replace('-', '/', $voucher);
+        Budget::UpdateBudgetOnlyStatus('undo_approve', $voucher, null);
+        Logger::SaveLog($voucher, 'Undo Approved');
+        return redirect()->route('budget.list')->with('noticication', 'Voucher <b>'.$RedirectVoucher.'</b> Successfully Undo Approved');
+    }
+
     public function BudgetDataTable(Request $request){
         $type = isset($request->type) && $request->type != '' ? $request->type : '';
         $Budgets = collect(Budget::GetBudgetDataTable($type));
@@ -129,7 +136,7 @@ class BudgetController extends Controller
                 }
 
                 if( $BtnShowHide['BtnUndoApproval'] ){
-                    $BtnUndoApproval = "<a class='dropdown-item success' href='#'><i class='feather icon-delete'></i>Undro Approval</a>";
+                    $BtnUndoApproval = "<a class='dropdown-item danger' href='".route('budget.undo_approve', [$Voucher])."'><i class='feather icon-delete'></i>Undro Approval</a>";
                 }
 
                 if( $BtnShowHide['BtnEdit'] ){

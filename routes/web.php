@@ -35,6 +35,9 @@ Route::middleware(['breadcrumbs', 'auth'])->group(function(){
         // Approve
         Route::get('/approve-budget/{voucher}', 'BudgetController@approve')->name('budget.approve');
 
+        //Undo Approve
+        Route::get('/undo-approve/{voucher}', 'BudgetController@undo_approve')->name('budget.undo_approve');
+
         // Reject
         Route::get('/reject/{voucher}', 'BudgetController@reject')->name('budget.reject');
 
