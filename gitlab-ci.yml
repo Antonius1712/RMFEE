@@ -1,0 +1,91 @@
+.pre_deploy: &pre_deploy |
+  eval $(ssh-agent -s)
+  ssh-add /deployer/.ssh/id_rsa
+
+# .post_deploy: &post_deploy |
+#   # npm install
+#   #npm run production # Do not forget to give permission folder (/root_project/public/) on server if You want to uncomment this...
+#   #composer install --prefer-dist --no-ansi --no-interaction --no-progress --no-scripts # Need permission on server...
+#   #php artisan migrate --force # Need permission on server...
+#   php artisan cache:clear
+#   php artisan config:clear
+#   php artisan view:clear
+
+# build-composer:
+#   only:
+#     # - master
+#     - demo
+#   stage: build
+#   script:
+#     - composer install --prefer-dist --no-ansi --no-interaction --no-progress --no-scripts
+#     - cp .env.example .env
+#   artifacts:
+#     expire_in: 1 month
+#     paths:
+#       - vendor/
+#       - .env
+#   tags:
+#     - ehelpdesk-runner
+
+# build-npm:
+#   only:
+#     # - master
+#     - demo
+#   stage: build
+#   script:
+#     # - npm install
+#     # - npm run production
+#     - echo "Skip this for now... :)"
+#   # artifacts:
+#     # expire_in: 1 month
+#     # paths:
+#       # - node_modules/
+#       # - public/css/
+#       # - public/js/
+#   tags:
+#     - ehelpdesk-runner
+
+# test-phpunit:
+#   only:
+#     # - master
+#     - demo
+#   stage: test
+#   variables:
+#     DB_CONNECTION: sqlite
+#     DB_DATABASE: '${CI_ISSURANCE_DB_DIR}'
+#   dependencies:
+#     - build-composer
+#   script:
+#     - php artisan key:generate
+#     # - php artisan migrate --force
+#     - php ./vendor/bin/phpunit --coverage-text --colors=never
+#   tags:
+#     - ehelpdesk-runner
+
+# test-codestyle:
+#   only:
+#     # - master
+#     - demo
+#   stage: test
+#   dependencies:
+#     - build-composer
+#   script:
+#     # - php ./vendor/bin/phpcs --standard=PSR2 --extensions=php app
+#     - echo "Skip this for now... :)"
+#   tags:
+#     - ehelpdesk-runner
+
+deploy:
+  only:
+    # - master
+    - demo
+  stage: deploy
+  script:
+    - *pre_deploy
+    - cd /var/www/html/engineering-fee
+    - git pull origin-ssh demo
+    - echo "Deployed! :D"
+  tags:
+    - engineering-fee-runner
+    
+
