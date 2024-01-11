@@ -1,6 +1,6 @@
 .pre_deploy: &pre_deploy |
   eval $(ssh-agent -s)
-  ssh-add .ssh/id_rsa
+  ssh-add /home/deployer/.ssh/id_rsa
 
 # .post_deploy: &post_deploy |
 #   # npm install
