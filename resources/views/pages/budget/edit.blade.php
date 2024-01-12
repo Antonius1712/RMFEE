@@ -120,7 +120,9 @@
                                         placeholder="Document" value="">
                                     @if( $Budget->Document_Path != '' )
                                     <a href="{{ $Budget->Document_Path != '' ? asset($Budget->Document_Path) : 'javascript:;' }}" class="col-lg-2" target="_blank" download="">
-                                        Download
+                                        {{-- Download --}}
+                                        {{-- UNTUK NAMA FILE di explode('images/Realization/Invoice/', $Budget->Document_Path)[1] aja. --}}
+                                        <i class='feather icon-download'></i>
                                     </a>
                                     @endif
                                 </div>

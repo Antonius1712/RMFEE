@@ -116,7 +116,8 @@
                                 </a> --}}
                                 @if( $RealizationData->Upload_Invoice_Path != '' )
                                 <a href="{{ $RealizationData->Upload_Invoice_Path ? asset($RealizationData->Upload_Invoice_Path) : 'javascript:;' }}" class="primary col-lg-2" target="_Blank" download="">
-                                    Download
+                                    {{-- Download --}}
+                                    <i class='feather icon-download'></i>
                                 </a>
                                 @endif
                             </div>
@@ -130,7 +131,8 @@
                                 </a> --}}
                                 @if( $RealizationData->Upload_Survey_Report_Path != '' )
                                 <a href="{{ $RealizationData->Upload_Survey_Report_Path ? asset($RealizationData->Upload_Survey_Report_Path) : 'javascript:;' }}" class="primary col-lg-2" target="_Blank" download="">
-                                    Download
+                                    {{-- Download --}}
+                                    <i class='feather icon-download'></i>
                                 </a>
                                 @endif
                             </div>
