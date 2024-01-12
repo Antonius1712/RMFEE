@@ -67,7 +67,7 @@ class DetailRealizationController extends Controller
         $Currencies = Utils::GetCurrencies();
         $RealizationData = Realization::GetRealization($invoice_no)[0];
         $DetailRealization = DetailRealization::GetDetailRealizationById($id);
-        // dd($RealizationData);
+        // dd($RealizationData, $DetailRealization);
         $BrokerName = Utils::GetProfile($RealizationData->Broker_ID, $RealizationData->Currency);
         $BrokerName = $BrokerName != null ? $BrokerName->Name : "";
         return view('pages.realization.detail-realization.show', compact('DetailRealization', 'RealizationData', 'BrokerName', 'Currencies', 'invoice_no'));

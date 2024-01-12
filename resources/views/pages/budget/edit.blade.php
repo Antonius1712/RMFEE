@@ -122,7 +122,7 @@
                                     <a href="{{ $Budget->Document_Path != '' ? asset($Budget->Document_Path) : 'javascript:;' }}" class="col-lg-2" target="_blank" download="">
                                         {{-- Download --}}
                                         {{-- UNTUK NAMA FILE di explode('images/Realization/Invoice/', $Budget->Document_Path)[1] aja. --}}
-                                        <i class='feather icon-download'></i>
+                                        <i class='feather icon-download' style="font-size: 24px;"></i>
                                     </a>
                                     @endif
                                 </div>

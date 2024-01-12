@@ -50,12 +50,12 @@
                         <div class="form-group row">
                             <label for="occupation_code" class="col-lg-3 col-form-label-lg">Occupation Code</label>
                             <label class="col-lg-1 col-form-label-lg">:</label>
-                            <input type="text" name="occupation_code" id="occupation_code" class="form-control col-lg-8" placeholder="Occupation Code" value="{{ explode('-', $DetailRealization->OCCUPATION)[0] }}" readonly>
+                            <input type="text" name="occupation_code" id="occupation_code" class="form-control col-lg-8" placeholder="Occupation Code" value="{{ $DetailRealization->OCCUPATION != null ? ( $DetailRealization->OCCUPATION != 'Fleet' ? explode('-', $DetailRealization->OCCUPATION)[0] : 'Fleet'): '' }}" readonly>
                         </div>
                         <div class="form-group row">
                             <label for="occupation_description" class="col-lg-3 col-form-label-lg">Occupation Description</label>
                             <label class="col-lg-1 col-form-label-lg">:</label>
-                            <input type="text" name="occupation_description" id="occupation_description" class="form-control col-lg-8" placeholder="Occupation Description" value="{{ explode('-', $DetailRealization->OCCUPATION)[1] }}" readonly>
+                            <input type="text" name="occupation_description" id="occupation_description" class="form-control col-lg-8" placeholder="Occupation Description" value="{{ $DetailRealization->OCCUPATION != null ? ( $DetailRealization->OCCUPATION != 'Fleet' ? explode('-', $DetailRealization->OCCUPATION)[1] : 'Fleet'): '' }}" readonly>
                         </div>
                         <div class="form-group row">
                             <label for="real_currency" class="col-lg-3 col-form-label-lg">Currency</label>
