@@ -36,6 +36,7 @@
                     <tr class="default">
                         <th>Action</th>
                         <th>Last Update</th>
+                        <th>Type of Payment</th>
                         <th>Invoice No</th>
                         <th>Type</th>
                         <th>Invoice Date</th>
@@ -64,6 +65,7 @@
                                     </div>
                                 </td>
                                 <td>{{ $val->Date }}</td>
+                                <td>{{ $val->type_Of_Payment }}</td>
                                 <td>{{ $val->Invoice_No }}</td>
                                 <td>{{ $val->Type_Of_Invoice }}</td>
                                 <td>{{ date('d M Y', strtotime($val->Invoice_Date)) }}</td>
