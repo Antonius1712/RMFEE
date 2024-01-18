@@ -305,13 +305,16 @@ class RealizationController extends Controller
                         $PID = Epo_PO_Header::orderBy('PID', 'Desc')->value('PID');
                         Realization::UpdateRealizationGroupEpo($invoice_no, $PID);
 
-                        ReportGenerator_LogEmailEpo::create([
-                            'PID' => $PID,
-                            'Realisasi_ID' => $RealizationData->ID,
-                            'Email_To' => Utils::GetEmailEpo(),
-                            'Date' => date('Y-m-d', strtotime(now())),
-                            'Time' => date('H:i:s', strtotime(now()))
-                        ]);
+                        $LogEmailEpo = ReportGenerator_LogEmailEpo::where('PID', $PID)->count();
+                        if( $LogEmailEpo == 0 ){
+                            ReportGenerator_LogEmailEpo::create([
+                                'PID' => $PID,
+                                'Realisasi_ID' => $RealizationData->ID,
+                                'Email_To' => Utils::GetEmailEpo(),
+                                'Date' => date('Y-m-d', strtotime(now())),
+                                'Time' => date('H:i:s', strtotime(now()))
+                            ]);
+                        }
                         
                     } catch (Exception $e) {
                         Log::error('Error while saving log email epo. Exception = ' . $e->getMessage());
