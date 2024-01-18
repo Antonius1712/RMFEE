@@ -32,8 +32,10 @@ class DetailRealization {
             $CurrencyRealization = $request->currency_realization;
             $ExchangeRateRealization = static::RemoveThousandSeparator($request->exchange_rate);
             $TotalAmountRealization = static::RemoveThousandSeparator($request->total_amount_realization);
+            $tax = $request->tax;
+            $vat = $request->vat;
 
-            return DB::connection(Database::REPORT_GENERATOR)->select("EXECUTE [dbo].[SP_Insert_Realization_Engineering_Fee] '$RealizationId', '$BudgetVoucher', '$AmountRealization', '$CurrencyRealization', '$ExchangeRateRealization', '$TotalAmountRealization'");
+            return DB::connection(Database::REPORT_GENERATOR)->select("EXECUTE [dbo].[SP_Insert_Realization_Engineering_Fee] '$RealizationId', '$BudgetVoucher', '$AmountRealization', '$CurrencyRealization', '$ExchangeRateRealization', '$TotalAmountRealization', '$tax', '$vat'");
         } catch (Exception $e) {
             return Log::error("Error while saving data Detail Realization on RealizationId = " . $RealizationId . " Exception = " . $e->getMessage());
         }
@@ -41,14 +43,15 @@ class DetailRealization {
 
     public static function UpdateDetailRealization($request, $RealizationId, $DetailRealizationId){
         try {
-            // dd($request->all(), $RealizationId, $DetailRealizationId);
             $BudgetVoucher = $request->voucher;
             $AmountRealization = static::RemoveThousandSeparator($request->amount_realization);
             $CurrencyRealization = $request->currency_realization;
             $ExchangeRateRealization = static::RemoveThousandSeparator($request->exchange_rate);
             $TotalAmountRealization = static::RemoveThousandSeparator($request->total_amount_realization);
+            $tax = $request->tax;
+            $vat = $request->vat;
 
-            return DB::connection(Database::REPORT_GENERATOR)->statement("EXECUTE [dbo].[SP_Update_Detail_Realization_Engineering_Fee] $DetailRealizationId, $RealizationId, '$BudgetVoucher', '$AmountRealization', '$CurrencyRealization', '$ExchangeRateRealization', '$TotalAmountRealization'");
+            return DB::connection(Database::REPORT_GENERATOR)->statement("EXECUTE [dbo].[SP_Update_Detail_Realization_Engineering_Fee] $DetailRealizationId, $RealizationId, '$BudgetVoucher', '$AmountRealization', '$CurrencyRealization', '$ExchangeRateRealization', '$TotalAmountRealization', '$tax', '$vat'");
         } catch (Exception $e) {
             return Log::error("Error while saving data Detail Realization on DetailRealizationId = " . $DetailRealizationId . " Exception = " . $e->getMessage());
         }

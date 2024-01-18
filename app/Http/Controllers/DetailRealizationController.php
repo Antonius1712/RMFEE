@@ -48,17 +48,17 @@ class DetailRealizationController extends Controller
         $Currencies = Utils::GetCurrencies();
         $RealizationData = Realization::GetRealization($invoice_no)[0];
         $DetailRealization = DetailRealization::GetDetailRealizationById($id);
-        $BrokerName = Utils::GetProfile($RealizationData->Broker_ID, $RealizationData->Currency);
-        $BrokerName = $BrokerName != null ? $BrokerName->Name : "";
-        return view('pages.realization.detail-realization.edit', compact('DetailRealization', 'RealizationData', 'BrokerName', 'Currencies', 'invoice_no'));
+        $Broker = Utils::GetProfile($RealizationData->Broker_ID, $RealizationData->Currency);
+        $BrokerName = $Broker != null ? $Broker->Name : "";
+        return view('pages.realization.detail-realization.edit', compact('DetailRealization', 'RealizationData', 'Broker', 'BrokerName', 'Currencies', 'invoice_no'));
     }
 
     public function update(Request $request, $invoice_no, $id){
-        $RealizationData = Realization::GetRealization($invoice_no);
+        $RealizationData = Realization::GetRealization($invoice_no)[0];
         try {
             DetailRealization::UpdateDetailRealization($request, $RealizationData->ID, $id);
         } catch (Exception $e) {
-            Log::error('Error While on Store Function of DetailRealizationController invoice = ' . $request->invoice_no);
+            Log::error('Error While on Store Function of DetailRealizationController invoice = ' . $request->invoice_no . ' Exception = '.$e->getMessage());
         }
         return redirect()->route('realization.detail-realization.index', $request->invoice_no);
     }

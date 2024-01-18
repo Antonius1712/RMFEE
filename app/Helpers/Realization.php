@@ -64,6 +64,7 @@ class Realization {
         try {
             $invoice_no = $param->invoice_no;
             $type_of_invoice = $param->type_of_invoice;
+            $type_of_payment = $param->type_of_payment;
             $currency = $param->currency;
             $invoice_date = date('Y-m-d H:i:s.000', strtotime($param->invoice_date));
             $broker_id = $param->broker_id;
@@ -76,6 +77,8 @@ class Realization {
             $remarks = $param->remarks;
             $CreatedBy = auth()->user()->UserId;
             $CreatedDate = now()->format('Y-m-d');
+            $lastUpdateBy = auth()->user()->UserId;
+            $lastUpdate = now()->format('Y-m-d');
 
             // $upload_invoice = $param->upload_invoice;
             // $upload_survey_report = $param->upload_survey_report;
@@ -98,7 +101,9 @@ class Realization {
                 $DocumentPath_upload_survey_report = 'images/Realization/Survey_Report/'.$filename;
             }
 
-            return DB::connection(Database::REPORT_GENERATOR)->select("EXECUTE [dbo].[SP_Insert_Group_Realization_Engineering_Fee] '$invoice_no', '$type_of_invoice', '$currency', '$invoice_date', '$broker_id', '$payment_to', '$DocumentPath_upload_invoice', '$DocumentPath_upload_survey_report', '$approval_bu', '$approval_finance', '$epo_checker', '$epo_approval', '$status_realization', '$remarks', '$CreatedBy', '$CreatedDate'");
+            DB::connection(Database::REPORT_GENERATOR)->select("EXECUTE [dbo].[SP_Insert_Group_Realization_Engineering_Fee] '$invoice_no', '$type_of_invoice', '$type_of_payment', '$currency', '$invoice_date', '$broker_id', '$payment_to', '$DocumentPath_upload_invoice', '$DocumentPath_upload_survey_report', '$approval_bu', '$approval_finance', '$epo_checker', '$epo_approval', '$status_realization', '$remarks', '$CreatedBy', '$CreatedDate', '$lastUpdateBy', '$lastUpdate'");
+
+            // dd($lastUpdateBy, $lastUpdate);
 
         } catch (Exception $e) {
             Log::error('Error while inserting New Realization Exception = '.$e->getMessage());
@@ -109,6 +114,7 @@ class Realization {
         try {
             $invoice_no = isset($param->invoice_no) ? $param->invoice_no : (isset($InvoiceNumber) ? $InvoiceNumber : null);
             $type_of_invoice = isset($param->type_of_invoice) ? $param->type_of_invoice : null;
+            $type_of_payment = isset($param->type_of_payment) ? $param->type_of_payment : null;
             $currency = isset($param->currency) ? $param->currency : null;
             $invoice_date = isset($param->invoice_date) ? $param->invoice_date : null;
             $broker_id = isset($param->broker_id) ? $param->broker_id : null;
@@ -119,6 +125,9 @@ class Realization {
             $epo_approval = isset($param->epo_approval) ? $param->epo_approval : null;
             // $status_realization = RealizationStatus::DRAFT;
             $remarks = $param->remarks;
+            $lastUpdateBy = auth()->user()->UserId;
+            $lastUpdate = now()->format('Y-m-d');
+
 
             $DocumentPath_upload_invoice = null;
             if( $param->hasFile('upload_invoice') ){
@@ -171,7 +180,7 @@ class Realization {
 
             //! INI UNTUK UPDATE REALISASI TANPA UPDATE KOLOM UPLOAD_INVOICE DAN UPLOAD_SURVEY.
             //? KOLOM UPLOAD _INVOICE DAN _SURVEY DI UPDATE DI ATAS.
-            return DB::connection(Database::REPORT_GENERATOR)->statement("EXECUTE [dbo].[SP_Update_Group_Realization_Engineering_Fee] '$InvoiceNumber', '$type_of_invoice', '$currency', '$invoice_date', '$broker_id', '$payment_to', '$approval_bu', '$approval_finance', '$epo_checker', '$epo_approval', '$status_realization', '$remarks'");
+            return DB::connection(Database::REPORT_GENERATOR)->statement("EXECUTE [dbo].[SP_Update_Group_Realization_Engineering_Fee] '$InvoiceNumber', '$type_of_invoice', '$type_of_payment', '$currency', '$invoice_date', '$broker_id', '$payment_to', '$approval_bu', '$approval_finance', '$epo_checker', '$epo_approval', '$status_realization', '$remarks', '$lastUpdateBy', '$lastUpdate'");
         } catch (Exception $e) {
             Log::error('Error Update Realization Group on Realization Helper Update Exception = ' . $e->getMessage());
         }
@@ -179,7 +188,10 @@ class Realization {
 
     public static function UpdateRealizationGroupStatus($status, $InvoiceNumber = null){
         try {
-            DB::connection(Database::REPORT_GENERATOR)->statement("EXECUTE [dbo].[SP_Update_Group_Status_Realization_Engineering_Fee] '$InvoiceNumber', '$status'");
+            $lastUpdateBy = auth()->user()->UserId;
+            $lastUpdate = now()->format('Y-m-d');
+
+            DB::connection(Database::REPORT_GENERATOR)->statement("EXECUTE [dbo].[SP_Update_Group_Status_Realization_Engineering_Fee] '$InvoiceNumber', '$status', '$lastUpdateBy', '$lastUpdate'");
         } catch (Exception $e) {
             Log::error('Error Update Realization Group on Realization Helper Update Exception = ' . $e->getMessage());
         }

@@ -13,3 +13,4 @@ yarn-error.log
 .docker
 /public/Attachment/*
 /public/Document/*
+/public/images/*

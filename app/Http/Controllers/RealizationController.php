@@ -216,7 +216,7 @@ class RealizationController extends Controller
         $action = $request->action;
         switch ($action) {
             case 'add_detail':
-                Realization::UpdateRealizationGroup($request, null, RealizationStatus::DRAFT);
+                Realization::UpdateRealizationGroup($request, $InvoiceNumber, RealizationStatus::DRAFT);
                 $redirect = redirect()->route('realization.detail-realization.index', $request->invoice_no);
                 break;
             case 'save':
@@ -224,7 +224,7 @@ class RealizationController extends Controller
                 $redirect = redirect()->route('realization.index');
                 break;
             case 'propose':
-                Realization::UpdateRealizationGroup($request, null, RealizationStatus::WAITING_APPROVAL_BU);
+                Realization::UpdateRealizationGroup($request, $InvoiceNumber, RealizationStatus::WAITING_APPROVAL_BU);
                 $redirect = redirect()->route('realization.index');
                 break;
             default:
