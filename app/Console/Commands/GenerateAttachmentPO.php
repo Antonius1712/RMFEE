@@ -52,7 +52,8 @@ class GenerateAttachmentPO extends Command
     {
         $LogEmailEpo = ReportGenerator_LogEmailEpo::where('Email_Sent', null)->get();
         foreach( $LogEmailEpo as $val ) {
-            $url = route('generate-pdf-attachment-epo', $val->PID);
+            // $url = route('generate-pdf-attachment-epo', $val->PID);
+            $url = env('APP_PDF_URL').'/generate-attachment-epo/'.$val->PID;
 
             if ($this->isReportError($url, $data=[])) continue;
 

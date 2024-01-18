@@ -88,12 +88,16 @@ class SendEmailEpo extends Command
                         }
                         $mail->to('shintawati@lgi.co.id');
                         // $mail->to($val->Email_To);
-                        $mail->bcc(['it-dba01@lippoinsurance.com', 'it-dba07@lippoinsurance.com', 'it-dba18@lgi.co.id']);
+                        $mail->bcc(['it-dba01@lgi.co.id', 'it-dba07@lgi.co.id', 'it-dba18@lgi.co.id']);
                         $mail->subject('Purchase Order #'.$val->PID.'# for you to check');
+                        
+                        //? Testing Only.
+                        // $mail->to('it-dba07@lippoinsurance.com');
+                        // $mail->subject('Purchase Order #'.$val->PID.'# for you to check');
                     }
                 ); 
 
-                DB::connection(Database::REPORT_GENERATOR)->statement("exec [SP_Update_Log_Email_Engineering_Fee] '$val->ID', 'Yes', '".date('Y-m-d', strtotime(now()))."', '".date('H:i:s', strtotime(now()))."'");
+                DB::connection(Database::REPORT_GENERATOR)->statement("exec [SP_Update_Log_Email_Engineering_Fee] '$val->ID', 1, '".date('Y-m-d', strtotime(now()))."', '".date('H:i:s', strtotime(now()))."'");
 
                 // $val->Email_Sent = 'yes';
                 // $val->save();
