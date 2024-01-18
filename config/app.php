@@ -14,7 +14,7 @@ return [
     */
 
     'name' => env('APP_NAME', 'Laravel'),
-    'PUBLIC_PATH' => env('PUBLIC_PATH', 'D:/xampp/htdocs/engineering-fee/public/'),
+    'PUBLIC_PATH' => env('PUBLIC_PATH', '/var/www/html/public/'),
     'EMAIL_EPO' => env('EMAIL_EPO', 'jessy@lgi.co.id'),
     'NO_REPLY_EMAIL' => env('NO_REPLY_EMAIL'),
 

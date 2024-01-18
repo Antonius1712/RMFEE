@@ -34,7 +34,7 @@ class GenerateAttachmentPO extends Command
      */
     public function __construct()
     {
-        $this->baseUrl = env('APP_URL');
+        $this->baseUrl = env('APP_PDF_URL');
         $this->publicPath = env('PUBLIC_PATH');
         $this->pageTitle = 'Page';
         $this->pageOfTitle = 'Of';
@@ -51,27 +51,35 @@ class GenerateAttachmentPO extends Command
     public function handle()
     {
         $LogEmailEpo = ReportGenerator_LogEmailEpo::where('Email_Sent', null)->get();
-        foreach( $LogEmailEpo as $val ) {
-            // $url = route('generate-pdf-attachment-epo', $val->PID);
-            $url = env('APP_PDF_URL').'/generate-attachment-epo/'.$val->PID;
+        if( count($LogEmailEpo) > 0 ){
+            foreach( $LogEmailEpo as $val ) {
+                // $url = route('generate-pdf-attachment-epo', $val->PID);
+                $url = $this->baseUrl.'/generate-pdf-attachment-epo/'.$val->PID;
+                
+                if ($this->isReportError($url, $data=[])) continue;
 
-            if ($this->isReportError($url, $data=[])) continue;
-
-            $destination = $this->publicPath . 'Attachment/'.date('Y', strtotime($val->Date)).'/'.date('M', strtotime($val->Date));
-
-            if( !File::isDirectory($destination) ) {
-                File::makeDirectory($destination, 0777, true);
+                $destination = $this->publicPath . 'Attachment/'.date('Y', strtotime($val->Date)).'/'.date('M', strtotime($val->Date));
+    
+                if( !File::isDirectory($destination) ) {
+                    File::makeDirectory($destination, 0777, true);
+                }
+    
+                $filename = 'PO_'.$val->PID;
+                $destinationPath = $destination .'/'.$filename.'.pdf';
+    
+                if( file_exists($destinationPath) === false ) {
+                    $cmd = env('WKHTMLTOPDF')." -q --margin-top 10 --margin-left 5 --margin-right 5 --footer-font-size 6 --footer-right \"{$this->pageTitle} [page] {$this->pageOfTitle} [topage]\" {$url} {$destinationPath}";
+                    exec($cmd);
+                }
+    
+                echo "SUKSES";
+                echo "\n";
+                echo $url;
+                echo "\n";
+                // return true;
             }
-
-            $filename = 'PO_'.$val->PID;
-            $destinationPath = $destination .'/'.$filename.'.pdf';
-
-            if( file_exists($destinationPath) === false ) {
-                $cmd = env('WKHTMLTOPDF')." -q --margin-top 10 --margin-left 5 --margin-right 5 --footer-font-size 6 --footer-right \"{$this->pageTitle} [page] {$this->pageOfTitle} [topage]\" {$url} {$destinationPath}";
-                exec($cmd);
-            }
-
-            return true;
+        }else{
+            echo "ERROR";
         }
     }
 

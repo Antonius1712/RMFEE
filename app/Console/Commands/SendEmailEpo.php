@@ -46,6 +46,7 @@ class SendEmailEpo extends Command
         $test = $this->call('generate:attachment-epo');
 
         //! Preparing Email.
+        $this->info("Preparing Email.");
         $LogEmailEpo = ReportGenerator_LogEmailEpo::where('Email_Sent', null)->get();
         $Files = [];
         foreach( $LogEmailEpo as $val ){
@@ -56,9 +57,13 @@ class SendEmailEpo extends Command
             $emailTemplate = 'email.sent-email-epo';
             $Files['PDF_EPO'] = env('PUBLIC_PATH').'Attachment/'.date('Y', strtotime($val->Date)).'/'.date('M', strtotime($val->Date)).'/PO_'.$val->PID.'.pdf';
 
-            $Files['Realization_Invoice'] = env('PUBLIC_PATH').$RealizationData->upload_invoice_path;
+            if( $RealizationData->upload_invoice_path != '' ){
+                $Files['Realization_Invoice'] = env('PUBLIC_PATH').$RealizationData->upload_invoice_path;
+            }
 
-            $Files['Realization_Survey_Report'] = env('PUBLIC_PATH').$RealizationData->upload_survey_report_path;
+            if( $RealizationData->upload_survey_report_path != '' ){
+                $Files['Realization_Survey_Report'] = env('PUBLIC_PATH').$RealizationData->upload_survey_report_path;
+            }
 
             $EMAIL_EPO = DB::connection(Database::EPO)->select("EXECUTE [dbo].[SP_Email_ePO_Engineering_Fee] '$val->PID'")[0];
 
