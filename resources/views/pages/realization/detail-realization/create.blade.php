@@ -159,6 +159,8 @@
                 </div>
             </div>
             <input type="hidden" name="invoice_no" value="{{ $RealizationData->Invoice_No }}">
+            <input type="hidden" name="tax" value="{{ $Broker->TAX }}">
+            <input type="hidden" name="vat" value="{{ $Broker->VAT }}">
         </form>
     </div>
 </div>
@@ -243,7 +245,7 @@
             let total_vat = 0;
             let total_tax = 0;
 
-            budget_in_amount = clear_number_format(budget_in_amount);
+            remain_budget = clear_number_format(remain_budget);
             amount_realization = clear_number_format(amount_realization);
             exchange_rate = clear_number_format(exchange_rate);
 
@@ -254,7 +256,7 @@
 
             total_amount_realization = (total_amount_realization - total_tax) + total_vat;
 
-            if( total_amount_realization > budget_in_amount ) {
+            if( total_amount_realization > remain_budget ) {
                 swal(
                     'Whoops!',
                     `Total Amount Realization Exceeding Remain Budget.`,
