@@ -58,7 +58,7 @@ Route::middleware(['breadcrumbs', 'auth'])->group(function(){
             Route::get('/', 'RealizationController@create')->name('realization.create');
             Route::post('/', 'RealizationController@store')->name('realization.store');
 
-            Route::get('/edit/{invoice_no}', 'RealizationController@edit')->name('realization.edit');
+            Route::get('/edit/{invoice_no?}', 'RealizationController@edit')->where('invoice_no', '(.*)')->name('realization.edit');
             Route::post('/edit/{invoice_no}', 'RealizationController@update')->name('realization.update');
 
             Route::get('/show/{invoice_no}', 'RealizationController@show')->name('realization.show');
@@ -86,13 +86,15 @@ Route::middleware(['breadcrumbs', 'auth'])->group(function(){
         Route::get('/data-table', 'Realization@RealizationDataTable')->name('realization.data-table');
     });
 
-    Route::prefix('setting')->middleware('head.access')->group(function(){
-        Route::get('/user', 'SettingController@userIndex')->name('setting.user.index');
-        Route::get('/user/create', 'SettingController@userCreate')->name('setting.user.create');
-        Route::post('/user/store', 'SettingController@userStore')->name('setting.user.store');
+    Route::prefix('setting')->as('setting.')->middleware('head.access')->group(function(){
+        Route::get('/user', 'SettingController@userIndex')->name('user.index');
+        Route::get('/user/create', 'SettingController@userCreate')->name('user.create');
+        Route::post('/user/store', 'SettingController@userStore')->name('user.store');
 
-        Route::get('/user/edit/{UserID}', 'SettingController@userEdit')->name('setting.user.edit');
-        Route::post('user/edit/{UserID}', 'SettingController@userUpdate')->name('setting.user.update');
+        Route::get('/user/edit/{UserID}', 'SettingController@userEdit')->name('user.edit');
+        Route::post('user/edit/{UserID}', 'SettingController@userUpdate')->name('user.update');
+
+        Route::get('/budget-group', 'BudgetGroupController@index')->name('budget-group.index');
         
     });
 

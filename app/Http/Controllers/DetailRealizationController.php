@@ -14,14 +14,16 @@ use Illuminate\Support\Facades\Log;
 class DetailRealizationController extends Controller
 {
     public function index($invoice_no){
-        $RealizationData = Realization::GetRealization($invoice_no)[0];
+        $invoice_no_real = str_replace('-', '/', $invoice_no);
+        $RealizationData = Realization::GetRealization($invoice_no_real)[0];
         $DetailRealization = DetailRealization::GetDetailRealization($RealizationData->ID);
         return view('pages.realization.detail-realization.index', compact('invoice_no', 'RealizationData', 'DetailRealization'));
     }
 
     public function create($invoice_no){
+        $invoice_no_real = str_replace('-', '/', $invoice_no);
         $Currencies = Utils::GetCurrencies();
-        $RealizationData = Realization::GetRealization($invoice_no)[0];
+        $RealizationData = Realization::GetRealization($invoice_no_real)[0];
         $Broker = Utils::GetProfile($RealizationData->Broker_ID, $RealizationData->Currency);
         $BrokerName = $Broker != null ? $Broker->Name : "";
         return view('pages.realization.detail-realization.create', compact('RealizationData', 'Broker', 'BrokerName', 'Currencies'));
@@ -45,8 +47,9 @@ class DetailRealizationController extends Controller
     }
 
     public function edit($invoice_no, $id){
+        $invoice_no_real = str_replace('-', '/', $invoice_no);
         $Currencies = Utils::GetCurrencies();
-        $RealizationData = Realization::GetRealization($invoice_no)[0];
+        $RealizationData = Realization::GetRealization($invoice_no_real)[0];
         $DetailRealization = DetailRealization::GetDetailRealizationById($id);
         $Broker = Utils::GetProfile($RealizationData->Broker_ID, $RealizationData->Currency);
         $BrokerName = $Broker != null ? $Broker->Name : "";
@@ -54,7 +57,8 @@ class DetailRealizationController extends Controller
     }
 
     public function update(Request $request, $invoice_no, $id){
-        $RealizationData = Realization::GetRealization($invoice_no)[0];
+        $invoice_no_real = str_replace('-', '/', $invoice_no);
+        $RealizationData = Realization::GetRealization($invoice_no_real)[0];
         try {
             DetailRealization::UpdateDetailRealization($request, $RealizationData->ID, $id);
         } catch (Exception $e) {
@@ -64,8 +68,9 @@ class DetailRealizationController extends Controller
     }
 
     public function show($invoice_no, $id){
+        $invoice_no_real = str_replace('-', '/', $invoice_no);
         $Currencies = Utils::GetCurrencies();
-        $RealizationData = Realization::GetRealization($invoice_no)[0];
+        $RealizationData = Realization::GetRealization($invoice_no_real)[0];
         $DetailRealization = DetailRealization::GetDetailRealizationById($id);
         // dd($RealizationData, $DetailRealization);
         $BrokerName = Utils::GetProfile($RealizationData->Broker_ID, $RealizationData->Currency);

@@ -41,16 +41,17 @@ class RealizationController extends Controller
         $Action = [];
         if( $RealizationData != null ){
             foreach( $RealizationData as $key => $val ) {
+                $invoice_no = str_replace('/', '-', $val->Invoice_No);
                 switch ($AuthUserGroup) {
                     case GroupCodeApplication::USER_RMFEE:
                         switch ( $val->Status_Realization ) {
                             case RealizationStatus::DRAFT:
                                 $Action[$key] = "
-                                    <a name='propose' class='dropdown-item success' href='".route('realization.propose', $val->Invoice_No)."'>
+                                    <a name='propose' class='dropdown-item success' href='".route('realization.propose', $invoice_no)."'>
                                         <i class='feather icon-check'></i>
                                         Propose
                                     </a>
-                                    <a name='propose' class='dropdown-item success' href='".route('realization.edit', $val->Invoice_No)."'>
+                                    <a name='propose' class='dropdown-item success' href='".route('realization.edit', $invoice_no)."'>
                                         <i class='feather icon-edit-2'></i>
                                         Edit
                                     </a>
@@ -173,8 +174,9 @@ class RealizationController extends Controller
         return $redirect;
     }
 
-    public function edit($invoice_no){
-        $RealizationData = Realization::GetRealization($invoice_no)[0];
+    public function edit($invoice_no ){
+        $invoice_no_real = str_replace('-', '/', $invoice_no);
+        $RealizationData = Realization::GetRealization($invoice_no_real)[0];
         $Currencies = Utils::GetCurrencies();
         $BrokerData = null;
         $PaymentToData = null;
@@ -209,7 +211,7 @@ class RealizationController extends Controller
 
         // dd($RealizationData);   
 
-        return view('pages.realization.edit', compact('RealizationData', 'Currencies', 'TypeOfInvoice', 'TypeOfPayment', 'BrokerData', 'PaymentToData', 'TotalAmountRealized', 'TotalAmountRealization'));
+        return view('pages.realization.edit', compact('RealizationData', 'Currencies', 'TypeOfInvoice', 'TypeOfPayment', 'BrokerData', 'PaymentToData', 'TotalAmountRealized', 'TotalAmountRealization', 'invoice_no'));
     }
 
     public function update(Request $request, $InvoiceNumber){
@@ -217,7 +219,7 @@ class RealizationController extends Controller
         switch ($action) {
             case 'add_detail':
                 Realization::UpdateRealizationGroup($request, $InvoiceNumber, RealizationStatus::DRAFT);
-                $redirect = redirect()->route('realization.detail-realization.index', $request->invoice_no);
+                $redirect = redirect()->route('realization.detail-realization.index', $InvoiceNumber);
                 break;
             case 'save':
                 Realization::UpdateRealizationGroup($request, $InvoiceNumber, RealizationStatus::DRAFT);
