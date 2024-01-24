@@ -6,7 +6,7 @@
 @section('content')
 <div class="card">
     <div class="card-body">
-        <form action="{{ route('realization.update', $RealizationData->Invoice_No) }}" method="post" enctype="multipart/form-data">
+        <form action="{{ route('realization.update', $invoice_no) }}" method="post" enctype="multipart/form-data">
             {{ csrf_field() }}
             <div class="row">
                 <div class="col-lg-6">

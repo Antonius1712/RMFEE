@@ -191,7 +191,7 @@
                 url: search_budget_url,
                 data: {
                     keywords: req.term,
-                    broker_name: broker_name
+                    broker_name: `${broker_name}`
                 },
                 success: function( data ) {
                     res($.map(data, function (item) {

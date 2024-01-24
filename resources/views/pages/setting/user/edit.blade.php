@@ -12,10 +12,10 @@
                         {{ csrf_field() }}
                         <div class="form-group">
                             <label for="nik">NIK</label>
-                            <select name="nik" id="nik" class="form-control">
+                            <select name="nik" id="nik" class="form-control" readonly>
                                 <option value="">Select User</option>
                                 @foreach ($userList as $val)
-                                    <option {{ $val->NIK == $UserSetting->UserID ? 'selected' : '' }} data-name="{{ $val->Name }}" value="{{ $val->NIK }}">{{ $val->NIK." - ".$val->Name }}</option>
+                                    <option {{ $val->UserId == $UserSetting->UserID ? 'selected' : '' }} data-name="{{ $val->Name }}" value="{{ $val->UserId }}">{{ $val->UserId." - ".$val->Name }}</option>
                                 @endforeach
                             </select>
                         </div>
