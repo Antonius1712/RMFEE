@@ -35,7 +35,7 @@
                                 <label for="currency" class="col-lg-3 col-form-label-lg">Currency</label>
                                 <label class="col-lg-1 col-form-label-lg">:</label>
                                 <select name="currency" id="currency" class="form-control col-lg-8" readonly>
-                                    <option value="">Select Currencies</option>
+                                    <option value="">Select Currency</option>
                                     @foreach ($Currencies as $Currency)
                                         <option {{ $Currency->Currency == $RealizationData->Currency ? 'selected' : '' }} value="{{ $Currency->Currency }}">{{ $Currency->Description }}</option>
                                     @endforeach

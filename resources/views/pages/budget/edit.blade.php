@@ -127,11 +127,12 @@
                                     @endif
                                 </div>
                                 <div class="form-group row">
-                                    <label for="proposed_to" class="col-lg-3 col-form-label-lg">Proposed to</label>
+                                    <label for="proposed_to_display" class="col-lg-3 col-form-label-lg">Proposed to</label>
                                     <label class="col-lg-1 col-form-label-lg">:</label>
-                                    <input type="text" name="proposed_to" id="proposed_to"
-                                        class="form-control col-lg-8" placeholder="Proposed to" value="{{ Auth()->user()->getUserSetting->Approval_BU_UserID }}" readonly>
+                                    <input type="text" name="proposed_to_display" id="proposed_to_display"
+                                        class="form-control col-lg-8" placeholder="Proposed to" value="{{ Auth()->user()->getUserSetting->Approval_BU_UserID }} - {{ Auth()->user()->getUserSetting->getApprovalBUName() }}" readonly>
                                         {{-- 2021044216 --}}
+                                    <input type="hidden" name="proposed_to" id="proposed_to" value="{{ Auth()->user()->getUserSetting->Approval_BU_UserID }}">
                                 </div>
 
                                 {{-- !Buttons --}}

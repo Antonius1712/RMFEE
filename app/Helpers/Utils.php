@@ -60,13 +60,28 @@ class Utils {
     // ! Function Search.
     public static function SearchProfile($keywords, $currency = null){
         try {
-            // dd($keywords, $currency);
             return DB::connection(Database::REPORT_GENERATOR)->select("EXECUTE [dbo].[SP_Get_Profile_Engineering_Fee] '$keywords', '$currency'");
         } catch (Exception $e) {
             return $e->getMessage();
         }
     }
 
+    public static function SearchProfileOnSettingBudget($keywords){
+        try {
+            return DB::connection(Database::REPORT_GENERATOR)->select("EXECUTE [dbo].[SP_Get_Profile_Setting_Engineering_Fee] '$keywords'");
+        } catch (Exception $e) {
+            return $e->getMessage();
+        }
+    }
+
+    public static function SearchOccupation($keywords){
+        try {
+            return DB::connection(Database::REPORT_GENERATOR)->select("EXECUTE [dbo].[SP_Get_GendTab_Engineering_Fee] '$keywords'");
+        } catch (Exception $e) {
+            return $e->getMessage();
+        }
+    }
+    
     public static function SearchBudgetByPolicyNoAndBrokerName($policy_no, $broker_name){
         try {
             // ! Parameters : '@BrokerName', '@Branch', '@Type', '@StartDate', '@StatusPremium','@AgingRealization', '@StatusRealization', '@Voucher';

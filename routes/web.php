@@ -86,6 +86,7 @@ Route::middleware(['breadcrumbs', 'auth'])->group(function(){
         Route::get('/data-table', 'Realization@RealizationDataTable')->name('realization.data-table');
     });
 
+    //! AKSES HEAD.
     Route::prefix('setting')->as('setting.')->middleware('head.access')->group(function(){
         Route::get('/user', 'SettingController@userIndex')->name('user.index');
         Route::get('/user/create', 'SettingController@userCreate')->name('user.create');
@@ -93,15 +94,23 @@ Route::middleware(['breadcrumbs', 'auth'])->group(function(){
 
         Route::get('/user/edit/{UserID}', 'SettingController@userEdit')->name('user.edit');
         Route::post('user/edit/{UserID}', 'SettingController@userUpdate')->name('user.update');
-
-        Route::get('/budget-group', 'BudgetGroupController@index')->name('budget-group.index');
-        
     });
 
+    //! AKSES ALL.
+    Route::prefix('setting')->as('setting.')->group(function(){
+        Route::get('/budget-group', 'BudgetGroupController@index')->name('budget-group.index');
+        Route::get('/budget-group/create', 'BudgetGroupController@create')->name('budget-group.create');
+        Route::post('budget-group/store', 'BudgetGroupController@store')->name('budget-group.store');
+
+        Route::get('budget-group/edit/{GroupID}', 'BudgetGroupController@edit')->name('budget-group.edit');
+        Route::post('budget-group/edit/{GroupID}', 'BudgetGroupController@update')->name('budget-group.update');
+    });
 
     // Ajax Calls.
     Route::prefix('utils')->as('utils.')->group(function(){
         Route::get('/search_profile', 'UtilsController@SearchProfile')->name('search_profile');
+        Route::get('/search_occupation', 'UtilsController@SearchOccupation')->name('search_occupation');
+        Route::get('/search_profile_on_setting_budget', 'UtilsController@SearchProfileOnSettingBudget')->name('search_profile_on_setting_budget');
         Route::get('/search_budget_by_policy_no_and_broker_name', 'UtilsController@SearchBudgetByPolicyNoAndBrokerName')->name('search_budget_by_policy_no_and_broker_name');
     });
 });

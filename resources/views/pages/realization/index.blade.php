@@ -21,8 +21,6 @@
         </div>
     @endforeach
 
-    {{-- {{ dd(session()->all()) }} --}}
-
     @if( session()->has('noticication') )
     <div class="alert alert-success text-center">
         {!! session()->get('noticication') !!}

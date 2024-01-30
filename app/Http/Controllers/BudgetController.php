@@ -136,7 +136,7 @@ class BudgetController extends Controller
                 }
 
                 if( $BtnShowHide['BtnUndoApproval'] ){
-                    $BtnUndoApproval = "<a class='dropdown-item danger' href='".route('budget.undo_approve', [$Voucher])."'><i class='feather icon-delete'></i>Undro Approval</a>";
+                    $BtnUndoApproval = "<a class='dropdown-item danger' href='".route('budget.undo_approve', [$Voucher])."'><i class='feather icon-delete'></i>Undo Approval</a>";
                 }
 
                 if( $BtnShowHide['BtnEdit'] ){
