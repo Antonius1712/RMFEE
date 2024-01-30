@@ -95,26 +95,26 @@
                                 }
                             }
                         },
-                        {
-                            extend: 'excelHtml5',
-                            text: 'Export to Excel',
-                            className: 'btn-primary btn-spacing',
-                            exportOptions: {
-                                modifier: {
-                                    search: 'none'
-                                }
-                            }
-                        },
-                        {
-                            extend: 'pdfHtml5',
-                            text: 'Export to PDF',
-                            className: 'btn-primary',
-                            exportOptions: {
-                                modifier: {
-                                    search: 'none'
-                                }
-                            }
-                        }
+                        // {
+                        //     extend: 'excelHtml5',
+                        //     text: 'Export to Excel',
+                        //     className: 'btn-primary btn-spacing',
+                        //     exportOptions: {
+                        //         modifier: {
+                        //             search: 'none'
+                        //         }
+                        //     }
+                        // },
+                        // {
+                        //     extend: 'pdfHtml5',
+                        //     text: 'Export to PDF',
+                        //     className: 'btn-primary',
+                        //     exportOptions: {
+                        //         modifier: {
+                        //             search: 'none'
+                        //         }
+                        //     }
+                        // }
                     ],
                     // select: {
                     //     style: 'multi'

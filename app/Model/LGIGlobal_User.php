@@ -2,6 +2,7 @@
 
 namespace App\Model;
 
+use App\Enums\Database;
 use App\Model\LGIGlobal_Branch;
 use App\Model\LGIGlobal_Dept;
 use App\Model\LGIGlobal_UserGroup;
@@ -11,7 +12,7 @@ use PgSql\Lob;
 
 class LGIGlobal_User extends Authenticatable
 {
-    protected $connection = 'LGIGlobal';
+    protected $connection = Database::LGI_GLOBAL;
     protected $table = 'Users';
     protected $primaryKey = 'UserId';
     public $incrementing = false;
