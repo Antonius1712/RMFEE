@@ -241,6 +241,7 @@
             let total_amount_realization = 0;
             let vat = `{{ $Broker->VAT }}`;
             let tax = `{{ $Broker->TAX }}`;
+            let lob = `{{ $Broker->LOB }}`;
 
             let total_vat = 0;
             let total_tax = 0;
@@ -251,8 +252,14 @@
 
             total_amount_realization = amount_realization * exchange_rate;
 
-            total_vat = (total_amount_realization * vat) / 100;
-            total_tax = (total_amount_realization * tax) / 100;
+            if( lob == '02' ){
+                vat = (vat / 100) * 0.2
+            }else{
+                vat = vat / 100;
+            }
+            total_vat = total_amount_realization * vat;
+            
+            total_tax = total_amount_realization * tax;
 
             total_amount_realization = (total_amount_realization - total_tax) + total_vat;
 
