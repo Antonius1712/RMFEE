@@ -82,13 +82,13 @@ class Utils {
         }
     }
     
-    public static function SearchBudgetByPolicyNoAndBrokerName($policy_no, $broker_name){
+    public static function SearchBudgetByPolicyNoAndBrokerName($policy_no, $broker_name, $RealizationDataId){
         try {
             // ! Parameters : '@BrokerName', '@Branch', '@Type', '@StartDate', '@StatusPremium','@AgingRealization', '@StatusRealization', '@Voucher';
             $Datas =  DB::connection(Database::REPORT_GENERATOR)
             ->select("
-                EXECUTE [dbo].[SP_Get_Data_Engineering_Fee] 
-                '".$broker_name."', '', '', '', '".$policy_no."', '', '', '', '', '', 'APPROVED', 0
+                EXECUTE [dbo].[SP_Get_Data_Budget_Engineering_Fee] 
+                '".$broker_name."', '', '', '', '".$policy_no."', '', '', '', '', '', 'APPROVED', 0, '".$RealizationDataId."'
             ");
 
             return $Datas;
