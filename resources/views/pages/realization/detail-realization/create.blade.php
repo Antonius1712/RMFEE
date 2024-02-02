@@ -170,7 +170,8 @@
     <script>
         var search_budget_url = '{{ route("utils.search_budget_by_policy_no_and_broker_name") }}';
         var broker_name = '{!! $BrokerName !!}';
-        var RealizationDataId = `{{ $RealizationData->id }}`;
+        
+        var RealizationDataId = `{{ $RealizationData->ID }}`;
 
         $(document).ready(function(){
             $('#start_date, #end_date, #date_of_premium_paid').datepicker({
