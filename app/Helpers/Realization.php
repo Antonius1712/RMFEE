@@ -281,7 +281,7 @@ class Realization {
             $Invoice = unpack("H*hex", $fileContent);
             $Invoice = '0x'.$Invoice['hex'];
         }else{
-            $Invoice = '';
+            $Invoice = 0;
         }
 
         if( $filePathSurvey_Report != '' ){
@@ -289,7 +289,7 @@ class Realization {
             $Survey_Report = unpack("H*hex", $fileContent);
             $Survey_Report = '0x'.$Survey_Report['hex'];
         }else{
-            $Survey_Report = '';
+            $Survey_Report = 0;
         }
         
         try {

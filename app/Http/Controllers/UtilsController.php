@@ -25,7 +25,7 @@ class UtilsController extends Controller
     }
     
     public function SearchBudgetByPolicyNoAndBrokerName(Request $request){
-        $Budgets = Utils::SearchBudgetByPolicyNoAndBrokerName($request->keywords, $request->broker_name);
+        $Budgets = Utils::SearchBudgetByPolicyNoAndBrokerName($request->keywords, $request->broker_name, $request->RealizationDataId);
 
         // Add Date Formatting and Thousand Seperator.
         foreach( $Budgets as $Budget ){
