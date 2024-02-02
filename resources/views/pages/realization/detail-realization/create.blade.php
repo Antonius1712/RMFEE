@@ -257,6 +257,9 @@
             }else{
                 vat = vat / 100;
             }
+
+            tax = (tax / 100);
+
             total_vat = total_amount_realization * vat;
             
             total_tax = total_amount_realization * tax;
