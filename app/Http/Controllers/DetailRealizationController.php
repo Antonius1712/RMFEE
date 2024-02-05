@@ -24,9 +24,13 @@ class DetailRealizationController extends Controller
         $invoice_no_real = str_replace('-', '/', $invoice_no);
         $Currencies = Utils::GetCurrencies();
         $RealizationData = Realization::GetRealization($invoice_no_real)[0];
-        $Broker = Utils::GetProfile($RealizationData->Payment_To_ID, $RealizationData->Currency);
+        $Broker = Utils::GetProfile($RealizationData->Broker_ID, $RealizationData->Currency);
         $BrokerName = $Broker != null ? $Broker->Name : "";
-        return view('pages.realization.detail-realization.create', compact('RealizationData', 'Broker', 'BrokerName', 'Currencies'));
+
+        $PaymentTo = Utils::GetProfile($RealizationData->Payment_To_ID, $RealizationData->Currency);
+        $PaymentToName = $PaymentTo != null ? $PaymentTo->Name : "";
+
+        return view('pages.realization.detail-realization.create', compact('RealizationData', 'Broker', 'BrokerName', 'Currencies', 'PaymentTo', 'PaymentToName'));
     }
 
     public function store(Request $request){        
@@ -51,9 +55,13 @@ class DetailRealizationController extends Controller
         $Currencies = Utils::GetCurrencies();
         $RealizationData = Realization::GetRealization($invoice_no_real)[0];
         $DetailRealization = DetailRealization::GetDetailRealizationById($id);
-        $Broker = Utils::GetProfile($RealizationData->Payment_To_ID, $RealizationData->Currency);
+        $Broker = Utils::GetProfile($RealizationData->Broker_ID, $RealizationData->Currency);
         $BrokerName = $Broker != null ? $Broker->Name : "";
-        return view('pages.realization.detail-realization.edit', compact('DetailRealization', 'RealizationData', 'Broker', 'BrokerName', 'Currencies', 'invoice_no'));
+
+        $PaymentTo = Utils::GetProfile($RealizationData->Payment_To_ID, $RealizationData->Currency);
+        $PaymentToName = $PaymentTo != null ? $PaymentTo->Name : "";
+
+        return view('pages.realization.detail-realization.edit', compact('DetailRealization', 'RealizationData', 'Broker', 'BrokerName', 'Currencies', 'invoice_no', 'PaymentTo', 'PaymentToName'));
     }
 
     public function update(Request $request, $invoice_no, $id){

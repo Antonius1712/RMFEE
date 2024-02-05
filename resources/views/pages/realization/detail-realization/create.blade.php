@@ -159,8 +159,8 @@
                 </div>
             </div>
             <input type="hidden" name="invoice_no" value="{{ $RealizationData->Invoice_No }}">
-            <input type="hidden" name="tax" value="{{ $Broker->TAX }}">
-            <input type="hidden" name="vat" value="{{ $Broker->VAT }}">
+            <input type="hidden" name="tax" value="{{ $PaymentTo->TAX }}">
+            <input type="hidden" name="vat" value="{{ $PaymentTo->VAT }}">
         </form>
     </div>
 </div>
@@ -242,9 +242,9 @@
             let remain_budget = $('#remain_budget').val();
             let budget_in_amount = $('#budget_in_amount').val();
             let total_amount_realization = 0;
-            let vat = `{{ $Broker->VAT }}`;
-            let tax = `{{ $Broker->TAX }}`;
-            let lob = `{{ $Broker->LOB }}`;
+            let vat = `{{ $PaymentTo->VAT }}`;
+            let tax = `{{ $PaymentTo->TAX }}`;
+            let lob = `{{ $PaymentTo->LOB }}`;
 
             let total_vat = 0;
             let total_tax = 0;
