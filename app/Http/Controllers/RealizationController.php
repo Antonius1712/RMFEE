@@ -175,7 +175,7 @@ class RealizationController extends Controller
     }
 
     public function edit($invoice_no ){
-        $invoice_no_real = str_replace('-', '/', $invoice_no);
+        $invoice_no_real = str_replace('~', '/', $invoice_no);
         $RealizationData = Realization::GetRealization($invoice_no_real)[0];
         $Currencies = Utils::GetCurrencies();
         $BrokerData = null;
