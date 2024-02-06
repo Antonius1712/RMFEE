@@ -117,7 +117,7 @@ class BudgetController extends Controller
                 $BtnArchive = '';
                 $BtnUnArchive = '';
                 $Divider = '';
-                $Voucher = str_replace('/','-',$row->VOUCHER);
+                $Voucher = str_replace('/','~',$row->VOUCHER);
 
                 $BtnShowHide['BtnApprove'] = null;
                 $BtnShowHide['BtnUndoApproval'] = null;

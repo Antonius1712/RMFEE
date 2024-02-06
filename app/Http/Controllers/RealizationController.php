@@ -243,14 +243,15 @@ class RealizationController extends Controller
         $BrokerData = null;
         $PaymentToData = null;
         if( isset($RealizationData->Broker_ID) && $RealizationData->Broker_ID != null ){
+            // $BrokerData = Utils::GetProfile($RealizationData->Broker_ID, $RealizationData->Currency);
             $BrokerData = Utils::GetProfile($RealizationData->Broker_ID, $RealizationData->Currency);
         }
+
+        // dd($BrokerData, $RealizationData);
 
         if( isset($RealizationData->Payment_To_ID) && $RealizationData->Payment_To_ID != null ){
             $PaymentToData = Utils::GetProfile($RealizationData->Payment_To_ID, $RealizationData->Currency);
         }
-
-        // dd($BrokerData, $RealizationData, $RealizationData);
 
         $UserSetting = ReportGenerator_UserSetting::where('UserID', $RealizationData->CreatedBy)->first();
 
