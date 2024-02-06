@@ -60,7 +60,7 @@ class Budget {
         // } catch (Exception $e) {
         //     Log::error('Error Updating Budget Voucher = ' . $voucher . ' Exception = ' . $e->getMessage());
         // }
-        $voucher = str_replace('-', '/', $voucher);
+        $voucher = str_replace('~', '/', $voucher);
         $LastEditedBy = auth()->user()->UserId;
         $LastEdited = now()->format('Y-m-d');
         $LastEditedTime = now()->format('H:i:s');
@@ -98,7 +98,7 @@ class Budget {
     }
 
     public static function UpdateBudgetOnlyStatus($action, $voucher){
-        $voucher = str_replace('-', '/', $voucher);
+        $voucher = str_replace('~', '/', $voucher);
         $LastEditedBy = auth()->user()->UserId;
         $LastEdited = now()->format('Y-m-d');
         $LastEditedTime = now()->format('H:i:s');
