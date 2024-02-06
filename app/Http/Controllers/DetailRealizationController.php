@@ -14,7 +14,8 @@ use Illuminate\Support\Facades\Log;
 class DetailRealizationController extends Controller
 {
     public function index($invoice_no){
-        $invoice_no_real = str_replace('-', '/', $invoice_no);
+        $invoice_no_real = str_replace('~', '/', $invoice_no);
+        // dd($invoice_no, $invoice_no_real);
         $RealizationData = Realization::GetRealization($invoice_no_real)[0];
         $DetailRealization = DetailRealization::GetDetailRealization($RealizationData->ID);
         return view('pages.realization.detail-realization.index', compact('invoice_no', 'RealizationData', 'DetailRealization'));
