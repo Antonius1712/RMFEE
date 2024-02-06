@@ -6,7 +6,7 @@
 @section('content')
 <div class="card">
     <div class="card-body">
-        <form action="{{ route('realization.update', $RealizationData->Invoice_No) }}" method="post" enctype="multipart/form-data">
+        <form action="{{ route('realization.update', $invoice_no) }}" method="post" enctype="multipart/form-data">
             {{ csrf_field() }}
             <div class="row">
                 <div class="col-lg-6">
@@ -19,7 +19,7 @@
                             <div class="form-group row">
                                 <label for="invoice_no" class="col-lg-3 col-form-label-lg">Invoice No</label>
                                 <label class="col-lg-1 col-form-label-lg">:</label>
-                                <input type="text" name="invoice_no" id="invoice_no" class="form-control col-lg-8" placeholder="Invoice No" value="{{ $RealizationData->Invoice_No }}">
+                                <input type="text" name="invoice_no" id="invoice_no" class="form-control col-lg-8" placeholder="Invoice No" value="{{ $RealizationData->Invoice_No }}" readonly>
                             </div>
                             <div class="form-group row">
                                 <label for="type_of_invoice" class="col-lg-3 col-form-label-lg">Type of Invoice</label>
@@ -35,7 +35,7 @@
                                 <label for="currency" class="col-lg-3 col-form-label-lg">Currency</label>
                                 <label class="col-lg-1 col-form-label-lg">:</label>
                                 <select name="currency" id="currency" class="form-control col-lg-8">
-                                    <option value="">Select Currencies</option>
+                                    <option value="">Select Currency</option>
                                     @foreach ($Currencies as $Currency)
                                         <option {{ $Currency->Currency == $RealizationData->Currency ? 'selected' : '' }} value="{{ $Currency->Currency }}">{{ $Currency->Description }}</option>
                                     @endforeach
@@ -64,7 +64,7 @@
                             <div class="form-group row">
                                 <label for="type_of_payment" class="col-lg-3 col-form-label-lg">Type of Payment </label>
                                 <label class="col-lg-1 col-form-label-lg">:</label>
-                                <input type="text" name="type_of_payment" id="type_of_payment" class="form-control col-lg-8" value="{{ Auth()->user()->getUserSetting->Type_Of_Payment }}" readonly>
+                                <input type="text" name="type_of_payment" id="type_of_payment" class="form-control col-lg-8" value="{{ $RealizationData->type_Of_Payment }}" readonly>
                             </div>
                             <div class="form-group row">
                                 <label for="payment_to" class="col-lg-3 col-form-label-lg">Payment To</label>
@@ -116,7 +116,8 @@
                                 </a> --}}
                                 @if( $RealizationData->Upload_Invoice_Path != '' )
                                 <a href="{{ $RealizationData->Upload_Invoice_Path ? asset($RealizationData->Upload_Invoice_Path) : 'javascript:;' }}" class="primary col-lg-2" target="_Blank" download="">
-                                    Download
+                                    {{-- Download --}}
+                                    <i class='feather icon-download' style="font-size: 24px;"></i>
                                 </a>
                                 @endif
                             </div>
@@ -130,7 +131,8 @@
                                 </a> --}}
                                 @if( $RealizationData->Upload_Survey_Report_Path != '' )
                                 <a href="{{ $RealizationData->Upload_Survey_Report_Path ? asset($RealizationData->Upload_Survey_Report_Path) : 'javascript:;' }}" class="primary col-lg-2" target="_Blank" download="">
-                                    Download
+                                    {{-- Download --}}
+                                    <i class='feather icon-download' style="font-size: 24px;"></i>
                                 </a>
                                 @endif
                             </div>
@@ -211,6 +213,14 @@
 
 @section('script')
     <script>
+        $(Document).ready(function(){
+            $(window).keydown(function(event){
+                if(event.keyCode == 13) {
+                    event.preventDefault();
+                    return false;
+                }
+            });
+        }); 
         // ! Datepicker Invoice Date
         $('#invoice_date').datepicker({
             dateFormat: 'dd M yy',
@@ -259,6 +269,7 @@
 
         // ! Autocomplete Payment_to Search Profile by BrokerID to put default data.
         $('#payment_to').autocomplete({
+            minLength: 3,
             source: function(req, res){
                 $('#error_currency').addClass('hidden');
                 let currency = $('#currency option:selected').val();
@@ -288,7 +299,6 @@
                     },
                 });
             },
-            minLength: 3,
             select: function( event, ui ) {
                 let data = ui.item.data;
                 $('#account_name').val(data.BankAccount);

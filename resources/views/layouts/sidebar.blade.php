@@ -96,7 +96,7 @@
 
             {{-- !SIDEBAR MENU REALIZATION --}}
             <li class=" nav-item">
-                <a class="d-flex align-items-center" href="#">
+                <a class="d-flex align-items-center" href="{{ route('setting.budget-group.index') }}">
                     <i data-feather="compass" class="feather icon-compass"></i>
                     <span class="menu-title text-truncate" data-i18n="Budget Group">Budget Group</span>
                 </a>

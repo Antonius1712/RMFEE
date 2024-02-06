@@ -35,7 +35,7 @@
                                 <label for="currency" class="col-lg-3 col-form-label-lg">Currency</label>
                                 <label class="col-lg-1 col-form-label-lg">:</label>
                                 <select name="currency" id="currency" class="form-control col-lg-8" readonly>
-                                    <option value="">Select Currencies</option>
+                                    <option value="">Select Currency</option>
                                     @foreach ($Currencies as $Currency)
                                         <option {{ $Currency->Currency == $RealizationData->Currency ? 'selected' : '' }} value="{{ $Currency->Currency }}">{{ $Currency->Description }}</option>
                                     @endforeach
@@ -116,7 +116,8 @@
                                 </a> --}}
                                 @if( $RealizationData->Upload_Invoice_Path != '' )
                                 <a href="{{ $RealizationData->Upload_Invoice_Path ? asset($RealizationData->Upload_Invoice_Path) : 'javascript:;' }}" class="primary col-lg-2" target="_Blank" download="">
-                                    Download
+                                    {{-- Download --}}
+                                    <i class='feather icon-download' style="font-size: 24px;"></i>
                                 </a>
                                 @endif
                             </div>
@@ -130,7 +131,8 @@
                                 </a> --}}
                                 @if( $RealizationData->Upload_Survey_Report_Path != '' )
                                 <a href="{{ $RealizationData->Upload_Survey_Report_Path ? asset($RealizationData->Upload_Survey_Report_Path) : 'javascript:;' }}" class="primary col-lg-2" target="_Blank" download="">
-                                    Download
+                                    {{-- Download --}}
+                                    <i class='feather icon-download' style="font-size: 24px;"></i>
                                 </a>
                                 @endif
                             </div>
@@ -187,6 +189,15 @@
 
 @section('script')
     <script>
+        $(Document).ready(function(){
+            $(window).keydown(function(event){
+                if(event.keyCode == 13) {
+                    event.preventDefault();
+                    return false;
+                }
+            });
+        }); 
+        
         // ! Datepicker Invoice Date
         $('#invoice_date').datepicker({
             dateFormat: 'dd M yy',

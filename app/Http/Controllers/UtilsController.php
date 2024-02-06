@@ -14,8 +14,18 @@ class UtilsController extends Controller
         return $Profile;
     }
 
+    public function SearchProfileOnSettingBudget(Request $request){
+        $Profile = Utils::SearchProfileOnSettingBudget($request->keywords);
+        return $Profile;
+    }
+
+    public function SearchOccupation(Request $request){
+        $Profile = Utils::SearchOccupation($request->keywords);
+        return $Profile;
+    }
+    
     public function SearchBudgetByPolicyNoAndBrokerName(Request $request){
-        $Budgets = Utils::SearchBudgetByPolicyNoAndBrokerName($request->keywords, $request->broker_name);
+        $Budgets = Utils::SearchBudgetByPolicyNoAndBrokerName($request->keywords, $request->broker_name, $request->RealizationDataId);
 
         // Add Date Formatting and Thousand Seperator.
         foreach( $Budgets as $Budget ){

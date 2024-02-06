@@ -110,6 +110,9 @@ class Budget {
             case 'approve':
                 $statusBudget = BudgetStatus::APPROVED;
                 break;
+            case 'undo_approve':
+                $statusBudget = BudgetStatus::DRAFT;
+                break;
             case 'reject':
                 $statusBudget = BudgetStatus::REJECTED;
                 break;

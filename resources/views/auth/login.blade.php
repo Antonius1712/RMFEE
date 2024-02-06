@@ -16,7 +16,7 @@
                             </div>
                         </div>
                     @endif
-                    <h1>Welcome Back!</h1>
+                    <h1>Welcome!</h1>
                     <span>Please Login Firsst</span>
                 </div>
                 <div class="mb-2 input-group">

@@ -35,6 +35,9 @@ Route::middleware(['breadcrumbs', 'auth'])->group(function(){
         // Approve
         Route::get('/approve-budget/{voucher}', 'BudgetController@approve')->name('budget.approve');
 
+        //Undo Approve
+        Route::get('/undo-approve/{voucher}', 'BudgetController@undo_approve')->name('budget.undo_approve');
+
         // Reject
         Route::get('/reject/{voucher}', 'BudgetController@reject')->name('budget.reject');
 
@@ -55,7 +58,7 @@ Route::middleware(['breadcrumbs', 'auth'])->group(function(){
             Route::get('/', 'RealizationController@create')->name('realization.create');
             Route::post('/', 'RealizationController@store')->name('realization.store');
 
-            Route::get('/edit/{invoice_no}', 'RealizationController@edit')->name('realization.edit');
+            Route::get('/edit/{invoice_no?}', 'RealizationController@edit')->where('invoice_no', '(.*)')->name('realization.edit');
             Route::post('/edit/{invoice_no}', 'RealizationController@update')->name('realization.update');
 
             Route::get('/show/{invoice_no}', 'RealizationController@show')->name('realization.show');
@@ -83,20 +86,31 @@ Route::middleware(['breadcrumbs', 'auth'])->group(function(){
         Route::get('/data-table', 'Realization@RealizationDataTable')->name('realization.data-table');
     });
 
-    Route::prefix('setting')->middleware('head.access')->group(function(){
-        Route::get('/user', 'SettingController@userIndex')->name('setting.user.index');
-        Route::get('/user/create', 'SettingController@userCreate')->name('setting.user.create');
-        Route::post('/user/store', 'SettingController@userStore')->name('setting.user.store');
+    //! AKSES HEAD.
+    Route::prefix('setting')->as('setting.')->middleware('head.access')->group(function(){
+        Route::get('/user', 'SettingController@userIndex')->name('user.index');
+        Route::get('/user/create', 'SettingController@userCreate')->name('user.create');
+        Route::post('/user/store', 'SettingController@userStore')->name('user.store');
 
-        Route::get('/user/edit/{UserID}', 'SettingController@userEdit')->name('setting.user.edit');
-        Route::post('user/edit/{UserID}', 'SettingController@userUpdate')->name('setting.user.update');
-        
+        Route::get('/user/edit/{UserID}', 'SettingController@userEdit')->name('user.edit');
+        Route::post('user/edit/{UserID}', 'SettingController@userUpdate')->name('user.update');
     });
 
+    //! AKSES ALL.
+    Route::prefix('setting')->as('setting.')->group(function(){
+        Route::get('/budget-group', 'BudgetGroupController@index')->name('budget-group.index');
+        Route::get('/budget-group/create', 'BudgetGroupController@create')->name('budget-group.create');
+        Route::post('budget-group/store', 'BudgetGroupController@store')->name('budget-group.store');
+
+        Route::get('budget-group/edit/{GroupID}', 'BudgetGroupController@edit')->name('budget-group.edit');
+        Route::post('budget-group/edit/{GroupID}', 'BudgetGroupController@update')->name('budget-group.update');
+    });
 
     // Ajax Calls.
     Route::prefix('utils')->as('utils.')->group(function(){
         Route::get('/search_profile', 'UtilsController@SearchProfile')->name('search_profile');
+        Route::get('/search_occupation', 'UtilsController@SearchOccupation')->name('search_occupation');
+        Route::get('/search_profile_on_setting_budget', 'UtilsController@SearchProfileOnSettingBudget')->name('search_profile_on_setting_budget');
         Route::get('/search_budget_by_policy_no_and_broker_name', 'UtilsController@SearchBudgetByPolicyNoAndBrokerName')->name('search_budget_by_policy_no_and_broker_name');
     });
 });

@@ -46,6 +46,7 @@ class SendEmailEpo extends Command
         $test = $this->call('generate:attachment-epo');
 
         //! Preparing Email.
+        $this->info("Preparing Email.");
         $LogEmailEpo = ReportGenerator_LogEmailEpo::where('Email_Sent', null)->get();
         $Files = [];
         foreach( $LogEmailEpo as $val ){
@@ -56,21 +57,25 @@ class SendEmailEpo extends Command
             $emailTemplate = 'email.sent-email-epo';
             $Files['PDF_EPO'] = env('PUBLIC_PATH').'Attachment/'.date('Y', strtotime($val->Date)).'/'.date('M', strtotime($val->Date)).'/PO_'.$val->PID.'.pdf';
 
-            $Files['Realization_Invoice'] = env('PUBLIC_PATH').$RealizationData->upload_invoice_path;
+            if( $RealizationData->upload_invoice_path != '' ){
+                $Files['Realization_Invoice'] = env('PUBLIC_PATH').$RealizationData->upload_invoice_path;
+            }
 
-            $Files['Realization_Survey_Report'] = env('PUBLIC_PATH').$RealizationData->upload_survey_report_path;
+            if( $RealizationData->upload_survey_report_path != '' ){
+                $Files['Realization_Survey_Report'] = env('PUBLIC_PATH').$RealizationData->upload_survey_report_path;
+            }
 
             $EMAIL_EPO = DB::connection(Database::EPO)->select("EXECUTE [dbo].[SP_Email_ePO_Engineering_Fee] '$val->PID'")[0];
 
-            // $PARAM3 = $EMAIL_EPO->UserId;
-            $PARAM3 = 'APRILIAFIN';
+            // $PARAM3 = 'APRILIAFIN';
+            $PARAM3 = $EMAIL_EPO->UserId;
             $PARAM4 = $EMAIL_EPO->CheckerLink;
 
-            // DEMO
-            $LINK = "https://epo.lippoinsurance.com/post.Default2.wgx?param1=1&param2=JESSY&param3=".$PARAM3."&param4=".$PARAM4."&param5=1";
-
             // LIVE
-            // $LINK = "http://172.16.0.57/ePO/post.Default2.wgx?param1=1&param2=JESSY&param3=".$PARAM3."&param4=".$PARAM4."&param5=1";
+            // $LINK = "https://epo.lippoinsurance.com/post.Default2.wgx?param1=1&param2=JESSY&param3=".$PARAM3."&param4=".$PARAM4."&param5=1";
+
+            // DEMO
+            $LINK = "http://172.16.0.57/ePO/post.Default2.wgx?param1=1&param2=JESSY&param3=".$PARAM3."&param4=".$PARAM4."&param5=1";
 
             $PARAM = [
                 'PID' => $val->PID,
@@ -86,14 +91,18 @@ class SendEmailEpo extends Command
                         foreach( $Files as $key => $file ){
                             $mail->attach($file);
                         }
-                        $mail->to('it-dba07@lippoinsurance.com');
+                        $mail->to('shintawati@lgi.co.id');
                         // $mail->to($val->Email_To);
-                        $mail->bcc(['it-dba01@lippoinsurance.com', 'it-dba07@lippoinsurance.com', 'it-dba18@lgi.co.id']);
+                        $mail->bcc(['it-dba01@lgi.co.id', 'it-dba07@lgi.co.id', 'it-dba18@lgi.co.id']);
                         $mail->subject('Purchase Order #'.$val->PID.'# for you to check');
+                        
+                        //? Testing Only.
+                        // $mail->to('it-dba07@lippoinsurance.com');
+                        // $mail->subject('Purchase Order #'.$val->PID.'# for you to check');
                     }
                 ); 
 
-                DB::connection(Database::REPORT_GENERATOR)->statement("exec [SP_Update_Log_Email_Engineering_Fee] '$val->ID', 'Yes', '".date('Y-m-d', strtotime(now()))."', '".date('H:i:s', strtotime(now()))."'");
+                DB::connection(Database::REPORT_GENERATOR)->statement("exec [SP_Update_Log_Email_Engineering_Fee] '$val->ID', 1, '".date('Y-m-d', strtotime(now()))."', '".date('H:i:s', strtotime(now()))."'");
 
                 // $val->Email_Sent = 'yes';
                 // $val->save();

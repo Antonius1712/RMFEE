@@ -64,18 +64,21 @@ class Realization {
         try {
             $invoice_no = $param->invoice_no;
             $type_of_invoice = $param->type_of_invoice;
+            $type_of_payment = $param->type_of_payment;
             $currency = $param->currency;
             $invoice_date = date('Y-m-d H:i:s.000', strtotime($param->invoice_date));
             $broker_id = $param->broker_id;
             $payment_to = $param->payment_to;
-            $approval_bu = $param->approval_bu;
-            $approval_finance = $param->approval_finance;
+            $approval_bu = explode(' - ', $param->approval_bu)[0];
+            $approval_finance = explode(' - ', $param->approval_finance)[0];
             $epo_checker = $param->epo_checker;
             $epo_approval = $param->epo_approval;
             $status_realization = $param->StatusRealization;
             $remarks = $param->remarks;
             $CreatedBy = auth()->user()->UserId;
             $CreatedDate = now()->format('Y-m-d');
+            $lastUpdateBy = auth()->user()->UserId;
+            $lastUpdate = now()->format('Y-m-d');
 
             // $upload_invoice = $param->upload_invoice;
             // $upload_survey_report = $param->upload_survey_report;
@@ -98,7 +101,9 @@ class Realization {
                 $DocumentPath_upload_survey_report = 'images/Realization/Survey_Report/'.$filename;
             }
 
-            return DB::connection(Database::REPORT_GENERATOR)->select("EXECUTE [dbo].[SP_Insert_Group_Realization_Engineering_Fee] '$invoice_no', '$type_of_invoice', '$currency', '$invoice_date', '$broker_id', '$payment_to', '$DocumentPath_upload_invoice', '$DocumentPath_upload_survey_report', '$approval_bu', '$approval_finance', '$epo_checker', '$epo_approval', '$status_realization', '$remarks', '$CreatedBy', '$CreatedDate'");
+            DB::connection(Database::REPORT_GENERATOR)->select("EXECUTE [dbo].[SP_Insert_Group_Realization_Engineering_Fee] '$invoice_no', '$type_of_invoice', '$type_of_payment', '$currency', '$invoice_date', '$broker_id', '$payment_to', '$DocumentPath_upload_invoice', '$DocumentPath_upload_survey_report', '$approval_bu', '$approval_finance', '$epo_checker', '$epo_approval', '$status_realization', '$remarks', '$CreatedBy', '$CreatedDate', '$lastUpdateBy', '$lastUpdate'");
+
+            // dd($lastUpdateBy, $lastUpdate);
 
         } catch (Exception $e) {
             Log::error('Error while inserting New Realization Exception = '.$e->getMessage());
@@ -109,16 +114,20 @@ class Realization {
         try {
             $invoice_no = isset($param->invoice_no) ? $param->invoice_no : (isset($InvoiceNumber) ? $InvoiceNumber : null);
             $type_of_invoice = isset($param->type_of_invoice) ? $param->type_of_invoice : null;
+            $type_of_payment = isset($param->type_of_payment) ? $param->type_of_payment : null;
             $currency = isset($param->currency) ? $param->currency : null;
             $invoice_date = isset($param->invoice_date) ? $param->invoice_date : null;
             $broker_id = isset($param->broker_id) ? $param->broker_id : null;
             $payment_to = isset($param->payment_to) ? $param->payment_to : null;
-            $approval_bu = isset($param->approval_bu) ? $param->approval_bu : null;
-            $approval_finance = isset($param->approval_finance) ? $param->approval_finance : null;
+            $approval_bu = isset($param->approval_bu) ? explode(' - ', $param->approval_bu)[0] : null;
+            $approval_finance = isset($param->approval_finance) ? explode(' - ', $param->approval_finance)[0] : null;
             $epo_checker = isset($param->epo_checker) ? $param->epo_checker : null;
             $epo_approval = isset($param->epo_approval) ? $param->epo_approval : null;
             // $status_realization = RealizationStatus::DRAFT;
             $remarks = $param->remarks;
+            $lastUpdateBy = auth()->user()->UserId;
+            $lastUpdate = now()->format('Y-m-d');
+
 
             $DocumentPath_upload_invoice = null;
             if( $param->hasFile('upload_invoice') ){
@@ -141,8 +150,10 @@ class Realization {
             // TODO kalo upload_invoice / upload_survey dari request kosong, cek db. ambil value path dari db save variable.
             // TODO lalu masukan variable ke dalam SP_Update dibawah.
 
+            // dd('xx');
+
             if( $DocumentPath_upload_invoice == null || $DocumentPath_upload_survey_report == null ) {
-                $RealizationFileData = DB::connection(Database::REPORT_GENERATOR)->select("EXECUTE [dbo].[SP_Get_Group_Realization_Engineering_Fee] '$invoice_no'")[0];
+                $RealizationFileData = DB::connection(Database::REPORT_GENERATOR)->select("EXECUTE [dbo].[SP_Get_Group_Realization_Engineering_Fee] '$InvoiceNumber'")[0];
 
                 if( $DocumentPath_upload_invoice == null ) {
                     $DocumentPath_upload_invoice = $RealizationFileData->Upload_Invoice_Path;
@@ -152,7 +163,6 @@ class Realization {
                     $DocumentPath_upload_survey_report = $RealizationFileData->Upload_Survey_Report_Path;
                 }
             }
-
 
             //! INI UNTUK SAVE PATH UPLOAD_INVOICE
             try {
@@ -170,7 +180,7 @@ class Realization {
 
             //! INI UNTUK UPDATE REALISASI TANPA UPDATE KOLOM UPLOAD_INVOICE DAN UPLOAD_SURVEY.
             //? KOLOM UPLOAD _INVOICE DAN _SURVEY DI UPDATE DI ATAS.
-            return DB::connection(Database::REPORT_GENERATOR)->statement("EXECUTE [dbo].[SP_Update_Group_Realization_Engineering_Fee] '$invoice_no', '$type_of_invoice', '$currency', '$invoice_date', '$broker_id', '$payment_to', '$approval_bu', '$approval_finance', '$epo_checker', '$epo_approval', '$status_realization', '$remarks'");
+            return DB::connection(Database::REPORT_GENERATOR)->statement("EXECUTE [dbo].[SP_Update_Group_Realization_Engineering_Fee] '$InvoiceNumber', '$type_of_invoice', '$type_of_payment', '$currency', '$invoice_date', '$broker_id', '$payment_to', '$approval_bu', '$approval_finance', '$epo_checker', '$epo_approval', '$status_realization', '$remarks', '$lastUpdateBy', '$lastUpdate'");
         } catch (Exception $e) {
             Log::error('Error Update Realization Group on Realization Helper Update Exception = ' . $e->getMessage());
         }
@@ -178,7 +188,10 @@ class Realization {
 
     public static function UpdateRealizationGroupStatus($status, $InvoiceNumber = null){
         try {
-            DB::connection(Database::REPORT_GENERATOR)->statement("EXECUTE [dbo].[SP_Update_Group_Status_Realization_Engineering_Fee] '$InvoiceNumber', '$status'");
+            $lastUpdateBy = auth()->user()->UserId;
+            $lastUpdate = now()->format('Y-m-d');
+
+            DB::connection(Database::REPORT_GENERATOR)->statement("EXECUTE [dbo].[SP_Update_Group_Status_Realization_Engineering_Fee] '$InvoiceNumber', '$status', '$lastUpdateBy', '$lastUpdate'");
         } catch (Exception $e) {
             Log::error('Error Update Realization Group on Realization Helper Update Exception = ' . $e->getMessage());
         }
@@ -256,24 +269,31 @@ class Realization {
             $TotalRealization += $val->total_amount_realization;
         }
         $InvoiceNo = $RealizationData->Invoice_No;
-        $FileSize = $RealizationData->Upload_Invoice_Path != '' ? filesize($RealizationData->Upload_Invoice_Path) : 0;
+        $FileSizeInvoice = $RealizationData->Upload_Invoice_Path != '' ? filesize($RealizationData->Upload_Invoice_Path) : 0;
+        $FileSizeSurvey_Report = $RealizationData->Upload_Survey_Report_Path != '' ? filesize($RealizationData->Upload_Survey_Report_Path) : 0;
 
         //! to save the image using SP, on the SP ImgFile will be converted to VARBINARY().
-        $filePath = $RealizationData->Upload_Invoice_Path;
+        $filePathInvoice = $RealizationData->Upload_Invoice_Path;
+        $filePathSurvey_Report = $RealizationData->Upload_Survey_Report_Path;
         
-        if( $filePath != '' ){
-
-            // dd( config('app.PUBLIC_PATH').$filePath );
-
-            $fileContent = file_get_contents(config('app.PUBLIC_PATH').'/'.$filePath);
-            $ImgFile = unpack("H*hex", $fileContent);
-            $ImgFile = '0x'.$ImgFile['hex'];
+        if( $filePathInvoice != '' ){
+            $fileContent = file_get_contents(config('app.PUBLIC_PATH').'/'.$filePathInvoice);
+            $Invoice = unpack("H*hex", $fileContent);
+            $Invoice = '0x'.$Invoice['hex'];
         }else{
-            $ImgFile = '';
+            $Invoice = 0;
+        }
+
+        if( $filePathSurvey_Report != '' ){
+            $fileContent = file_get_contents(config('app.PUBLIC_PATH').'/'.$filePathSurvey_Report);
+            $Survey_Report = unpack("H*hex", $fileContent);
+            $Survey_Report = '0x'.$Survey_Report['hex'];
+        }else{
+            $Survey_Report = 0;
         }
         
         try {
-            DB::connection("EPO114")->statement("EXECUTE [dbo].[SP_Insert_ePO_Engineering_Fee] '$InvoiceNo', $TotalRealization, $FileSize, $ImgFile, '$LinkApproval', '$LinkChecker' ");
+            DB::connection("EPO114")->statement("EXECUTE [dbo].[SP_Insert_ePO_Engineering_Fee] '$InvoiceNo', $TotalRealization, $FileSizeInvoice, $Invoice, '$LinkApproval', '$LinkChecker', $FileSizeSurvey_Report, $Survey_Report ");
             return ['status' => true, 'message' => 'ok',];
         } catch (Exception $e) {
             Log::error('Error While Inserting EPO When Finance Approve Invoice ' .$InvoiceNo . ' Exception = ' . $e->getMessage());

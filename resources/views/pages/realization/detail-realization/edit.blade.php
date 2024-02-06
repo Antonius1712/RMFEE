@@ -53,12 +53,12 @@
                             <div class="form-group row">
                                 <label for="occupation_code" class="col-lg-3 col-form-label-lg">Occupation Code</label>
                                 <label class="col-lg-1 col-form-label-lg">:</label>
-                                <input type="text" name="occupation_code" id="occupation_code" class="form-control col-lg-8" placeholder="Occupation Code" value="{{ $DetailRealization->OCCUPATION != null && $DetailRealization->OCCUPATION != 'Fleet' ? explode('-', $DetailRealization->OCCUPATION)[0] : 'Fleet' }}" readonly>
+                                <input type="text" name="occupation_code" id="occupation_code" class="form-control col-lg-8" placeholder="Occupation Code" value="{{ $DetailRealization->OCCUPATION != null ? ( $DetailRealization->OCCUPATION != 'Fleet' ? explode('-', $DetailRealization->OCCUPATION)[0] : 'Fleet'): '' }}" readonly>
                             </div>
                             <div class="form-group row">
                                 <label for="occupation_description" class="col-lg-3 col-form-label-lg">Occupation Description</label>
                                 <label class="col-lg-1 col-form-label-lg">:</label>
-                                <input type="text" name="occupation_description" id="occupation_description" class="form-control col-lg-8" placeholder="Occupation Description" value="{{ $DetailRealization->OCCUPATION != null && $DetailRealization->OCCUPATION != 'Fleet' ? explode('-', $DetailRealization->OCCUPATION)[1] : 'Fleet' }}" readonly>
+                                <input type="text" name="occupation_description" id="occupation_description" class="form-control col-lg-8" placeholder="Occupation Description" value="{{ $DetailRealization->OCCUPATION != null ? ( $DetailRealization->OCCUPATION != 'Fleet' ? explode('-', $DetailRealization->OCCUPATION)[1] : 'Fleet'): '' }}" readonly>
                             </div>
                             <div class="form-group row">
                                 <label for="real_currency" class="col-lg-3 col-form-label-lg">Currency</label>
@@ -92,6 +92,8 @@
                             </div> --}}
 
                             <input id="voucher" type="hidden" name="voucher" value="{{ $DetailRealization->budget_voucher }}"/>
+                            <input type="hidden" name="tax" value="{{ $PaymentTo->TAX }}">
+                            <input type="hidden" name="vat" value="{{ $PaymentTo->VAT }}">
                         </div>
                     </div>
                 </div>
@@ -168,11 +170,20 @@
     var search_budget_url = '{{ route("utils.search_budget_by_policy_no_and_broker_name") }}';
     var broker_name = '{{ $BrokerName }}';
 
+    var RealizationDataId = `{{ $RealizationData->ID }}`;
+
     $(document).ready(function(){
         $('#start_date, #end_date, #date_of_premium_paid').datepicker({
             format: 'dd M yy',
             autoclose: true,
             todayHighlight: true,
+        });
+
+        $(window).keydown(function(event){
+            if(event.keyCode == 13) {
+                event.preventDefault();
+                return false;
+            }
         });
     });
 
@@ -182,7 +193,8 @@
                 url: search_budget_url,
                 data: {
                     keywords: req.term,
-                    broker_name: broker_name
+                    broker_name: `${broker_name}`,
+                    RealizationDataId: RealizationDataId
                 },
                 success: function( data ) {
                     res($.map(data, function (item) {
@@ -228,12 +240,32 @@
         let remain_budget = $('#remain_budget').val();
         let budget_in_amount = $('#budget_in_amount').val();
         let total_amount_realization = 0;
+        let vat = `{{ $PaymentTo->VAT }}`;
+        let tax = `{{ $PaymentTo->TAX }}`;
+        let lob = `{{ $PaymentTo->LOB }}`;
+
+        let total_vat = 0;
+        let total_tax = 0;
 
         remain_budget = clear_number_format(remain_budget);
         amount_realization = clear_number_format(amount_realization);
         exchange_rate = clear_number_format(exchange_rate);
 
         total_amount_realization = amount_realization * exchange_rate;
+
+        if( lob == '02' ){
+            vat = (vat / 100) * 0.2
+        }else{
+            vat = vat / 100;
+        }
+
+        tax = (tax / 100);
+
+        total_vat = total_amount_realization * vat;
+        
+        total_tax = total_amount_realization * tax;
+
+        total_amount_realization = (total_amount_realization - total_tax) + total_vat;
 
         if( total_amount_realization > remain_budget ) {
             swal(

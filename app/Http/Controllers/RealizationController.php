@@ -41,16 +41,17 @@ class RealizationController extends Controller
         $Action = [];
         if( $RealizationData != null ){
             foreach( $RealizationData as $key => $val ) {
+                $invoice_no = str_replace('/', '-', $val->Invoice_No);
                 switch ($AuthUserGroup) {
                     case GroupCodeApplication::USER_RMFEE:
                         switch ( $val->Status_Realization ) {
                             case RealizationStatus::DRAFT:
                                 $Action[$key] = "
-                                    <a name='propose' class='dropdown-item success' href='".route('realization.propose', $val->Invoice_No)."'>
+                                    <a name='propose' class='dropdown-item success' href='".route('realization.propose', $invoice_no)."'>
                                         <i class='feather icon-check'></i>
                                         Propose
                                     </a>
-                                    <a name='propose' class='dropdown-item success' href='".route('realization.edit', $val->Invoice_No)."'>
+                                    <a name='propose' class='dropdown-item success' href='".route('realization.edit', $invoice_no)."'>
                                         <i class='feather icon-edit-2'></i>
                                         Edit
                                     </a>
@@ -173,8 +174,9 @@ class RealizationController extends Controller
         return $redirect;
     }
 
-    public function edit($invoice_no){
-        $RealizationData = Realization::GetRealization($invoice_no)[0];
+    public function edit($invoice_no ){
+        $invoice_no_real = str_replace('-', '/', $invoice_no);
+        $RealizationData = Realization::GetRealization($invoice_no_real)[0];
         $Currencies = Utils::GetCurrencies();
         $BrokerData = null;
         $PaymentToData = null;
@@ -209,22 +211,22 @@ class RealizationController extends Controller
 
         // dd($RealizationData);   
 
-        return view('pages.realization.edit', compact('RealizationData', 'Currencies', 'TypeOfInvoice', 'TypeOfPayment', 'BrokerData', 'PaymentToData', 'TotalAmountRealized', 'TotalAmountRealization'));
+        return view('pages.realization.edit', compact('RealizationData', 'Currencies', 'TypeOfInvoice', 'TypeOfPayment', 'BrokerData', 'PaymentToData', 'TotalAmountRealized', 'TotalAmountRealization', 'invoice_no'));
     }
 
-    public function update(Request $request){
+    public function update(Request $request, $InvoiceNumber){
         $action = $request->action;
         switch ($action) {
             case 'add_detail':
-                Realization::UpdateRealizationGroup($request, null, RealizationStatus::DRAFT);
-                $redirect = redirect()->route('realization.detail-realization.index', $request->invoice_no);
+                Realization::UpdateRealizationGroup($request, $InvoiceNumber, RealizationStatus::DRAFT);
+                $redirect = redirect()->route('realization.detail-realization.index', $InvoiceNumber);
                 break;
             case 'save':
-                Realization::UpdateRealizationGroup($request, null, RealizationStatus::DRAFT);
+                Realization::UpdateRealizationGroup($request, $InvoiceNumber, RealizationStatus::DRAFT);
                 $redirect = redirect()->route('realization.index');
                 break;
             case 'propose':
-                Realization::UpdateRealizationGroup($request, null, RealizationStatus::WAITING_APPROVAL_BU);
+                Realization::UpdateRealizationGroup($request, $InvoiceNumber, RealizationStatus::WAITING_APPROVAL_BU);
                 $redirect = redirect()->route('realization.index');
                 break;
             default:
@@ -292,21 +294,29 @@ class RealizationController extends Controller
                             return redirect()->back()->withErrors('You Have an Overlimit Budget inside this Invoice. <strong>'.$invoice_no.'</strong>');
                         }
                         $StatusRealisasi = RealizationStatus::APPROVED_BY_FINANCE;
-                        $InsertEpo = Realization::InsertEpo($RealizationData);
-                        if( !$InsertEpo['status'] ){
-                            return redirect()->back()->withErrors($InsertEpo['message']);
+
+                        // TODO IF OFFSET TIDAK PERLU INSERT EPO. HANYA REIMBURSE.
+                        $UserSetting = ReportGenerator_UserSetting::where('UserID', $RealizationData->CreatedBy)->first();
+                        if( $UserSetting->Type_Of_Payment == 'Reimbursement' ){
+                            $InsertEpo = Realization::InsertEpo($RealizationData);
+                            if( !$InsertEpo['status'] ){
+                                return redirect()->back()->withErrors($InsertEpo['message']);
+                            }
                         }
-                        
+
                         $PID = Epo_PO_Header::orderBy('PID', 'Desc')->value('PID');
                         Realization::UpdateRealizationGroupEpo($invoice_no, $PID);
 
-                        ReportGenerator_LogEmailEpo::create([
-                            'PID' => $PID,
-                            'Realisasi_ID' => $RealizationData->ID,
-                            'Email_To' => Utils::GetEmailEpo(),
-                            'Date' => date('Y-m-d', strtotime(now())),
-                            'Time' => date('H:i:s', strtotime(now()))
-                        ]);
+                        $LogEmailEpo = ReportGenerator_LogEmailEpo::where('PID', $PID)->count();
+                        if( $LogEmailEpo == 0 ){
+                            ReportGenerator_LogEmailEpo::create([
+                                'PID' => $PID,
+                                'Realisasi_ID' => $RealizationData->ID,
+                                'Email_To' => Utils::GetEmailEpo(),
+                                'Date' => date('Y-m-d', strtotime(now())),
+                                'Time' => date('H:i:s', strtotime(now()))
+                            ]);
+                        }
                         
                     } catch (Exception $e) {
                         Log::error('Error while saving log email epo. Exception = ' . $e->getMessage());

@@ -79,10 +79,12 @@ class BudgetController extends Controller
         return redirect()->route('budget.archive-list')->with('noticication', 'Voucher <b>'.$RedirectVoucher.'</b> Successfully UnArchived');
     }
 
-    public function reject($voucher){
+    public function reject($voucher, Request $request){
+        $message = $request->comment;
         $RedirectVoucher = str_replace('-', '/', $voucher);
         Budget::UpdateBudgetOnlyStatus('reject', $voucher, null);
-        Logger::SaveLog($voucher, 'Rejected');
+        $message = $message != null ? ' | '.$message : null;
+        Logger::SaveLog($voucher, 'Rejected', $message);
         return redirect()->route('budget.list')->with('noticication', 'Voucher <b>'.$RedirectVoucher.'</b> Successfully Rejected');
     }
 
@@ -91,6 +93,13 @@ class BudgetController extends Controller
         Budget::UpdateBudgetOnlyStatus('approve', $voucher, null);
         Logger::SaveLog($voucher, 'Approved');
         return redirect()->route('budget.list')->with('noticication', 'Voucher <b>'.$RedirectVoucher.'</b> Successfully Approved');
+    }
+
+    public function undo_approve($voucher){
+        $RedirectVoucher = str_replace('-', '/', $voucher);
+        Budget::UpdateBudgetOnlyStatus('undo_approve', $voucher, null);
+        Logger::SaveLog($voucher, 'Undo Approved');
+        return redirect()->route('budget.list')->with('noticication', 'Voucher <b>'.$RedirectVoucher.'</b> Successfully Undo Approved');
     }
 
     public function BudgetDataTable(Request $request){
@@ -127,7 +136,7 @@ class BudgetController extends Controller
                 }
 
                 if( $BtnShowHide['BtnUndoApproval'] ){
-                    $BtnUndoApproval = "<a class='dropdown-item success' href='#'><i class='feather icon-delete'></i>Undro Approval</a>";
+                    $BtnUndoApproval = "<a class='dropdown-item danger' href='".route('budget.undo_approve', [$Voucher])."'><i class='feather icon-delete'></i>Undo Approval</a>";
                 }
 
                 if( $BtnShowHide['BtnEdit'] ){
@@ -150,7 +159,8 @@ class BudgetController extends Controller
                 }
 
                 if( $BtnShowHide['BtnReject'] ){
-                    $BtnReject = "<a class='dropdown-item danger' href=".route('budget.reject', $Voucher)." data-toggle='modal'data-target='#ModalReject'><i class='feather icon-x-circle'></i>Reject</a>";
+                    // $BtnReject = "<a class='dropdown-item danger' id='RejectModal' href=".route('budget.reject', $Voucher)." data-toggle='modal'data-target='#ModalReject' data-voucher='$Voucher'><i class='feather icon-x-circle'></i>Reject</a>";
+                    $BtnReject = "<a class='dropdown-item danger' id='RejectModal' data-voucher='$Voucher'><i class='feather icon-x-circle'></i>Reject</a>";
                 }
 
                 if( $BtnShowHide['BtnArchive'] ){
@@ -167,10 +177,12 @@ class BudgetController extends Controller
                 return $BtnAction;
             })
             ->editColumn('Start_Date', function($row){
-                return date('Y-m-d', strtotime($row->Start_Date));
+                // return date('Y-m-d', strtotime($row->Start_Date));
+                return date('d-M-Y', strtotime($row->Start_Date));
             })
             ->editColumn('End_Date', function($row){
-                return date('Y-m-d', strtotime($row->End_Date));
+                // return date('Y-m-d', strtotime($row->End_Date));
+                return date('d-M-Y', strtotime($row->End_Date));
             })
             ->editColumn('LGI_PREMIUM', function($row){
                 return number_format($row->LGI_PREMIUM);
@@ -192,7 +204,8 @@ class BudgetController extends Controller
                 return number_format($row->PAYMENT);
             })
             ->editColumn('PAYMENT_DATE', function($row){
-                return date('Y-m-d', strtotime($row->PAYMENT_DATE));
+                // return date('Y-m-d', strtotime($row->PAYMENT_DATE));
+                return date('d-M-Y', strtotime($row->PAYMENT_DATE));
             })
             ->editColumn('Budget', function($row){
                 return number_format($row->Budget);
@@ -225,6 +238,10 @@ class BudgetController extends Controller
                     </div>'; 
                 } else if ( $row->STATUS_BUDGET == BudgetStatus::APPROVED ){
                     return '<div class="badge badge-pill badge-success" style="font-size: 16px;">
+                        <li>'.$row->STATUS_BUDGET.'</li>
+                    </div>'; 
+                } else if ( $row->STATUS_BUDGET == BudgetStatus::REJECTED ){
+                    return '<div class="badge badge-pill badge-danger" style="font-size: 16px;">
                         <li>'.$row->STATUS_BUDGET.'</li>
                     </div>'; 
                 }

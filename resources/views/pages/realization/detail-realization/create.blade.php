@@ -159,6 +159,8 @@
                 </div>
             </div>
             <input type="hidden" name="invoice_no" value="{{ $RealizationData->Invoice_No }}">
+            <input type="hidden" name="tax" value="{{ $PaymentTo->TAX }}">
+            <input type="hidden" name="vat" value="{{ $PaymentTo->VAT }}">
         </form>
     </div>
 </div>
@@ -167,13 +169,22 @@
 @section('script')
     <script>
         var search_budget_url = '{{ route("utils.search_budget_by_policy_no_and_broker_name") }}';
-        var broker_name = '{{ $BrokerName }}';
+        var broker_name = '{!! $BrokerName !!}';
+        
+        var RealizationDataId = `{{ $RealizationData->ID }}`;
 
         $(document).ready(function(){
             $('#start_date, #end_date, #date_of_premium_paid').datepicker({
                 format: 'dd M yy',
                 autoclose: true,
                 todayHighlight: true,
+            });
+
+            $(window).keydown(function(event){
+                if(event.keyCode == 13) {
+                    event.preventDefault();
+                    return false;
+                }
             });
         });
 
@@ -183,7 +194,8 @@
                     url: search_budget_url,
                     data: {
                         keywords: req.term,
-                        broker_name: broker_name
+                        broker_name: `${broker_name}`,
+                        RealizationDataId: RealizationDataId
                     },
                     success: function( data ) {
                         console.log(data);
@@ -230,14 +242,34 @@
             let remain_budget = $('#remain_budget').val();
             let budget_in_amount = $('#budget_in_amount').val();
             let total_amount_realization = 0;
+            let vat = `{{ $PaymentTo->VAT }}`;
+            let tax = `{{ $PaymentTo->TAX }}`;
+            let lob = `{{ $PaymentTo->LOB }}`;
 
-            budget_in_amount = clear_number_format(budget_in_amount);
+            let total_vat = 0;
+            let total_tax = 0;
+
+            remain_budget = clear_number_format(remain_budget);
             amount_realization = clear_number_format(amount_realization);
             exchange_rate = clear_number_format(exchange_rate);
 
             total_amount_realization = amount_realization * exchange_rate;
 
-            if( total_amount_realization > budget_in_amount ) {
+            if( lob == '02' ){
+                vat = (vat / 100) * 0.2
+            }else{
+                vat = vat / 100;
+            }
+
+            tax = (tax / 100);
+
+            total_vat = total_amount_realization * vat;
+            
+            total_tax = total_amount_realization * tax;
+
+            total_amount_realization = (total_amount_realization - total_tax) + total_vat;
+
+            if( total_amount_realization > remain_budget ) {
                 swal(
                     'Whoops!',
                     `Total Amount Realization Exceeding Remain Budget.`,

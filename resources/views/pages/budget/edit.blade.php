@@ -28,7 +28,7 @@
                                     <label for="broker_name" class="col-lg-3 col-form-label-lg">Broker Name</label>
                                     <label class="col-lg-1 col-form-label-lg">:</label>
                                     <input type="text" name="broker_name" id="broker_name" class="form-control col-lg-8"
-                                        placeholder="Broker Name" value={{ $BrokerName }}" readonly>
+                                        placeholder="Broker Name" value="{{ $BrokerName }}" readonly>
                                 </div>
                                 <div class="form-group row">
                                     <label for="policy_no" class="col-lg-3 col-form-label-lg">Policy Number</label>
@@ -120,16 +120,19 @@
                                         placeholder="Document" value="">
                                     @if( $Budget->Document_Path != '' )
                                     <a href="{{ $Budget->Document_Path != '' ? asset($Budget->Document_Path) : 'javascript:;' }}" class="col-lg-2" target="_blank" download="">
-                                        Download
+                                        {{-- Download --}}
+                                        {{-- UNTUK NAMA FILE di explode('images/Realization/Invoice/', $Budget->Document_Path)[1] aja. --}}
+                                        <i class='feather icon-download' style="font-size: 24px;"></i>
                                     </a>
                                     @endif
                                 </div>
                                 <div class="form-group row">
-                                    <label for="proposed_to" class="col-lg-3 col-form-label-lg">Proposed to</label>
+                                    <label for="proposed_to_display" class="col-lg-3 col-form-label-lg">Proposed to</label>
                                     <label class="col-lg-1 col-form-label-lg">:</label>
-                                    <input type="text" name="proposed_to" id="proposed_to"
-                                        class="form-control col-lg-8" placeholder="Proposed to" value="{{ Auth()->user()->getUserSetting->Approval_BU_UserID }}" readonly>
+                                    <input type="text" name="proposed_to_display" id="proposed_to_display"
+                                        class="form-control col-lg-8" placeholder="Proposed to" value="{{ Auth()->user()->getUserSetting->Approval_BU_UserID }} - {{ Auth()->user()->getUserSetting->getApprovalBUName() }}" readonly>
                                         {{-- 2021044216 --}}
+                                    <input type="hidden" name="proposed_to" id="proposed_to" value="{{ Auth()->user()->getUserSetting->Approval_BU_UserID }}">
                                 </div>
 
                                 {{-- !Buttons --}}
