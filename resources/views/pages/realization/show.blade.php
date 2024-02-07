@@ -146,16 +146,31 @@
                         </div>
                         <hr />
                         <div class="card-body">
+                            {{-- Display --}}
                             <div class="form-group row">
+                                <label for="approval_bu_display" class="col-lg-3 col-form-label-lg">Approval BU</label>
+                                <label class="col-lg-1 col-form-label-lg">:</label>
+                                <input type="text" name="approval_bu_display" id="approval_bu_display" class="form-control col-lg-8" placeholder="Approval BU" value="{{ $ApprovalBU }} - {{ $ApprovalBUName }}" readonly>
+                            </div>
+                            {{-- Save --}}
+                            <div class="form-group row" style="display: none;">
                                 <label for="approval_bu" class="col-lg-3 col-form-label-lg">Approval BU</label>
                                 <label class="col-lg-1 col-form-label-lg">:</label>
                                 <input type="text" name="approval_bu" id="approval_bu" class="form-control col-lg-8" placeholder="Approval BU" value="{{ $ApprovalBU }}" readonly>
                             </div>
+                            {{-- Display --}}
                             <div class="form-group row">
+                                <label for="approval_finance_display" class="col-lg-3 col-form-label-lg">Approval Finance</label>
+                                <label class="col-lg-1 col-form-label-lg">:</label>
+                                <input type="text" name="approval_finance_display" id="approval_finance_display" class="form-control col-lg-8" placeholder="Approval Finance" value="{{ $ApprovalFinance }} - {{ $ApprovalFinanceName }}" readonly>
+                            </div>
+                            {{-- Save --}}
+                            <div class="form-group row" style="display: none;">
                                 <label for="approval_finance" class="col-lg-3 col-form-label-lg">Approval Finance</label>
                                 <label class="col-lg-1 col-form-label-lg">:</label>
                                 <input type="text" name="approval_finance" id="approval_finance" class="form-control col-lg-8" placeholder="Approval Finance" value="{{ $ApprovalFinance }}" readonly>
                             </div>
+
                             <div class="form-group row">
                                 <label for="epo_checker" class="col-lg-3 col-form-label-lg">EPO Checker</label>
                                 <label class="col-lg-1 col-form-label-lg">:</label>
