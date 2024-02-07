@@ -38,10 +38,11 @@ class BudgetController extends Controller
     }
 
     public function edit($voucher, $archived = 0){
+        $voucher = str_replace('~', '/', $voucher);
         $Budget = Budget::GetBudget($voucher, $archived);
         $Logs = Logger::GetLog($voucher);
         $BudgetInAmount = ($Budget->Budget/100) * $Budget->LGI_PREMIUM;
-        $VoucherId = str_replace("/", "-", $Budget->VOUCHER);
+        $VoucherId = str_replace("/", "~", $Budget->VOUCHER);
         $BrokerId = explode('-', $Budget->BROKERNAME, 2)[0];
         $BrokerName = explode('-', $Budget->BROKERNAME, 2)[1];
         return view('pages.budget.edit', compact('Budget', 'BudgetInAmount', 'VoucherId', 'BrokerName', 'BrokerId', 'Logs'));
