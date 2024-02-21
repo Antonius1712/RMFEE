@@ -126,6 +126,7 @@
                                     </a>
                                     @endif
                                 </div>
+                                {{-- {{ dd( Auth()->user()->getUserSetting ) }} --}}
                                 <div class="form-group row">
                                     <label for="proposed_to_display" class="col-lg-3 col-form-label-lg">Proposed to</label>
                                     <label class="col-lg-1 col-form-label-lg">:</label>

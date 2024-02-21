@@ -36,6 +36,7 @@ class RealizationController extends Controller
 
     public function index(){
         $RealizationData = Realization::GetRealization();
+        // dd($RealizationData);
         $AuthUserGroup = Auth()->user()->getUserGroup->GroupCode;
         
         $Action = [];

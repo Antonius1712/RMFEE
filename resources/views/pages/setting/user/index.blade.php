@@ -7,6 +7,21 @@
                 Tambah
             </a>
         </div>
+
+        <div class="col-12 mt-2">
+            @foreach ($errors->all() as $error)
+                <div class="alert alert-danger text-center">
+                    *{!! $error !!}
+                </div>
+            @endforeach
+
+            @if( session()->has('noticication') )
+            <div class="alert alert-success text-center">
+                {!! session()->get('noticication') !!}
+            </div>
+            @endif
+        </div>
+
         <div class="col-12 mt-2">
             <div class="card">
                 <div class="card-body">
@@ -28,9 +43,18 @@
                             @foreach ($UserSettings as $val)
                                 <tr>
                                     <td>
-                                        <a href="{{ route('setting.user.edit', $val->UserID) }}">
-                                            <i class="feather icon-edit"></i>
-                                        </a>    
+                                        <a href="{{ route('setting.user.edit', $val->UserID) }}" class="btn btn-primary btn-sm mb-2">
+                                            <i class="feather icon-edit-2"></i>
+                                        </a>  
+                                        <form action="{{ route('setting.user.delete', $val->UserID) }}" method="post" class="form-delete-setting-user">
+                                            {{ csrf_field() }}
+                                            {{-- <a id="btn-delete" href="{{ route('setting.user.delete', $val->UserID) }}">
+                                                <i class="feather icon-trash"></i>
+                                            </a> --}}
+                                            <button type="submit" id="btn-delete" class="btn btn-danger btn-sm">
+                                                <i class="feather icon-trash-2"></i>    
+                                            </button>    
+                                        </form>    
                                     </td>
                                     <td>{{ $val->UserID }}</td>
                                     <td>{{ $val->UserName }}</td>
@@ -48,4 +72,27 @@
             </div>
         </div>
     </div>
+@endsection
+@section('script')
+<script>
+    $('body').on('click', '#btn-delete', function(e) {
+        e.preventDefault();
+        let thisForm = $(this).parent();
+        // console.log(thisForm);
+        swal({
+            title: 'Are you sure?',
+            text: 'You will not be able to recover this data',
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: true,
+            confirmButtonColor: '#DD6B55',
+            confirmButtonText: 'Yes, I am sure!',
+            cancelButtonText: "No, cancel it!",
+        }).then(function(isConfirm){
+            if( isConfirm.value == true ){
+                thisForm.submit();
+            }
+        });
+    });
+</script>
 @endsection

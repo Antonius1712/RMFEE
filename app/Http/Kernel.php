@@ -4,6 +4,7 @@ namespace App\Http;
 
 use App\Http\Middleware\BreadCrumbs;
 use App\Http\Middleware\HeadAccess;
+use App\Http\Middleware\Secret;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
 class Kernel extends HttpKernel
@@ -61,5 +62,6 @@ class Kernel extends HttpKernel
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'breadcrumbs' => \App\Http\Middleware\BreadCrumbs::class,
         'head.access' => HeadAccess::class,
+        'secret' => Secret::class,
     ];
 }

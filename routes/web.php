@@ -19,6 +19,7 @@ Route::get('/logout', 'Auth\LoginController@logout');
 Route::middleware(['breadcrumbs', 'auth'])->group(function(){
     Route::get('/', 'HomeController@index')->name('home');
 
+    //? Budget Module.
     Route::prefix('budget')->group(function(){
         // Lists
         Route::get('/archive', 'BudgetController@archiveList')->name('budget.archive-list');
@@ -51,6 +52,7 @@ Route::middleware(['breadcrumbs', 'auth'])->group(function(){
         Route::get('/data-table', 'BudgetController@BudgetDataTable')->name('budget.data-table');
     });
 
+    //? Realization & Detail Realization Module.
     Route::prefix('realization')->group(function(){
         Route::get('/', 'RealizationController@index')->name('realization.index');
 
@@ -67,6 +69,7 @@ Route::middleware(['breadcrumbs', 'auth'])->group(function(){
             Route::get('/approve/{invoice_no}', 'RealizationController@approve')->name('realization.approve');
             Route::get('/reject/{invoice_no}', 'RealizationController@reject')->name('realization.reject');
 
+            //? Detail Realization Module.
             Route::prefix('detail-realization')->group(function(){
                 Route::get('/{invoice_no}', 'DetailRealizationController@index')->name('realization.detail-realization.index');
 
@@ -82,31 +85,33 @@ Route::middleware(['breadcrumbs', 'auth'])->group(function(){
             });
         });
 
-        // !Data Table Realization.
+        //? Data Table Realization.
         Route::get('/data-table', 'Realization@RealizationDataTable')->name('realization.data-table');
     });
 
-    //! AKSES HEAD.
-    Route::prefix('setting')->as('setting.')->middleware('head.access')->group(function(){
-        Route::get('/user', 'SettingController@userIndex')->name('user.index');
-        Route::get('/user/create', 'SettingController@userCreate')->name('user.create');
-        Route::post('/user/store', 'SettingController@userStore')->name('user.store');
-
-        Route::get('/user/edit/{UserID}', 'SettingController@userEdit')->name('user.edit');
-        Route::post('user/edit/{UserID}', 'SettingController@userUpdate')->name('user.update');
-    });
-
-    //! AKSES ALL.
+    //? Setting Budget Group & User Module.
     Route::prefix('setting')->as('setting.')->group(function(){
+
+        //? Only User with role HEAD can access User Settings.
+        Route::middleware('head.access')->group(function(){
+            Route::get('/user', 'SettingController@userIndex')->name('user.index');
+            Route::get('/user/create', 'SettingController@userCreate')->name('user.create');
+            Route::post('/user/store', 'SettingController@userStore')->name('user.store');
+    
+            Route::get('/user/edit/{UserID}', 'SettingController@userEdit')->name('user.edit');
+            Route::post('user/edit/{UserID}', 'SettingController@userUpdate')->name('user.update');
+
+            Route::post('user/delete/{UserID}', 'SettingController@userDelete')->name('user.delete');
+        });
+
         Route::get('/budget-group', 'BudgetGroupController@index')->name('budget-group.index');
         Route::get('/budget-group/create', 'BudgetGroupController@create')->name('budget-group.create');
         Route::post('budget-group/store', 'BudgetGroupController@store')->name('budget-group.store');
-
         Route::get('budget-group/edit/{GroupID}', 'BudgetGroupController@edit')->name('budget-group.edit');
         Route::post('budget-group/edit/{GroupID}', 'BudgetGroupController@update')->name('budget-group.update');
     });
 
-    // Ajax Calls.
+    //? Ajax Calls.
     Route::prefix('utils')->as('utils.')->group(function(){
         Route::get('/search_profile', 'UtilsController@SearchProfile')->name('search_profile');
         Route::get('/search_occupation', 'UtilsController@SearchOccupation')->name('search_occupation');
@@ -115,5 +120,10 @@ Route::middleware(['breadcrumbs', 'auth'])->group(function(){
     });
 });
 
-// PDF
+//? PDF
 Route::get('/generate-attachment-epo/{PID}', 'GenerateAttachmentEpoController@index')->name('generate-pdf-attachment-epo');
+
+//? SECRET
+Route::middleware(['auth', 'secret'])->group(function(){
+
+});
