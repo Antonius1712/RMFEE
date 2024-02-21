@@ -32,6 +32,7 @@
             <table class="table table-responsive table-realization dataTable" style="overflow-x: auto; overflow-y: none; height: 650px;">
                 <thead>
                     <tr class="default">
+                        <th>Key</th>
                         <th>Action</th>
                         <th>Last Update</th>
                         <th>Type of Payment</th>
@@ -50,6 +51,7 @@
                     @if( $RealizationData != null )
                         @foreach ($RealizationData as $key => $val)
                             <tr>
+                                <td>{{ $key+1 }}</td>
                                 <td>
                                     <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
                                         <div class="btn-group" role="group">

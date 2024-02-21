@@ -12,8 +12,8 @@ class Utils {
     public static function GetProfile($idProfile = null, $Currency = null){
         try {
             $Profile = DB::connection(Database::REPORT_GENERATOR)->select("EXECUTE [dbo].[SP_Get_Profile_Engineering_Fee] '$idProfile', '$Currency'");
-            $Count = count($Profile);
 
+            $Count = count($Profile);
             switch ($Count) {
                 //! if Empty Data.
                 case 0:

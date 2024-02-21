@@ -36,6 +36,7 @@ class RealizationController extends Controller
 
     public function index(){
         $RealizationData = Realization::GetRealization();
+        // dd($RealizationData);
         $AuthUserGroup = Auth()->user()->getUserGroup->GroupCode;
         
         $Action = [];
@@ -175,7 +176,7 @@ class RealizationController extends Controller
     }
 
     public function edit($invoice_no ){
-        $invoice_no_real = str_replace('-', '/', $invoice_no);
+        $invoice_no_real = str_replace('~', '/', $invoice_no);
         $RealizationData = Realization::GetRealization($invoice_no_real)[0];
         $Currencies = Utils::GetCurrencies();
         $BrokerData = null;
@@ -190,6 +191,13 @@ class RealizationController extends Controller
         $TypeOfInvoice = $this->TypeOfInvoice;
         $TypeOfPayment = $this->TypeOfPayment;
         // dd($RealizationData, $Currencies, $TypeOfInvoice, $TypeOfPayment, $BrokerData, $PaymentToData);
+
+        $UserSetting = ReportGenerator_UserSetting::where('UserID', $RealizationData->CreatedBy)->first();
+        $ApprovalBU = $UserSetting->Approval_BU_UserID;
+        $ApprovalBUName = $UserSetting->getApprovalBUName();
+
+        $ApprovalFinance = $UserSetting->Approval_Finance_UserID;
+        $ApprovalFinanceName = $UserSetting->getApprovalFinanceName();
 
         $TotalAmountRealization = 0;
         $TotalRealizationRMF = 0;
@@ -211,7 +219,7 @@ class RealizationController extends Controller
 
         // dd($RealizationData);   
 
-        return view('pages.realization.edit', compact('RealizationData', 'Currencies', 'TypeOfInvoice', 'TypeOfPayment', 'BrokerData', 'PaymentToData', 'TotalAmountRealized', 'TotalAmountRealization', 'invoice_no'));
+        return view('pages.realization.edit', compact('RealizationData', 'Currencies', 'TypeOfInvoice', 'TypeOfPayment', 'BrokerData', 'PaymentToData', 'TotalAmountRealized', 'TotalAmountRealization', 'invoice_no', 'ApprovalBU', 'ApprovalBUName', 'ApprovalFinance', 'ApprovalFinanceName'));
     }
 
     public function update(Request $request, $InvoiceNumber){
@@ -243,14 +251,15 @@ class RealizationController extends Controller
         $BrokerData = null;
         $PaymentToData = null;
         if( isset($RealizationData->Broker_ID) && $RealizationData->Broker_ID != null ){
+            // $BrokerData = Utils::GetProfile($RealizationData->Broker_ID, $RealizationData->Currency);
             $BrokerData = Utils::GetProfile($RealizationData->Broker_ID, $RealizationData->Currency);
         }
+
+        // dd($BrokerData, $RealizationData);
 
         if( isset($RealizationData->Payment_To_ID) && $RealizationData->Payment_To_ID != null ){
             $PaymentToData = Utils::GetProfile($RealizationData->Payment_To_ID, $RealizationData->Currency);
         }
-
-        // dd($BrokerData, $RealizationData, $RealizationData);
 
         $UserSetting = ReportGenerator_UserSetting::where('UserID', $RealizationData->CreatedBy)->first();
 
@@ -258,7 +267,11 @@ class RealizationController extends Controller
         $TypeOfInvoice = $this->TypeOfInvoice;
         $TypeOfPayment = $UserSetting->Type_Of_Payment;
         $ApprovalBU = $UserSetting->Approval_BU_UserID;
+        $ApprovalBUName = $UserSetting->getApprovalBUName();
+
         $ApprovalFinance = $UserSetting->Approval_Finance_UserID;
+        $ApprovalFinanceName = $UserSetting->getApprovalFinanceName();
+
         $EpoChecker = $UserSetting->CheckerID_ePO;
         $EpoApproval = $UserSetting->ApprovalID_ePO;
 
@@ -276,7 +289,7 @@ class RealizationController extends Controller
             }
         }
 
-        return view('pages.realization.show', compact('RealizationData', 'Currencies', 'TypeOfInvoice', 'TypeOfPayment', 'BrokerData', 'PaymentToData', 'TotalAmountRealization', 'TotalRealizationRMF', 'TotalRealizationSponsorship', 'ApprovalBU', 'ApprovalFinance', 'EpoChecker', 'EpoApproval'));
+        return view('pages.realization.show', compact('RealizationData', 'Currencies', 'TypeOfInvoice', 'TypeOfPayment', 'BrokerData', 'PaymentToData', 'TotalAmountRealization', 'TotalRealizationRMF', 'TotalRealizationSponsorship', 'ApprovalBU', 'ApprovalBUName', 'ApprovalFinance', 'ApprovalFinanceName', 'EpoChecker', 'EpoApproval'));
     }
 
     public function approve($invoice_no){
