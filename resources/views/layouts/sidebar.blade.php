@@ -4,7 +4,7 @@
             <li class="nav-item mr-auto">
                 <a class="navbar-brand" href="{{ Route('home') }}">
                     <i class="fa fa-balance-scale"></i>
-                    <h2 class="brand-text mb-0">Engineering Fee</h2>
+                    <h2 class="brand-text mb-0">Budget Fee</h2>
                 </a>
             </li>
             <li class="nav-item nav-toggle">

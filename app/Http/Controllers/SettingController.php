@@ -31,7 +31,7 @@ class SettingController extends Controller
 
     public function userStore(SettingUserRequest $request){
         try {
-            $CountUserSetting = ReportGenerator_UserSetting::where('UserID', $request->nik)->count();
+            $CountUserSetting = ReportGenerator_UserSetting::where('UserID', $request->nik)->where('isDeleted', 0)->count();
             if( $CountUserSetting > 0 ){
                 return redirect()->back()->withErrors("There's an existing setting for this user.");
             }
@@ -63,6 +63,15 @@ class SettingController extends Controller
             return redirect()->route('setting.user.index');
         } catch (Exception $e) {
             return redirect()->back()->withErrors('Error while update user setting on UserID = '.$UserId.'. please contact administrator.');
+        }
+    }
+
+    public function userDelete($UserId){
+        try {
+            Setting::DeleteUserSetting($UserId);
+            return redirect()->route('setting.user.index')->with('noticication', 'Success Delete Settings for '.$UserId);
+        } catch (Exception $e) {
+            return redirect()->back()->withErrors('Error while delete user setting on UserID = '.$UserId.'. please contact administrator.');
         }
     }
 }
