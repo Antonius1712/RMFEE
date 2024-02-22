@@ -92,7 +92,10 @@ class Setting {
             $CheckerID_ePO = $request->checker_id_epo;
             $ApprovalID_ePO = $request->approval_id_epo;
 
-            return DB::connection(Database::REPORT_GENERATOR)->statement("EXECUTE [dbo].[SP_Insert_User_Setting_Engineering_Fee] '$UserId', '$Type_Of_Payment', '$Approval_BU_UserID', '$Approval_Finance_UserID', '$UserID_ePO', '$CheckerID_ePO', '$ApprovalID_ePO'");
+            $CreatedBy = Auth()->user()->UserId;
+            $LastCreate = now()->format('Y-m-d');
+
+            return DB::connection(Database::REPORT_GENERATOR)->statement("EXECUTE [dbo].[SP_Insert_User_Setting_Engineering_Fee] '$UserId', '$Type_Of_Payment', '$Approval_BU_UserID', '$Approval_Finance_UserID', '$UserID_ePO', '$CheckerID_ePO', '$ApprovalID_ePO', 0, '$CreatedBy', '$LastCreate', null, null");
         } catch (Exception $e) {
             Log::error('Error while save user setting. Exception = '.$e->getMessage());
         }
@@ -108,7 +111,10 @@ class Setting {
             $CheckerID_ePO = $request->checker_id_epo;
             $ApprovalID_ePO = $request->approval_id_epo;
 
-            return DB::connection(Database::REPORT_GENERATOR)->statement("EXECUTE [dbo].[SP_Update_User_Setting_Engineering_Fee] '$UserId', '$Type_Of_Payment', '$Approval_BU_UserID', '$Approval_Finance_UserID', '$UserID_ePO', '$CheckerID_ePO', '$ApprovalID_ePO'");
+            $UpdatedBy = Auth()->user()->UserId;
+            $LastUpdate = now()->format('Y-m-d');
+
+            return DB::connection(Database::REPORT_GENERATOR)->statement("EXECUTE [dbo].[SP_Update_User_Setting_Engineering_Fee] '$UserId', '$Type_Of_Payment', '$Approval_BU_UserID', '$Approval_Finance_UserID', '$UserID_ePO', '$CheckerID_ePO', '$ApprovalID_ePO', 0, null, null, '$UpdatedBy', '$LastUpdate'");
         } catch (Exception $e) {
             Log::error('Error while save user setting. Exception = '.$e->getMessage());
         }
