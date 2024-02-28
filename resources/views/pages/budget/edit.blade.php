@@ -53,14 +53,14 @@
                                         Code</label>
                                     <label class="col-lg-1 col-form-label-lg">:</label>
                                     <input type="text" name="occupation_code" id="occupation_code"
-                                        class="form-control col-lg-8" placeholder="Occupation Code" value="{{ $Budget->CLASS == '01-PROPERTY' && $Budget->OCCUPATION != 'Fleet' ? explode(' - ', $Budget->OCCUPATION)[0] : $Budget->OCCUPATION }}" readonly>
+                                        class="form-control col-lg-8" placeholder="Occupation Code" value="{{ $Budget->OCCUPATION != '' ? ($Budget->CLASS == '01-PROPERTY' && $Budget->OCCUPATION != 'Fleet' ? explode(' - ', $Budget->OCCUPATION)[0] : $Budget->OCCUPATION) : '' }}" readonly>
                                 </div>
                                 <div class="form-group row">
                                     <label for="occupation_description" class="col-lg-3 col-form-label-lg">Occupation
                                         Description</label>
                                     <label class="col-lg-1 col-form-label-lg">:</label>
                                     <input type="text" name="occupation_description" id="occupation_description"
-                                        class="form-control col-lg-8" placeholder="Occupation Description" value="{{ $Budget->CLASS == '01-PROPERTY' && $Budget->OCCUPATION != 'Fleet' ? explode(' - ', $Budget->OCCUPATION)[1] : $Budget->OCCUPATION }}" readonly>
+                                        class="form-control col-lg-8" placeholder="Occupation Description" value="{{ $Budget->OCCUPATION != '' ? ($Budget->CLASS == '01-PROPERTY' && $Budget->OCCUPATION != 'Fleet' ? explode(' - ', $Budget->OCCUPATION)[1] : $Budget->OCCUPATION) : '' }}" readonly>
                                 </div>
                                 <div class="form-group row">
                                     <label for="currency" class="col-lg-3 col-form-label-lg">Currency</label>
