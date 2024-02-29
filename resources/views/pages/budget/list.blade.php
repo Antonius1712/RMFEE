@@ -414,7 +414,8 @@
                 let branch = $('#branch').val();
                 let nb_rn = $('#nb_rn').val();
                 // let start_date = moment($('#start_date').val()).format('YYYY-MM-DD HH:mm:ss');
-                let start_date = moment($('#start_date').val()).format('YYYY-MM-DD');
+                // let start_date = moment($('#start_date').val()).format('YYYY-MM-DD'); // contoh: 2024-01-01
+                let start_date = moment($('#start_date').val()).format('DD-MMM-YYYY'); // contoh: 01-jan-2024
                 let no_policy = $('#no_policy').val();
                 let holder_name = $('#holder_name').val();
                 let status_pembayaran_premi = $('#status_pembayaran_premi').val();
