@@ -170,6 +170,8 @@ class BudgetController extends Controller
         $ClassBusiness = isset($filter_ClassBusiness) ? $filter_ClassBusiness : '';
         $status_budget = isset($filter_status_budget) ? $filter_status_budget : '';
 
+        // dd($ClassBusiness);
+
         $RedirectVoucher = str_replace('~', '/', $voucher);
         Budget::UpdateBudgetOnlyStatus('undo_approve', $voucher, null);
         Logger::SaveLog($voucher, 'Undo Approved');

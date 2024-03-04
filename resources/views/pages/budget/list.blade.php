@@ -3,6 +3,7 @@
 @endsection
 
 @section('content')
+{{-- {{ dd(session()->all()) }} --}}
     <div class="row">
         <div class="col-lg-6 mb-2">
             {{-- <a class="btn btn-primary pull-left" style="border-radius: 100px; font-size: 18px;" aria-expanded="false" data-toggle="collapse" data-target="#FilterCollapse">
@@ -509,7 +510,6 @@
 
             /* CONVERT OBJECT TO QUERY URL PARAMETERS. */
             $.each(obj_filter, function(key, val){
-                console.log('key', key, 'val', val);
                 if( val != '' ){
                     filter += `${key}=${val}&`;
                 }
@@ -517,23 +517,36 @@
 
             /* REMOVE LAST CHARACTER FROM QUERY URL PARAMETERS. (&) */
             filter = filter.substring(0, filter.length - 1);
-            
             return filter;
         }
 
-        function AddQueryUrlParameterToButtons(filter){
-            // alert('AddQuery');
-            let hrefApprove = $('body').find('.approve').attr('href');
-            hrefApprove = `${hrefApprove}?${filter}`;
-            $('body').find('.approve').attr('href', hrefApprove);
+        function AddQueryUrlParameterToButtons(filters){
+            /* ?Approve */
+            let hrefApprove = $('body').find('.approve').attr('href'); /*Get Href Value*/
+            if( typeof hrefApprove !== 'undefined' ){
+                hrefApprove = hrefApprove.split('?')[0]; /*Remove Query Parameter from url.*/
+            }
+            hrefApprove = `${hrefApprove}?${filters}`;
+            $('body').find('.approve').attr('href', hrefApprove); /*Assign new url with Query Parameter*/
+            
 
-            let hrefUndoApprove = $('body').find('.undo_approve').attr('href');
-            hrefUndoApprove = `${hrefUndoApprove}?${filter}`;
-            $('body').find('.undo_approve').attr('href', hrefUndoApprove);
+            /* ?Undo Approve */
+            let hrefUndoApprove = $('body').find('.undo_approve').attr('href'); /*Get Href Value*/
+            if( typeof hrefUndoApprove !== 'undefined' ){
+                hrefUndoApprove = hrefUndoApprove.split('?')[0]; /*Remove Query Parameter from url.*/
+            }
+            hrefUndoApprove = `${hrefUndoApprove}?${filters}`;
+            $('body').find('.undo_approve').attr('href', hrefUndoApprove); /*Assign new url with Query Parameter*/
 
-            let hrefReject = $('body').find('#form-reject-budget').attr('action');
-            hrefReject = `${hrefReject}?${filter}`;
-            $('body').find('#form-reject-budget').attr('action', hrefReject);
+
+            /* ?Reject */
+            let hrefReject = $('body').find('#form-reject-budget').attr('action'); /*Get Href Value*/
+            if( typeof hrefReject !== 'undefined' ){
+                hrefReject = hrefReject.split('?')[0]; /*Remove Query Parameter from url.*/
+            }
+            hrefReject = `${hrefReject}?${filters}`;
+            $('body').find('#form-reject-budget').attr('action', hrefReject); /*Assign new url with Query Parameter*/
+
         }
     </script>
 @endsection
