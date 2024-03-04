@@ -96,11 +96,41 @@ class BudgetController extends Controller
         return redirect()->route('budget.list')->with('noticication', 'Voucher <b>'.$RedirectVoucher.'</b> Successfully Approved');
     }
 
-    public function undo_approve($voucher){
+    public function undo_approve($voucher, Request $request){
+        $query_url_filter = $request->query();
+        foreach(  $query_url_filter as $key => $val){
+            ${"filter_".$key} = $val;
+        }
+
+        $broker_name = isset($filter_broker_name) ? $filter_broker_name : '';
+        $branch = isset($filter_branch) ? $filter_branch : '';
+        $status_pembayaran_premi = isset($filter_status_pembayaran_premi) ? $filter_status_pembayaran_premi : '';
+        $start_date = isset($filter_start_date) ? $filter_start_date : '';
+        $no_policy = isset($filter_no_policy) ? $filter_no_policy : '';
+        $aging_rmf = isset($filter_aging_rmf) ? $filter_aging_rmf : '';
+        $nb_rn = isset($filter_nb_rn) ? $filter_nb_rn : '';
+        $holder_name = isset($filter_holder_name) ? $filter_holder_name : '';
+        $status_realisasi = isset($filter_status_realisasi) ? $filter_status_realisasi : '';
+        $ClassBusiness = isset($filter_ClassBusiness) ? $filter_ClassBusiness : '';
+        $status_budget = isset($filter_status_budget) ? $filter_status_budget : '';
+
         $RedirectVoucher = str_replace('~', '/', $voucher);
         Budget::UpdateBudgetOnlyStatus('undo_approve', $voucher, null);
         Logger::SaveLog($voucher, 'Undo Approved');
-        return redirect()->route('budget.list')->with('noticication', 'Voucher <b>'.$RedirectVoucher.'</b> Successfully Undo Approved');
+        return redirect()
+        ->route('budget.list')
+        ->with('noticication', 'Voucher <b>'.$RedirectVoucher.'</b> Successfully Undo Approved')
+        ->with('broker_name', $broker_name)
+        ->with('branch', $branch)
+        ->with('status_pembayaran_premi', $status_pembayaran_premi)
+        ->with('start_date', $start_date)
+        ->with('no_policy', $no_policy)
+        ->with('aging_rmf', $aging_rmf)
+        ->with('nb_rn', $nb_rn)
+        ->with('holder_name', $holder_name)
+        ->with('status_realisasi', $status_realisasi)
+        ->with('ClassBusiness', $ClassBusiness)
+        ->with('status_budget', $status_budget);
     }
 
     public function BudgetDataTable(Request $request){
@@ -133,15 +163,15 @@ class BudgetController extends Controller
                 // dd($BtnShowHide);
 
                 if( $BtnShowHide['BtnApprove'] ){
-                    $BtnApprove = "<a class='dropdown-item success' href='".route('budget.approve', $Voucher)."'><i class='feather icon-check-circle'></i>Approve</a>";
+                    $BtnApprove = "<a class='dropdown-item success approve' href='".route('budget.approve', $Voucher)."'><i class='feather icon-check-circle'></i>Approve</a>";
                 }
 
                 if( $BtnShowHide['BtnUndoApproval'] ){
-                    $BtnUndoApproval = "<a class='dropdown-item danger' href='".route('budget.undo_approve', [$Voucher])."'><i class='feather icon-delete'></i>Undo Approval</a>";
+                    $BtnUndoApproval = "<a class='dropdown-item danger undo_approve' href='".route('budget.undo_approve', [$Voucher])."'><i class='feather icon-delete'></i>Undo Approval</a>";
                 }
 
                 if( $BtnShowHide['BtnEdit'] ){
-                    $BtnEdit = "<a class='dropdown-item success' href='".route('budget.edit', [$Voucher, 0])."'><i class='feather icon-edit-2'></i>Edit</a>";
+                    $BtnEdit = "<a class='dropdown-item success edit' href='".route('budget.edit', [$Voucher, 0])."'><i class='feather icon-edit-2'></i>Edit</a>";
                 }
 
                 if( $BtnShowHide['BtnDownloadDocument'] ){
