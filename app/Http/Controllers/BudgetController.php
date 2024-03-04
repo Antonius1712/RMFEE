@@ -57,7 +57,7 @@ class BudgetController extends Controller
         }
         $RedirectVoucher = str_replace('~', '/', $voucher);
         Budget::UpdateBudget($request, $voucher);
-        Logger::SaveLog($voucher, $desc);
+        Logger::SaveLog($RedirectVoucher, $desc);
         return redirect()->route('budget.list')->with('noticication', 'Voucher <b>'.$RedirectVoucher.'</b> Successfully '. $desc);
     }
 
@@ -69,31 +69,87 @@ class BudgetController extends Controller
     public function archive($voucher){
         $RedirectVoucher = str_replace('~', '/', $voucher);
         Budget::UpdateBudgetOnlyStatus('archive', $voucher, null);
-        Logger::SaveLog($voucher, 'Archived');
+        Logger::SaveLog($RedirectVoucher, 'Archived');
         return redirect()->route('budget.archive-list')->with('noticication', 'Voucher <b>'.$RedirectVoucher.'</b> Successfully Archived');
     }
 
     public function unarchive($voucher){
         $RedirectVoucher = str_replace('~', '/', $voucher);
         Budget::UpdateBudgetOnlyStatus('draft', $voucher, null);
-        Logger::SaveLog($voucher, 'Unarchived');
+        Logger::SaveLog($RedirectVoucher, 'Unarchived');
         return redirect()->route('budget.archive-list')->with('noticication', 'Voucher <b>'.$RedirectVoucher.'</b> Successfully UnArchived');
     }
 
     public function reject($voucher, Request $request){
+        $query_url_filter = $request->query();
+        foreach(  $query_url_filter as $key => $val){
+            ${"filter_".$key} = $val;
+        }
+
+        $broker_name = isset($filter_broker_name) ? $filter_broker_name : '';
+        $branch = isset($filter_branch) ? $filter_branch : '';
+        $status_pembayaran_premi = isset($filter_status_pembayaran_premi) ? $filter_status_pembayaran_premi : '';
+        $start_date = isset($filter_start_date) ? $filter_start_date : '';
+        $no_policy = isset($filter_no_policy) ? $filter_no_policy : '';
+        $aging_rmf = isset($filter_aging_rmf) ? $filter_aging_rmf : '';
+        $nb_rn = isset($filter_nb_rn) ? $filter_nb_rn : '';
+        $holder_name = isset($filter_holder_name) ? $filter_holder_name : '';
+        $status_realisasi = isset($filter_status_realisasi) ? $filter_status_realisasi : '';
+        $ClassBusiness = isset($filter_ClassBusiness) ? $filter_ClassBusiness : '';
+        $status_budget = isset($filter_status_budget) ? $filter_status_budget : '';
+
         $message = $request->comment;
         $RedirectVoucher = str_replace('~', '/', $voucher);
         Budget::UpdateBudgetOnlyStatus('reject', $voucher, null);
         $message = $message != null ? ' | '.$message : null;
-        Logger::SaveLog($voucher, 'Rejected', $message);
-        return redirect()->route('budget.list')->with('noticication', 'Voucher <b>'.$RedirectVoucher.'</b> Successfully Rejected');
+        Logger::SaveLog($RedirectVoucher, 'Rejected', $message);
+        return redirect()->route('budget.list')->with('noticication', 'Voucher <b>'.$RedirectVoucher.'</b> Successfully Rejected')
+        ->with('broker_name', $broker_name)
+        ->with('branch', $branch)
+        ->with('status_pembayaran_premi', $status_pembayaran_premi)
+        ->with('start_date', $start_date)
+        ->with('no_policy', $no_policy)
+        ->with('aging_rmf', $aging_rmf)
+        ->with('nb_rn', $nb_rn)
+        ->with('holder_name', $holder_name)
+        ->with('status_realisasi', $status_realisasi)
+        ->with('ClassBusiness', $ClassBusiness)
+        ->with('status_budget', $status_budget);
     }
 
-    public function approve($voucher){
+    public function approve($voucher, Request $request){
+        $query_url_filter = $request->query();
+        foreach(  $query_url_filter as $key => $val){
+            ${"filter_".$key} = $val;
+        }
+
+        $broker_name = isset($filter_broker_name) ? $filter_broker_name : '';
+        $branch = isset($filter_branch) ? $filter_branch : '';
+        $status_pembayaran_premi = isset($filter_status_pembayaran_premi) ? $filter_status_pembayaran_premi : '';
+        $start_date = isset($filter_start_date) ? $filter_start_date : '';
+        $no_policy = isset($filter_no_policy) ? $filter_no_policy : '';
+        $aging_rmf = isset($filter_aging_rmf) ? $filter_aging_rmf : '';
+        $nb_rn = isset($filter_nb_rn) ? $filter_nb_rn : '';
+        $holder_name = isset($filter_holder_name) ? $filter_holder_name : '';
+        $status_realisasi = isset($filter_status_realisasi) ? $filter_status_realisasi : '';
+        $ClassBusiness = isset($filter_ClassBusiness) ? $filter_ClassBusiness : '';
+        $status_budget = isset($filter_status_budget) ? $filter_status_budget : '';
+
         $RedirectVoucher = str_replace('~', '/', $voucher);
         Budget::UpdateBudgetOnlyStatus('approve', $voucher, null);
-        Logger::SaveLog($voucher, 'Approved');
-        return redirect()->route('budget.list')->with('noticication', 'Voucher <b>'.$RedirectVoucher.'</b> Successfully Approved');
+        Logger::SaveLog($RedirectVoucher, 'Approved');
+        return redirect()->route('budget.list')->with('noticication', 'Voucher <b>'.$RedirectVoucher.'</b> Successfully Approved')
+        ->with('broker_name', $broker_name)
+        ->with('branch', $branch)
+        ->with('status_pembayaran_premi', $status_pembayaran_premi)
+        ->with('start_date', $start_date)
+        ->with('no_policy', $no_policy)
+        ->with('aging_rmf', $aging_rmf)
+        ->with('nb_rn', $nb_rn)
+        ->with('holder_name', $holder_name)
+        ->with('status_realisasi', $status_realisasi)
+        ->with('ClassBusiness', $ClassBusiness)
+        ->with('status_budget', $status_budget);
     }
 
     public function undo_approve($voucher, Request $request){
