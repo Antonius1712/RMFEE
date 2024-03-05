@@ -308,6 +308,9 @@ class BudgetController extends Controller
             ->editColumn('REMAIN_BUDGET', function($row){
                 return number_format($row->REMAIN_BUDGET);
             })
+            ->editColumn('COMMENT', function($row){
+                return strlen($row->COMMENT) > 15 ? substr($row->COMMENT,0,15)."..." : $row->COMMENT;
+            })
             ->editColumn('STATUS_BUDGET', function($row){
                 if( $row->STATUS_BUDGET == 'NEW' ){
                     return '<div class="badge badge-pill badge-info" style="font-size: 16px;">
