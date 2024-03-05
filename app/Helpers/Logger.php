@@ -29,7 +29,7 @@ class Logger {
 
     public static function GetLog($voucher = null){
         try {
-            return ReportGenerator_Log_Engineering_Fee::where('Voucher', $voucher)->get();
+            return ReportGenerator_Log_Engineering_Fee::where('Voucher', $voucher)->orderBy('Date', 'asc')->orderby('Time', 'asc')->get();
         } catch (Exception $e) {
             return $e->getMessage();
         }
