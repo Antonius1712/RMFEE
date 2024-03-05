@@ -309,7 +309,20 @@ class BudgetController extends Controller
                 return number_format($row->REMAIN_BUDGET);
             })
             ->editColumn('COMMENT', function($row){
-                return strlen($row->COMMENT) > 15 ? substr($row->COMMENT,0,15)."..." : $row->COMMENT;
+                $arrayOfWord = explode(' ', $row->COMMENT);
+                $displayText = '';
+
+                foreach( $arrayOfWord as $key => $val ){
+                    if( $key <= 10 ){
+                        $displayText .= $val." ";
+                    }
+                }
+
+                $displayText = rtrim($displayText, ' ');
+
+                $displayText.="...";
+
+                return $displayText;
             })
             ->editColumn('STATUS_BUDGET', function($row){
                 if( $row->STATUS_BUDGET == 'NEW' ){
