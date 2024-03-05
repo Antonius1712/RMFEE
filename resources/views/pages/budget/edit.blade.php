@@ -176,6 +176,7 @@
                     <tr class="default">
                         <th>Name</th>
                         <th>Status</th>
+                        <th>Desc</th>
                         <th>Date</th>
                         <th>Time</th>
                     </tr>
@@ -185,6 +186,7 @@
                     <tr class="text-center">
                         <td>{{ $Log->NIK.' - '.$Log->getUser->Name }}</td>
                         <td>{{ $Log->Status }}</td>
+                        <td>{{ $Log->Description }}</td>
                         <td>{{ date('Y-m-d', strtotime($Log->Date)) }}</td>
                         <td>{{ $Log->Time }}</td>
                     </tr>
