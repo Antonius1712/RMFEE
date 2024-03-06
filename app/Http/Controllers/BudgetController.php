@@ -312,16 +312,18 @@ class BudgetController extends Controller
                 $arrayOfWord = explode(' ', $row->COMMENT);
                 $displayText = '';
 
-                foreach( $arrayOfWord as $key => $val ){
-                    if( $key <= 10 ){
-                        $displayText .= $val." ";
+                if( count($arrayOfWord) >= 15 ){
+                    foreach( $arrayOfWord as $key => $val ){
+                        if( $key <= 10 ){
+                            $displayText .= $val." ";
+                        }
                     }
+                    $displayText = rtrim($displayText, ' ');
+                    $displayText.="...";
+                }else{
+                    $displayText = $row->COMMENT;
                 }
-
-                $displayText = rtrim($displayText, ' ');
-
-                $displayText.="...";
-
+                
                 return $displayText;
             })
             ->editColumn('STATUS_BUDGET', function($row){

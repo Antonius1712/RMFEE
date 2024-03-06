@@ -227,6 +227,9 @@
             e.preventDefault();
             let Voucher = $(this).data('voucher');
             let Action = `${url}/budget/reject/${Voucher}`;
+            let Filters = AssignValueFilter();
+
+            Action = `${Action}?${Filters}`;
             $('#form-reject-budget').attr('action', Action);
             $('#ModalReject').modal('toggle');
         });
@@ -538,14 +541,17 @@
             hrefUndoApprove = `${hrefUndoApprove}?${filters}`;
             $('body').find('.undo_approve').attr('href', hrefUndoApprove); /*Assign new url with Query Parameter*/
 
+            
+            // /* ?Reject on different function. */
+            // let hrefReject = $('body').find('#form-reject-budget').attr('action'); /*Get Href Value*/
+            // if( typeof hrefReject !== 'undefined' ){
+            //     hrefReject = hrefReject.split('?')[0]; /*Remove Query Parameter from url.*/
+            // }
+            // hrefReject = `${hrefReject}?${filters}`;
 
-            /* ?Reject */
-            let hrefReject = $('body').find('#form-reject-budget').attr('action'); /*Get Href Value*/
-            if( typeof hrefReject !== 'undefined' ){
-                hrefReject = hrefReject.split('?')[0]; /*Remove Query Parameter from url.*/
-            }
-            hrefReject = `${hrefReject}?${filters}`;
-            $('body').find('#form-reject-budget').attr('action', hrefReject); /*Assign new url with Query Parameter*/
+            // console.log(hrefReject, filters, );
+
+            // $('body').find('#form-reject-budget').attr('action', hrefReject); /*Assign new url with Query Parameter*/
 
         }
     </script>
