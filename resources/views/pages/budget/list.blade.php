@@ -10,10 +10,10 @@
                 <i class="feather icon-filter text-white"></i>
                 <span class="text-white">Filter</span>
             </a> --}}
-
+            {{-- {{ dd(isset($to_do_list), isset($to_do_list) && $to_do_list == true) }} --}}
             <label>
                 <input type="checkbox" name="to_do_list" id="to_do_list" class="to-do-list"
-                    style="width: 30px; height: 30px; vertical-align: middle;" value="" checked>
+                    style="width: 30px; height: 30px; vertical-align: middle;" value="" {{ (isset($to_do_list) && $to_do_list == 'Yes') ? 'checked' : '' }}>
                 <b style="font-size: 20px; vertical-align: middle;" class="ml-1">To do List</b>
                 <input type="hidden" id="to_do_list_check_proposed_to" name="to_do_list_check_proposed_to" value=""/>
                 <input type="hidden" id="to_do_list_check_last_edited_by" name="to_do_list_check_last_edited_by" value=""/>
@@ -30,7 +30,7 @@
     </div>
 
     <div class="card collapse" id="FilterCollapse">
-        <div class="card-body row">
+        <div class="card-body row" id="card-filter">
             <div class="col-lg-4">
                 <div class="form-group">
                     <label for="broker_name">Broker Name</label>
@@ -219,6 +219,11 @@
     <!-- Modal Reject-->
     @include('add-on.modal-reject')
     @include('add-on.modal-view-document-budget')
+
+    @php
+        $toDoListVal = session()->has('to_do_list') ? session()->get('to_do_list') : '';
+        // dd($toDoListVal);
+    @endphp
 @endsection
 
 @section('script')
@@ -245,6 +250,17 @@
 
         // Document Ready
         $(document).ready(function() {
+            let toDoList = `{{ $toDoListVal }}`;
+            
+            if( toDoList == 'Yes' ){
+                $('#to_do_list').attr('checked', true);
+            }else if( toDoList == 'No' ){
+                $('#to_do_list').attr('checked', false);
+            }else{
+                $('#to_do_list').attr('checked', true);
+            }
+
+
             // Datepicker Start Date
             $('#start_date').datepicker({
                 dateFormat: 'dd-M-yy',
@@ -386,6 +402,23 @@
                 SearchDataTable();
                 $('body').find('#btn_apply_filter').trigger('click');
             }, 5);
+
+
+            let AllInputFormFilter = $('#card-filter').find('input');
+            let AllSelectFormFilter = $('#card-filter').find('select');
+
+            let countValueInput = AllInputFormFilter.filter(function(){
+                return this.value;
+            }).length;
+
+            let countValueSelect = AllSelectFormFilter.filter(function(){
+                return this.value;
+            }).length;
+            setTimeout(() => {
+                if( (countValueInput > 0) || (countValueSelect > 0) ){
+                    $('#btn_apply_filter').trigger('click');
+                }
+            }, 100);
         });
 
         // // Show Loader when exports.
@@ -428,6 +461,7 @@
                 $('#to_do_list_check_last_edited_by').val('');
             }
             SearchDataTable();
+            $('#btn_apply_filter').trigger('click');
         });
 
         // Button to Reset Filter on Datatable.
@@ -446,6 +480,7 @@
             $('#to_do_list_check_proposed_to').val('');
             
             SearchDataTable();
+            // Loader(SearchDataTable);
         });
 
         // Function Search / Filter Datatable.
@@ -490,6 +525,23 @@
             // DataTableBudget.column('#th_status_realisasi').search(status_realisasi).draw();
         }
 
+        async function Loader(fn, par = '') {
+            ShowLoader();
+            await fn(par);
+
+            // return await setTimeout(async function() {
+            // await fn(par);
+            // }, 3000, fn, par);
+        }
+
+        function HideLoader(){
+            $('#loading').hide();
+        }
+
+        function ShowLoader(){
+            $('#loading').show();
+        }
+
         function AssignValueFilter(isReturnObject = false){
             // alert('assignValue');
             var obj_filter = {}; /* HARUS OBJECT {} BUKAN ARRAY [], KALAU ARRAY KEY BUKAN [0,1,2,..] TETAPI STRING SEPERTI DIBAWAH, JIKA MENGGUNAKAN ARRAY MAKA TIDAK BISA $.EACH LOOP.  */
@@ -505,6 +557,7 @@
             var status_realisasi = $('#status_realisasi').val();
             var ClassBusiness = $('#ClassBusiness').val();
             var status_budget = $('#status_budget').val();
+            var to_do_list = $('#to_do_list').is(':checked') ? 'Yes' : 'No';
 
             obj_filter['broker_name'] = broker_name;
             obj_filter['branch'] = branch;
@@ -517,6 +570,7 @@
             obj_filter['status_realisasi'] = status_realisasi;
             obj_filter['ClassBusiness'] = ClassBusiness;
             obj_filter['status_budget'] = status_budget;
+            obj_filter['to_do_list'] = to_do_list;
 
             /* CONVERT OBJECT TO QUERY URL PARAMETERS. */
             $.each(obj_filter, function(key, val){
