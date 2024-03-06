@@ -227,10 +227,17 @@
             e.preventDefault();
             let Voucher = $(this).data('voucher');
             let Action = `${url}/budget/reject/${Voucher}`;
-            let Filters = AssignValueFilter();
+            let Filters = AssignValueFilter(true);
+            let AddHiddenInputForFilters = '';
 
-            Action = `${Action}?${Filters}`;
+            $.each(Filters, function(key, val){
+                AddHiddenInputForFilters += `
+                    <input type="hidden" name="${key}" value="${val}" />
+                `;
+            });
+
             $('#form-reject-budget').attr('action', Action);
+            $('#append').html(AddHiddenInputForFilters);
             $('#ModalReject').modal('toggle');
         });
         // Define Variable of Auth User NIK, Group Code, Datatable of Budget.
@@ -483,7 +490,7 @@
             // DataTableBudget.column('#th_status_realisasi').search(status_realisasi).draw();
         }
 
-        function AssignValueFilter(){
+        function AssignValueFilter(isReturnObject = false){
             // alert('assignValue');
             var obj_filter = {}; /* HARUS OBJECT {} BUKAN ARRAY [], KALAU ARRAY KEY BUKAN [0,1,2,..] TETAPI STRING SEPERTI DIBAWAH, JIKA MENGGUNAKAN ARRAY MAKA TIDAK BISA $.EACH LOOP.  */
             var filter = '';
@@ -520,6 +527,11 @@
 
             /* REMOVE LAST CHARACTER FROM QUERY URL PARAMETERS. (&) */
             filter = filter.substring(0, filter.length - 1);
+
+            if( isReturnObject ){
+                return obj_filter;
+            }
+
             return filter;
         }
 

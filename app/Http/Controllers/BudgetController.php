@@ -82,6 +82,7 @@ class BudgetController extends Controller
 
     public function reject($voucher, Request $request){
         $query_url_filter = $request->query();
+        // dd($request->all(), $request->query(), $voucher);
         foreach(  $query_url_filter as $key => $val){
             ${"filter_".$key} = $val;
         }
