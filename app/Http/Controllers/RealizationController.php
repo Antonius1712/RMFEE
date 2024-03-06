@@ -36,13 +36,12 @@ class RealizationController extends Controller
 
     public function index(){
         $RealizationData = Realization::GetRealization();
-        // dd($RealizationData);
         $AuthUserGroup = Auth()->user()->getUserGroup->GroupCode;
         
         $Action = [];
         if( $RealizationData != null ){
             foreach( $RealizationData as $key => $val ) {
-                $invoice_no = str_replace('/', '-', $val->Invoice_No);
+                $invoice_no = str_replace('/', '~', $val->Invoice_No);
                 switch ($AuthUserGroup) {
                     case GroupCodeApplication::USER_RMFEE:
                         switch ( $val->Status_Realization ) {

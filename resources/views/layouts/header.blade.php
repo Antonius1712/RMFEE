@@ -12,11 +12,29 @@
                     </b>
                 </li>
                 @foreach ($Segments as $key => $val)
-                    <li class="breadcrumb-item">
-                        <b class="text-primary">
-                            {{ $val }}
-                        </b>
-                    </li>
+                    @switch($val)
+                        @case('1') {{-- 1 Means Archived --}}
+                            <li class="breadcrumb-item">
+                                <b class="text-primary">
+                                    Archived
+                                </b>
+                            </li>
+                            @break
+                        @case('0') {{-- 0 Means not archived --}}
+                            {{-- <li class="breadcrumb-item">
+                                <b class="text-primary">
+                                    Not Archived
+                                </b>
+                            </li> --}}
+                            @break
+                        @default
+                            <li class="breadcrumb-item">
+                                <b class="text-primary">
+                                    {{ $val }}
+                                </b>
+                            </li>
+                            @break
+                    @endswitch
                 @endforeach
             @endif
         </ol>
