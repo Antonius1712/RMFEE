@@ -260,7 +260,6 @@
                 $('#to_do_list').attr('checked', true);
             }
 
-
             // Datepicker Start Date
             $('#start_date').datepicker({
                 dateFormat: 'dd-M-yy',
@@ -365,6 +364,22 @@
                     { data: 'ProposedTo', searchable: true, visible: false },
                     { data: 'LAST_EDITED_BY', searchable: true, visible: false }
                 ],
+                initComplete: function(){
+                    let AllInputFormFilter = $('#card-filter').find('input');
+                    let AllSelectFormFilter = $('#card-filter').find('select');
+
+                    let countValueInput = AllInputFormFilter.filter(function(){
+                        return this.value;
+                    }).length;
+
+                    let countValueSelect = AllSelectFormFilter.filter(function(){
+                        return this.value;
+                    }).length;
+                    /*console.log({countValueInput, countValueSelect});*/
+                    if( (countValueInput > 0) || (countValueSelect > 0) ){
+                        $('body').find('#btn_apply_filter').trigger('click');
+                    }
+                }
             }).on('select', function(e, dt, node, config){
                 let selectedData = dt.rows('.selected').data();
             });
@@ -404,21 +419,8 @@
             }, 5);
 
 
-            let AllInputFormFilter = $('#card-filter').find('input');
-            let AllSelectFormFilter = $('#card-filter').find('select');
-
-            let countValueInput = AllInputFormFilter.filter(function(){
-                return this.value;
-            }).length;
-
-            let countValueSelect = AllSelectFormFilter.filter(function(){
-                return this.value;
-            }).length;
-            setTimeout(() => {
-                if( (countValueInput > 0) || (countValueSelect > 0) ){
-                    $('#btn_apply_filter').trigger('click');
-                }
-            }, 100);
+            
+            
         });
 
         // // Show Loader when exports.
