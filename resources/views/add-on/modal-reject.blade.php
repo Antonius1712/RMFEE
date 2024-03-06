@@ -14,6 +14,10 @@
                         placeholder="Additional Note">
                 </div>
                 <div class="modal-footer">
+                    <div id="append">
+                        
+                    </div>
+
                     <button type="button" class="btn btn-outline-primary radius" data-dismiss="modal"
                         style="width: 50%;">Cancel</button>
 
