@@ -101,7 +101,7 @@ class Realization {
                 $DocumentPath_upload_survey_report = 'images/Realization/Survey_Report/'.$filename;
             }
 
-            DB::connection(Database::REPORT_GENERATOR)->select("EXECUTE [dbo].[SP_Insert_Group_Realization_Engineering_Fee] '$invoice_no', '$type_of_invoice', '$type_of_payment', '$currency', '$invoice_date', '$broker_id', '$payment_to', '$DocumentPath_upload_invoice', '$DocumentPath_upload_survey_report', '$approval_bu', '$approval_finance', '$epo_checker', '$epo_approval', '$status_realization', '$remarks', '$CreatedBy', '$CreatedDate', '$lastUpdateBy', '$lastUpdate'");
+            DB::connection(Database::REPORT_GENERATOR)->statement("EXECUTE [dbo].[SP_Insert_Group_Realization_Engineering_Fee] '$invoice_no', '$type_of_invoice', '$type_of_payment', '$currency', '$invoice_date', '$broker_id', '$payment_to', '$DocumentPath_upload_invoice', '$DocumentPath_upload_survey_report', '$approval_bu', '$approval_finance', '$epo_checker', '$epo_approval', '$status_realization', '$remarks', '$CreatedBy', '$CreatedDate', '$lastUpdateBy', '$lastUpdate'");
 
             // dd($lastUpdateBy, $lastUpdate);
 
