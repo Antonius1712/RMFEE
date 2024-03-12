@@ -41,7 +41,6 @@ class RealizationController extends Controller
         $Action = [];
         if( $RealizationData != null ){
             foreach( $RealizationData as $key => $val ) {
-                $invoice_no = str_replace('/', '~', $invoice_no);
                 switch ($AuthUserGroup) {
                     case GroupCodeApplication::USER_RMFEE:
                         switch ( $val->Status_Realization ) {
