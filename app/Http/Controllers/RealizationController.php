@@ -41,7 +41,7 @@ class RealizationController extends Controller
         $Action = [];
         if( $RealizationData != null ){
             foreach( $RealizationData as $key => $val ) {
-                $invoice_no = str_replace('/', '~', $val->Invoice_No);
+                $invoice_no = str_replace('/', '~', $invoice_no);
                 switch ($AuthUserGroup) {
                     case GroupCodeApplication::USER_RMFEE:
                         switch ( $val->Status_Realization ) {
@@ -59,14 +59,14 @@ class RealizationController extends Controller
                                 break;
                             case RealizationStatus::REJECTED:
                                 $Action[$key] = "
-                                    <a name='propose' class='dropdown-item success' href='".route('realization.edit', $val->Invoice_No)."'>
+                                    <a name='propose' class='dropdown-item success' href='".route('realization.edit', $invoice_no)."'>
                                         <i class='feather icon-edit-2'></i>
                                         Edit
                                     </a>
                                 ";
                             default:
                                 $Action[$key] = "
-                                    <a class='dropdown-item success' href='".route('realization.show', $val->Invoice_No)."'>
+                                    <a class='dropdown-item success' href='".route('realization.show', $invoice_no)."'>
                                         <i class='feather icon-eye'></i>
                                         View
                                     </a>
@@ -78,16 +78,16 @@ class RealizationController extends Controller
                         switch ($val->Status_Realization) {
                             case RealizationStatus::WAITING_APPROVAL_BU:
                                 $Action[] = "
-                                    <a name='approve' class='dropdown-item success' href='".route('realization.approve', $val->Invoice_No)."'>
+                                    <a name='approve' class='dropdown-item success' href='".route('realization.approve', $invoice_no)."'>
                                         <i class='feather icon-check'></i>
                                         Approve
                                     </a>
-                                    <a class='dropdown-item success' href='".route('realization.show', $val->Invoice_No)."'>
+                                    <a class='dropdown-item success' href='".route('realization.show', $invoice_no)."'>
                                         <i class='feather icon-eye'></i>
                                         View
                                     </a>
                                     <div class='dropdown-divider'></div>
-                                    <a class='dropdown-item danger' href='".route('realization.reject', $val->Invoice_No)."'>
+                                    <a class='dropdown-item danger' href='".route('realization.reject', $invoice_no)."'>
                                         <i class='feather icon-trash'></i>
                                         Reject
                                     </a>
@@ -103,16 +103,16 @@ class RealizationController extends Controller
                         switch ($val->Status_Realization) {
                             case RealizationStatus::WAITING_APPROVAL_FINANCE:
                                 $Action[$key] = "
-                                    <a name='approve' class='dropdown-item success' href='".route('realization.approve', $val->Invoice_No)."'>
+                                    <a name='approve' class='dropdown-item success' href='".route('realization.approve', $invoice_no)."'>
                                         <i class='feather icon-check'></i>
                                         Approve
                                     </a>
-                                    <a class='dropdown-item success' href='".route('realization.show', $val->Invoice_No)."'>
+                                    <a class='dropdown-item success' href='".route('realization.show', $invoice_no)."'>
                                         <i class='feather icon-eye'></i>
                                         View
                                     </a>
                                     <div class='dropdown-divider'></div>
-                                    <a class='dropdown-item danger' href='".route('realization.reject', $val->Invoice_No)."'>
+                                    <a class='dropdown-item danger' href='".route('realization.reject', $invoice_no)."'>
                                         <i class='feather icon-trash'></i>
                                         Reject
                                     </a>
@@ -246,7 +246,8 @@ class RealizationController extends Controller
     }
 
     public function show($invoice_no){
-        $RealizationData = Realization::GetRealization($invoice_no)[0];
+        $invoice_no_real = str_replace('~', '/', $invoice_no);
+        $RealizationData = Realization::GetRealization($invoice_no_real)[0];
         $Currencies = Utils::GetCurrencies();
         $BrokerData = null;
         $PaymentToData = null;
