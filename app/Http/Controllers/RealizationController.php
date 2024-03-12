@@ -293,8 +293,9 @@ class RealizationController extends Controller
     }
 
     public function approve($invoice_no){
+        $invoice_no_real = str_replace('~', '/', $invoice_no);
         $AuthUserGroup = Auth()->user()->getUserGroup->GroupCode;
-        $RealizationData = Realization::GetRealization($invoice_no)[0];
+        $RealizationData = Realization::GetRealization($invoice_no_real)[0];
         try {
             switch ($AuthUserGroup) {
                 case GroupCodeApplication::HEAD_BU_RMFEE:
@@ -304,7 +305,7 @@ class RealizationController extends Controller
                     try {
                         $Budget = Realization::UpdateBudgetRealization($RealizationData);
                         if( $Budget == BudgetStatus::OVERLIMIT ) {
-                            return redirect()->back()->withErrors('You Have an Overlimit Budget inside this Invoice. <strong>'.$invoice_no.'</strong>');
+                            return redirect()->back()->withErrors('You Have an Overlimit Budget inside this Invoice. <strong>'.$invoice_no_real.'</strong>');
                         }
                         $StatusRealisasi = RealizationStatus::APPROVED_BY_FINANCE;
 
@@ -318,7 +319,7 @@ class RealizationController extends Controller
                         }
 
                         $PID = Epo_PO_Header::orderBy('PID', 'Desc')->value('PID');
-                        Realization::UpdateRealizationGroupEpo($invoice_no, $PID);
+                        Realization::UpdateRealizationGroupEpo($invoice_no_real, $PID);
 
                         $LogEmailEpo = ReportGenerator_LogEmailEpo::where('PID', $PID)->count();
                         if( $LogEmailEpo == 0 ){
@@ -333,7 +334,7 @@ class RealizationController extends Controller
                         
                     } catch (Exception $e) {
                         Log::error('Error while saving log email epo. Exception = ' . $e->getMessage());
-                        return redirect()->back()->withErrors('Error on Approve Finance. Invoice. <strong>'.$invoice_no.'</strong>');
+                        return redirect()->back()->withErrors('Error on Approve Finance. Invoice. <strong>'.$invoice_no_real.'</strong>');
                     }
 
                     // TODO buat table log untuk send email, isinya id, pid, realisasi_id, email_sent. hanya setelah sukses insert epo. untuk dapetin pid.
@@ -345,28 +346,30 @@ class RealizationController extends Controller
                 default:
                 break;
             }
-            Realization::UpdateRealizationGroupStatus($StatusRealisasi, $invoice_no);
+            Realization::UpdateRealizationGroupStatus($StatusRealisasi, $invoice_no_real);
         } catch (Exception $e) {
             Log::error('Error Update Realization Group on Approve Exception = ' . $e->getMessage());
         }
-        return redirect()->back()->with('noticication', 'Invoice <b>'.$invoice_no.'</b> Successfully Approved');
+        return redirect()->back()->with('noticication', 'Invoice <b>'.$invoice_no_real.'</b> Successfully Approved');
     }
 
     public function propose($invoice_no){
+        $invoice_no_real = str_replace('~', '/', $invoice_no);
         try {
-            Realization::UpdateRealizationGroupStatus(RealizationStatus::WAITING_APPROVAL_BU, $invoice_no);
+            Realization::UpdateRealizationGroupStatus(RealizationStatus::WAITING_APPROVAL_BU, $invoice_no_real);
         } catch (Exception $e) {
             Log::error('Error Update Realization Group on Approve Exception = ' . $e->getMessage());
         }
-        return redirect()->back()->with('noticication', 'Invoice <b>'.$invoice_no.'</b> Successfully Proposed');
+        return redirect()->back()->with('noticication', 'Invoice <b>'.$invoice_no_real.'</b> Successfully Proposed');
     }
 
     public function reject($invoice_no){
+        $invoice_no_real = str_replace('~', '/', $invoice_no);
         try {
-            Realization::UpdateRealizationGroupStatus(RealizationStatus::REJECTED, $invoice_no);
+            Realization::UpdateRealizationGroupStatus(RealizationStatus::REJECTED, $invoice_no_real);
         } catch (Exception $e) {
             Log::error('Error Update Realization Group on Approve Exception = ' . $e->getMessage());
         }
-        return redirect()->back()->with('noticication', 'Invoice <b>'.$invoice_no.'</b> Successfully Rejected');
+        return redirect()->back()->with('noticication', 'Invoice <b>'.$invoice_no_real.'</b> Successfully Rejected');
     }
 }
