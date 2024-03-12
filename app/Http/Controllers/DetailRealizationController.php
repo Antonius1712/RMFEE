@@ -37,8 +37,9 @@ class DetailRealizationController extends Controller
 
     public function store(Request $request){        
         $invoice_no = str_replace('/', '~', $request->invoice_no);
+        $invoice_no_real = str_replace('~', '/', $request->invoice_no);
         // dd($request->all());
-        $RealizationData = Realization::GetRealization($invoice_no)[0];
+        $RealizationData = Realization::GetRealization($invoice_no_real)[0];
         try {
             // $Budget = DetailRealization::UpdateBudgetRealization($request, $RealizationData->type_of_invoice);
             // if( $Budget == BudgetStatus::OVERLIMIT ) {
@@ -49,7 +50,7 @@ class DetailRealizationController extends Controller
 
             DetailRealization::SaveDetailRealization($request, $RealizationData->ID);
         } catch (Exception $e) {
-            Log::error('Error While on Store Function of DetailRealizationController invoice = ' . $request->invoice_no. ' Exception = '.$e->getMessage());
+            Log::error('Error While on Store Function of DetailRealizationController invoice = ' . $invoice_no_real. ' Exception = '.$e->getMessage());
         }
         return redirect()->route('realization.detail-realization.index', $invoice_no);
     }
