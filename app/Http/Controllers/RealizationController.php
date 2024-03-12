@@ -142,10 +142,11 @@ class RealizationController extends Controller
     }
 
     public function store(Request $request){
+        $invoice_no = str_replace('/', '~', $request->invoice_no);
         $action = $request->action;
         switch ($action) {
             case 'add_detail':
-                $redirect = redirect()->route('realization.detail-realization.index', $request->invoice_no);
+                $redirect = redirect()->route('realization.detail-realization.index', $invoice_no);
                 $request['StatusRealization'] = RealizationStatus::DRAFT;
                 break;
             case 'save':
