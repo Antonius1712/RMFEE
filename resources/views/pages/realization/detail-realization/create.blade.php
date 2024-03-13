@@ -227,7 +227,13 @@
                 $('#premium_note').val(data.COMMENT);
                 $('#budget').val(data.Persentage);
                 $('#budget_in_amount').val(number_format(data.Budget));
-                $('#remain_budget').val(number_format(data.REMAIN_BUDGET));
+                if( data.CURRENCY == 'IDR' ){
+                    $('#remain_budget').val(number_format(data.REMAIN_BUDGET, 2));
+                    console.log(number_format(data.REMAIN_BUDGET, 2));
+                }else{
+                    $('#remain_budget').val(number_format(data.REMAIN_BUDGET, 4));
+                    console.log(number_format(data.REMAIN_BUDGET, 4));
+                }
                 $('#voucher').val(data.VOUCHER);
 
                 $('#amount_realization').attr('readonly', false);
