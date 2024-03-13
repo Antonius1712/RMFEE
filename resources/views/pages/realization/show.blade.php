@@ -183,7 +183,7 @@
                             </div>
                             <div class="row">
                                 <div class="col-lg-12 mb-2">
-                                    <a href="{{ route('realization.detail-realization.index', $RealizationData->Invoice_No) }}" style="width: 100%; height: 60px;" class="btn btn-outline-primary radius-100">
+                                    <a href="{{ route('realization.detail-realization.index', str_replace('/', '~', $RealizationData->Invoice_No)) }}" style="width: 100%; height: 60px;" class="btn btn-outline-primary radius-100">
                                         <b style="font-size: 18px;">View Detail</b>
                                     </a>
                                     <a href="{{ route('realization.index') }}" style="width: 100%; height: 60px;" class="btn btn-primary radius-100 mt-2">
