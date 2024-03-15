@@ -275,12 +275,17 @@
 
             total_amount_realization = (total_amount_realization - total_tax) + total_vat;
 
+
+            /* Remove Trailing decimals. example : 123.4500000032 -> 123.45 */
+            total_amount_realization = parseInt('' + (total_amount_realization * 100)) / 100;
+
             // console.log({total_amount_realization, remain_budget});
+
 
             if( total_amount_realization > remain_budget ) {
                 swal(
                     'Whoops!',
-                    `Total Amount Realization Exceeding Remain Budget.`,
+                    `Total Amount Realization Exceeding Remain Budget. <br/> Total =  ${number_format(total_amount_realization, 2)}`,
                     'warning'
                 );
                 amount_realization = 0;
@@ -288,9 +293,9 @@
                 total_amount_realization = 0;
             }
 
-            amount_realization = number_format(amount_realization);
+            amount_realization = number_format(amount_realization, 2);
             exchange_rate = number_format(exchange_rate, 2);
-            total_amount_realization = number_format(total_amount_realization);
+            total_amount_realization = number_format(total_amount_realization, 2);
 
             $('#amount_realization').val(amount_realization);
             $('#exchange_rate').val(exchange_rate);
