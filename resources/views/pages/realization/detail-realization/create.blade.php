@@ -275,6 +275,8 @@
 
             total_amount_realization = (total_amount_realization - total_tax) + total_vat;
 
+            // console.log({total_amount_realization, remain_budget});
+
             if( total_amount_realization > remain_budget ) {
                 swal(
                     'Whoops!',
