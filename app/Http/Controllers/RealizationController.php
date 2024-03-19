@@ -4,8 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Enums\BudgetStatus;
 use App\Enums\GroupCodeApplication;
+use App\Enums\HardCoded;
+use App\Enums\LogStatus;
 use App\Enums\RealizationStatus;
 use App\Helpers\DetailRealization;
+use App\Helpers\Logger;
 use App\Helpers\Realization;
 use App\Helpers\Utils;
 use App\Model\Epo_PO_Header;
@@ -21,6 +24,7 @@ use Yajra\Datatables\Datatables;
 class RealizationController extends Controller
 {
     public $TypeOfInvoice, $TypeOfPayment;
+    public $RealizationStatus, $COB;
 
     public function __construct(){
         $this->TypeOfInvoice = [
@@ -32,10 +36,32 @@ class RealizationController extends Controller
             'Reimbursement',
             'Offset Payment'
         ];
+
+        $this->RealizationStatus = RealizationStatus::LIST;
+        $this->COB = HardCoded::COB;
     }
 
-    public function index(){
-        $RealizationData = Realization::GetRealization();
+    public function index(Request $request){
+        $FilterStatusRealization = isset($request->status_realization) ? $request->status_realization : '';
+        $FilterBrokerName = isset($request->broker_name) ? $request->broker_name : '';
+        $FilterLastUpdate = isset($request->last_update) ? $request->last_update : '';
+        $FilterInvoiceNo = isset($request->invoice_no) ? $request->invoice_no : '';
+        $FilterCOB = isset($request->cob) ? $request->cob : '';
+
+        $FilterLastUpdate = $FilterLastUpdate != '' ? date('m/d/Y', strtotime($FilterLastUpdate)) : '';
+
+        // dd($FilterLastUpdate);
+
+        $RealizationStatus = $this->RealizationStatus;
+        $COB = $this->COB;
+
+        $RealizationData = Realization::GetRealization($FilterInvoiceNo, $FilterStatusRealization, $FilterBrokerName, $FilterLastUpdate, $FilterCOB);
+
+        // dd($RealizationData, $FilterInvoiceNo, $FilterStatusRealization, $FilterBrokerName, $FilterLastUpdate, $FilterCOB);
+
+
+        // dd($RealizationData);
+
         $AuthUserGroup = Auth()->user()->getUserGroup->GroupCode;
         
         $Action = [];
@@ -56,6 +82,9 @@ class RealizationController extends Controller
                                         Edit
                                     </a>
                                 ";
+                                $string = trim(preg_replace('/\s+/', ' ', $Action[$key]));
+
+                                $val->Action = $string;
                                 break;
                             case RealizationStatus::REJECTED:
                                 $Action[$key] = "
@@ -64,6 +93,9 @@ class RealizationController extends Controller
                                         Edit
                                     </a>
                                 ";
+                                $string = trim(preg_replace('/\s+/', ' ', $Action[$key]));
+
+                                $val->Action = $string;
                             default:
                                 $Action[$key] = "
                                     <a class='dropdown-item success' href='".route('realization.show', $invoice_no)."'>
@@ -71,6 +103,10 @@ class RealizationController extends Controller
                                         View
                                     </a>
                                 ";
+
+                                $string = trim(preg_replace('/\s+/', ' ', $Action[$key]));
+
+                                $val->Action = $string;
                             break;
                         }
                         break;
@@ -92,9 +128,15 @@ class RealizationController extends Controller
                                         Reject
                                     </a>
                                 ";
+                                $string = trim(preg_replace('/\s+/', ' ', $Action[$key]));
+
+                                $val->Action = $string;
                                 break;
                             default:
                                 $Action[] = "";
+                                $string = trim(preg_replace('/\s+/', ' ', $Action[$key]));
+
+                                $val->Action = $string;
                                 break;
                             break;
                         }
@@ -117,9 +159,15 @@ class RealizationController extends Controller
                                         Reject
                                     </a>
                                 ";
+                                $string = trim(preg_replace('/\s+/', ' ', $Action[$key]));
+
+                                $val->Action = $string;
                                 break;
                             default:
                                 $Action[] = "";
+                                $string = trim(preg_replace('/\s+/', ' ', $Action[$key]));
+
+                                $val->Action = $string;
                                 break;
                             break;
                         }
@@ -129,9 +177,13 @@ class RealizationController extends Controller
             }
         }
 
-        // dd($Action, $RealizationData);
+        // dd($RealizationData);
 
-        return view('pages.realization.index', compact('RealizationData', 'Action'));
+        $RealizationData = collect($RealizationData)->paginate(10);
+
+        
+
+        return view('pages.realization.index', compact('RealizationData', 'Action', 'RealizationStatus', 'COB', 'FilterStatusRealization', 'FilterBrokerName', 'FilterLastUpdate', 'FilterInvoiceNo', 'FilterCOB'));
     }
 
     public function create(){
@@ -144,6 +196,7 @@ class RealizationController extends Controller
     public function store(Request $request){
         $invoice_no = str_replace('/', '~', $request->invoice_no);
         $action = $request->action;
+        $LogAction = '';
         switch ($action) {
             case 'add_detail':
                 $redirect = redirect()->route('realization.detail-realization.index', $invoice_no);
@@ -152,10 +205,12 @@ class RealizationController extends Controller
             case 'save':
                 $redirect = redirect()->route('realization.index');
                 $request['StatusRealization'] = RealizationStatus::DRAFT;
+                $LogAction = 'SAVE';
                 break;
             case 'propose':
                 $redirect = redirect()->route('realization.index');
                 $request['StatusRealization'] = RealizationStatus::WAITING_APPROVAL_BU;
+                $LogAction = 'PROPOSE';
                 break;
             default:
                 $redirect = redirect()->route('realization.index');
@@ -171,6 +226,9 @@ class RealizationController extends Controller
         } catch (Exception $e) {
             Log::error('Error Insert Realization Group on ' . $action . ' Exception = ' . $e->getMessage());
         }
+
+        $Realization_id = ReportGenerator_Realization_Group::where('invoice_no', $request->invoice_no)->value('id');
+        Logger::SaveLog(LogStatus::REALIZATION, $Realization_id, $LogAction);
 
         return $redirect;
     }
@@ -224,6 +282,7 @@ class RealizationController extends Controller
 
     public function update(Request $request, $InvoiceNumber){
         $action = $request->action;
+        $LogAction = '';
         switch ($action) {
             case 'add_detail':
                 Realization::UpdateRealizationGroup($request, $InvoiceNumber, RealizationStatus::DRAFT);
@@ -232,15 +291,20 @@ class RealizationController extends Controller
             case 'save':
                 Realization::UpdateRealizationGroup($request, $InvoiceNumber, RealizationStatus::DRAFT);
                 $redirect = redirect()->route('realization.index');
+                $LogAction = 'UPDATE';
                 break;
             case 'propose':
                 Realization::UpdateRealizationGroup($request, $InvoiceNumber, RealizationStatus::WAITING_APPROVAL_BU);
                 $redirect = redirect()->route('realization.index');
+                $LogAction = 'PROPOSE';
                 break;
             default:
                 $redirect = redirect()->route('realization.index');
                 break;
         }
+
+        $Realization_id = ReportGenerator_Realization_Group::where('invoice_no', $InvoiceNumber)->value('id');
+        Logger::SaveLog(LogStatus::REALIZATION, $Realization_id, $LogAction);
 
         return $redirect;
     }
@@ -351,6 +415,10 @@ class RealizationController extends Controller
         } catch (Exception $e) {
             Log::error('Error Update Realization Group on Approve Exception = ' . $e->getMessage());
         }
+
+        $Realization_id = ReportGenerator_Realization_Group::where('invoice_no', $invoice_no_real)->value('id');
+        Logger::SaveLog(LogStatus::REALIZATION, $Realization_id, 'APPROVE');
+
         return redirect()->back()->with('noticication', 'Invoice <b>'.$invoice_no_real.'</b> Successfully Approved');
     }
 
@@ -361,6 +429,10 @@ class RealizationController extends Controller
         } catch (Exception $e) {
             Log::error('Error Update Realization Group on Approve Exception = ' . $e->getMessage());
         }
+
+        $Realization_id = ReportGenerator_Realization_Group::where('invoice_no', $invoice_no_real)->value('id');
+        Logger::SaveLog(LogStatus::REALIZATION, $Realization_id, 'PROPOSE');
+
         return redirect()->back()->with('noticication', 'Invoice <b>'.$invoice_no_real.'</b> Successfully Proposed');
     }
 
@@ -371,6 +443,10 @@ class RealizationController extends Controller
         } catch (Exception $e) {
             Log::error('Error Update Realization Group on Approve Exception = ' . $e->getMessage());
         }
+
+        $Realization_id = ReportGenerator_Realization_Group::where('invoice_no', $invoice_no_real)->value('id');
+        Logger::SaveLog(LogStatus::REALIZATION, $Realization_id, 'REJECT');
+
         return redirect()->back()->with('noticication', 'Invoice <b>'.$invoice_no_real.'</b> Successfully Rejected');
     }
 }

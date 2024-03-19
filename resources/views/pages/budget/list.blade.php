@@ -216,6 +216,12 @@
         </div>
     </div>
 
+    <style>
+        .td_comment {
+            cursor: pointer;
+        }
+    </style>
+
     <!-- Modal Reject-->
     @include('add-on.modal-reject')
     @include('add-on.modal-view-document-budget')
@@ -245,6 +251,18 @@
             $('#append').html(AddHiddenInputForFilters);
             $('#ModalReject').modal('toggle');
         });
+
+        $('body').on('click', '.td_comment', function(){
+            let thisClass = $(this);
+            let comment = thisClass.parent().data('comment');
+            swal({
+                title: 'Full Comment',
+                html: `<p style="font-size: 20px; word-spacing: 10px; padding: 15px; line-height: 1.6"><strong>${comment}</strong></p>`,
+                icon: 'info',
+                width: '800px'
+            });
+        });
+
         // Define Variable of Auth User NIK, Group Code, Datatable of Budget.
             var DataTableBudget = '';
 
@@ -351,7 +369,7 @@
                     { data: 'Status_Premium' },
                     { data: 'VOUCHER' },
                     { data: 'OCCUPATION' },
-                    { data: 'COMMENT' },
+                    { data: 'COMMENT', className:'td_comment' },
                     { data: 'CAEP' },
                     { data: 'Persentage' },
                     { data: 'AGING_REALIZATION' },

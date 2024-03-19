@@ -57,6 +57,14 @@ class Utils {
         }
     }
 
+    public static function GetCOB(){
+        try {
+            return DB::connection(Database::REPORT_GENERATOR)->select("EXECUTE [dbo].[SP_Get_COB_Engineering_Fee]");
+        } catch (Exception $e) {
+            return [];
+        }
+    }
+
     // ! Function Search.
     public static function SearchProfile($keywords, $currency = null){
         try {

@@ -25,5 +25,10 @@ final class HardCoded {
         'REJECT',
         'ARCHIVE'
     ];
+
+    CONST COB = [
+        '01-PROPERTY' => '01-PROPERTY',
+        '02-MOTOR VEHICLE' => '02-MOTOR VEHICLE'
+    ];
 }
 ?>

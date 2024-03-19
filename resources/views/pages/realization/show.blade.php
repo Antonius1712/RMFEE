@@ -197,6 +197,30 @@
             </div>
             <input type="hidden" name="from" value="edit"/>
         </form>
+
+        <div class="card-body default text-center">Log Activity</div>
+        <table class="table table-bordered">
+            <thead>
+                <tr class="default">
+                    <th>Name</th>
+                    <th>Status</th>
+                    <th>Desc</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{-- @foreach ($Logs as $Log)
+                <tr class="text-center">
+                    <td>{{ $Log->NIK.' - '.$Log->getUser->Name }}</td>
+                    <td>{{ $Log->Status }}</td>
+                    <td>{{ $Log->Description }}</td>
+                    <td>{{ date('Y-m-d', strtotime($Log->Date)) }}</td>
+                    <td>{{ $Log->Time }}</td>
+                </tr>
+                @endforeach --}}
+            </tbody>
+        </table>
     </div>
 </div>
 @include('add-on.modal-view-file-realization')
