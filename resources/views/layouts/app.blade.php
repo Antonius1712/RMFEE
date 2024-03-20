@@ -222,6 +222,21 @@
                 }
             });
         }
+
+        function getDatesInRange(startDate, endDate) {
+            var start = moment(startDate).format('YYYY-MM-DD');
+            var end = moment(endDate).format('YYYY-MM-DD');
+            var dates = [];
+
+            if( typeof start !== 'undefined' && typeof end !== 'undefined' ){
+                while (start <= end) {
+                    dates.push(moment(start).format('DD-MMM-YYYY'));
+                    start = moment(start).add(1, 'days').format('YYYY-MM-DD');
+                }
+            }
+
+            return dates;
+        }
     </script>
 
     @yield('script')

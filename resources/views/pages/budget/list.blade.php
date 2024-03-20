@@ -90,7 +90,7 @@
             <div class="col-lg-4">
                 <div class="form-group">
                     <label for="booking_date_from">Booking Date From</label>
-                    <input type="text" class="form-control" id="booking_date_from">
+                    <input type="text" class="form-control" id="booking_date_from" value="{{ session()->get('booking_date_from') }}">
                 </div>
             </div>
             <div class="col-lg-4">
@@ -115,7 +115,7 @@
             <div class="col-lg-4">
                 <div class="form-group">
                     <label for="booking_date_to">Booking Date To</label>
-                    <input type="text" name="booking_date_to" id="booking_date_to" class="form-control">
+                    <input type="text" name="booking_date_to" id="booking_date_to" class="form-control" value="{{ session()->get('booking_date_to') }}">
                 </div>
             </div>
             <div class="col-lg-4">
@@ -175,7 +175,7 @@
 
     <div class="card">
         <div class="card-body table-responsive">
-            <table class="table  table-budget dataTable" style="overflow-x: auto; overflow-y: none; height:">
+            <table class="table table-budget dataTable" style="overflow-x: auto; overflow-y: none; height:">
                 <thead>
                     <tr class="default tr-budget">
                         <th>Action</th>
@@ -299,6 +299,8 @@
                 // format: 'd-M-Y',
                 autoclose: true,
                 todayHighlight: true,
+                changeMonth: true,
+                changeYear: true
             });
 
             // Datatable Budget
@@ -312,6 +314,8 @@
                 serverSide: false, 
                 responsive: true,
                 scrollX: true, /* PAGINATION STAY ON THE BOTTOM RIGHT. */
+                // scrollResize: true,
+                scrollY: '100vh',
                 search: {
                     caseInsensitive: true,
                     regex: true,
@@ -505,7 +509,8 @@
             $('#broker_name').val('');
             $('#branch').val('');
             $('#nb_rn').val('');
-            $('#start_date').val('');
+            $('#booking_date_from').val('');
+            $('#booking_date_to').val('');
             $('#start_date').val('');
             $('#no_policy').val('');
             $('#holder_name').val('');
@@ -536,6 +541,7 @@
             let ClassBusiness = $('#ClassBusiness').val();
             let booking_date_from = $('#booking_date_from').val();
             let booking_date_to = $('#booking_date_to').val();
+            var AllDate = [];
 
             if( start_date == 'Invalid date' ){
                 start_date = '';
@@ -549,14 +555,9 @@
                 booking_date_to = '';
             }
 
-            // if (
-            //     (booking_date_from === null && booking_date_from === null) ||
-            //     (booking_date_from === null && date <= booking_date_from) ||
-            //     (booking_date_from <= date && booking_date_from === null) ||
-            //     (booking_date_from <= date && date <= booking_date_from)
-            // ) {
-            //     return true;
-            // }
+            if( booking_date_from != '' && booking_date_to != '' ){
+                AllDate = getDatesInRange(booking_date_from, booking_date_to);
+            }
 
             DataTableBudget.column('#th_branch').search(branch).draw();
             DataTableBudget.column('#th_broker_name').search(broker_name).draw();
@@ -570,7 +571,8 @@
             DataTableBudget.column('#th_last_edited_by').search(to_do_list_check_last_edited_by).draw();
             DataTableBudget.column('#th_class').search(ClassBusiness).draw();
 
-            DataTableBudget.column('#th_booking_date').search()
+            /*SEARCH COLUMN BOOKING DATE WITH DATE RANGE. ALLDATE => ALL DATE BETWEEN THE DATE RANGE.*/
+            DataTableBudget.column('#th_booking_date').search(AllDate.join('|'), true).draw();
 
             /* IF DATATABLE SERVER SIDE ABOVE = TRUE, THIS SEARCH WITH REGEX DOESN'T WORK.  */
             /* WITH REGEX */
@@ -607,6 +609,8 @@
             var branch = $('#branch').val();
             var status_pembayaran_premi = $('#status_pembayaran_premi').val();
             var start_date = $('#start_date').val();
+            var booking_date_from = $('#booking_date_from').val();
+            var booking_date_to = $('#booking_date_to').val();
             var no_policy = $('#no_policy').val();
             var aging_rmf = $('#aging_rmf').val();
             var nb_rn = $('#nb_rn').val();
