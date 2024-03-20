@@ -89,6 +89,12 @@
             <div class="clearfix"></div>
             <div class="col-lg-4">
                 <div class="form-group">
+                    <label for="booking_date_from">Booking Date From</label>
+                    <input type="text" class="form-control" id="booking_date_from">
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="form-group">
                     <label for="nb_rn">NB/RN</label>
                     <select name="nb_rn" id="nb_rn" class="form-control radius">
                         <option value="">All</option>
@@ -105,6 +111,23 @@
                         placeholder="Type Here..">
                 </div>
             </div>
+            <div class="clearfix"></div>
+            <div class="col-lg-4">
+                <div class="form-group">
+                    <label for="booking_date_to">Booking Date To</label>
+                    <input type="text" name="booking_date_to" id="booking_date_to" class="form-control">
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="form-group">
+                    <label for="ClassBusiness">Class</label>
+                    <select name="ClassBusiness" id="ClassBusiness" class="form-control radius">
+                        <option value="">All</option>
+                        <option {{ session()->get('ClassBusiness') == '02-MOTOR VEHICLE' ? 'selected' : '' }} value="02-MOTOR VEHICLE">02-MOTOR VEHICLE</option>
+                        <option {{ session()->get('ClassBusiness') == '01-PROPERTY' ? 'selected' : '' }} value="01-PROPERTY">01-PROPERTY</option>
+                    </select>
+                </div>
+            </div>
             <div class="col-lg-4">
                 <div class="form-group">
                     <label for="status_realisasi">Status Realisasi</label>
@@ -117,16 +140,7 @@
                 </div>
             </div>
             <div class="clearfix"></div>
-            <div class="col-lg-4">
-                <div class="form-group">
-                    <label for="ClassBusiness">Class</label>
-                    <select name="ClassBusiness" id="ClassBusiness" class="form-control radius">
-                        <option value="">All</option>
-                        <option {{ session()->get('ClassBusiness') == '02-MOTOR VEHICLE' ? 'selected' : '' }} value="02-MOTOR VEHICLE">02-MOTOR VEHICLE</option>
-                        <option {{ session()->get('ClassBusiness') == '01-PROPERTY' ? 'selected' : '' }} value="01-PROPERTY">01-PROPERTY</option>
-                    </select>
-                </div>
-            </div>
+            <div class="col-lg-4"></div>
             <div class="col-lg-4"></div>
             <div class="col-lg-4">
                 <div class="form-group">
@@ -171,6 +185,7 @@
                         <th id="th_branch">BRANCH</th>
                         <th id="th_policy_number">POLICY NUMBER</th>
                         <th id="th_holder_name">HOLDER NAME</th>
+                        <th id="th_booking_date">BOOKING DATE</th>
                         <th id="th_start_date">START DATE</th>
                         <th id="th_end_date">END DATE</th>
                         <th id="th_currency">CURRENCY</th>
@@ -264,7 +279,7 @@
         });
 
         // Define Variable of Auth User NIK, Group Code, Datatable of Budget.
-            var DataTableBudget = '';
+        var DataTableBudget = '';
 
         // Document Ready
         $(document).ready(function() {
@@ -279,7 +294,7 @@
             }
 
             // Datepicker Start Date
-            $('#start_date').datepicker({
+            $('#start_date, #booking_date_from, #booking_date_to').datepicker({
                 dateFormat: 'dd-M-yy',
                 // format: 'd-M-Y',
                 autoclose: true,
@@ -355,6 +370,7 @@
                     { data: 'BRANCH' },
                     { data: 'POLICYNO' },
                     { data: 'Holder_Name' },
+                    { data: 'ADATE' },
                     { data: 'Start_Date' },
                     { data: 'End_Date' },
                     { data: 'CURRENCY' },
@@ -518,10 +534,29 @@
             let to_do_list_check_proposed_to = $('#to_do_list_check_proposed_to').val();     
             let to_do_list_check_last_edited_by = $('#to_do_list_check_last_edited_by').val();     
             let ClassBusiness = $('#ClassBusiness').val();
+            let booking_date_from = $('#booking_date_from').val();
+            let booking_date_to = $('#booking_date_to').val();
 
             if( start_date == 'Invalid date' ){
                 start_date = '';
             }
+
+            if( booking_date_from == 'Invalid date' ){
+                booking_date_from = '';
+            }
+
+            if( booking_date_to == 'Invalid date' ){
+                booking_date_to = '';
+            }
+
+            // if (
+            //     (booking_date_from === null && booking_date_from === null) ||
+            //     (booking_date_from === null && date <= booking_date_from) ||
+            //     (booking_date_from <= date && booking_date_from === null) ||
+            //     (booking_date_from <= date && date <= booking_date_from)
+            // ) {
+            //     return true;
+            // }
 
             DataTableBudget.column('#th_branch').search(branch).draw();
             DataTableBudget.column('#th_broker_name').search(broker_name).draw();
@@ -534,6 +569,8 @@
             DataTableBudget.column('#th_proposed_to').search(to_do_list_check_proposed_to).draw();
             DataTableBudget.column('#th_last_edited_by').search(to_do_list_check_last_edited_by).draw();
             DataTableBudget.column('#th_class').search(ClassBusiness).draw();
+
+            DataTableBudget.column('#th_booking_date').search()
 
             /* IF DATATABLE SERVER SIDE ABOVE = TRUE, THIS SEARCH WITH REGEX DOESN'T WORK.  */
             /* WITH REGEX */

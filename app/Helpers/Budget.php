@@ -24,7 +24,7 @@ class Budget {
             return DB::connection(Database::REPORT_GENERATOR)
             ->select("
                 EXECUTE [dbo].[SP_Get_Data_Engineering_Fee] 
-                '', '', '', '', '', '', '', '', '', '', '$type', $archive
+                '', '', '', '', '', '', '', '', '', '', '$type', $archive, '', ''
             ");
         } catch (Exception $e) {
             return $e->getMessage();
