@@ -41,7 +41,7 @@ class BudgetController extends Controller
     public function edit($voucher, $archived = 0){
         $voucher = str_replace('~', '/', $voucher);
         $Budget = Budget::GetBudget($voucher, $archived);
-        $Logs = Logger::GetLog($voucher);
+        $Logs = Logger::GetLog(LogStatus::BUDGET, $voucher);
         $BudgetInAmount = ($Budget->Budget/100) * $Budget->LGI_PREMIUM;
         $VoucherId = str_replace("/", "~", $Budget->VOUCHER);
         $BrokerId = explode('-', $Budget->BROKERNAME, 2)[0];
