@@ -28,9 +28,12 @@ class Realization {
     }
 
     public static function GetRealization($invoice_no = null, $FilterStatusRealization = null, $FilterBrokerName = null, $FilterLastUpdate = null, $FilterCOB = null){
+        // dd($invoice_no, $FilterStatusRealization, $FilterBrokerName, $FilterLastUpdate, $FilterCOB);
         $UserGroup = auth()->user()->getUserGroup->GroupCode;
         try {
             $RealizationData = DB::connection(Database::REPORT_GENERATOR)->select("EXECUTE [dbo].[SP_Get_Group_Realization_Engineering_Fee] '$invoice_no', '$FilterStatusRealization', '$FilterBrokerName', '$FilterLastUpdate', '$FilterCOB'");
+
+            // dd($RealizationData);
             
             $CountRealization = count($RealizationData);
 

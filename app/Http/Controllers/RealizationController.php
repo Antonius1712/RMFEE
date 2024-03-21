@@ -42,20 +42,22 @@ class RealizationController extends Controller
     }
 
     public function index(Request $request){
-        $FilterStatusRealization = isset($request->status_realization) ? $request->status_realization : '';
-        $FilterBrokerName = isset($request->broker_name) ? $request->broker_name : '';
-        $FilterLastUpdate = isset($request->last_update) ? $request->last_update : '';
-        $FilterInvoiceNo = isset($request->invoice_no) ? $request->invoice_no : '';
-        $FilterCOB = isset($request->cob) ? $request->cob : '';
+        $FilterStatusRealization = isset($request->status_realization) ? $request->status_realization : null;
+        $FilterBrokerName = isset($request->broker_name) ? $request->broker_name : null;
+        $FilterLastUpdate = isset($request->last_update) ? $request->last_update : null;
+        $FilterInvoiceNo = isset($request->invoice_no) ? $request->invoice_no : null;
+        $FilterCOB = isset($request->cob) ? $request->cob : null;
 
-        $FilterLastUpdate = $FilterLastUpdate != '' ? date('m/d/Y', strtotime($FilterLastUpdate)) : '';
+        $FilterLastUpdate = $FilterLastUpdate != '' ? date('m/d/Y', strtotime($FilterLastUpdate)) : null;
 
-        // dd($FilterLastUpdate);
-
+        
         $RealizationStatus = $this->RealizationStatus;
         $COB = $this->COB;
+        // dd($FilterStatusRealization,   $FilterBrokerName, $FilterLastUpdate, $FilterInvoiceNo, $FilterCOB);
 
         $RealizationData = Realization::GetRealization($FilterInvoiceNo, $FilterStatusRealization, $FilterBrokerName, $FilterLastUpdate, $FilterCOB);
+
+        // dd($RealizationData);
 
         // dd($RealizationData, $FilterInvoiceNo, $FilterStatusRealization, $FilterBrokerName, $FilterLastUpdate, $FilterCOB);
 
@@ -201,6 +203,7 @@ class RealizationController extends Controller
             case 'add_detail':
                 $redirect = redirect()->route('realization.detail-realization.index', $invoice_no);
                 $request['StatusRealization'] = RealizationStatus::DRAFT;
+                $LogAction = 'ADD DETAIL';
                 break;
             case 'save':
                 $redirect = redirect()->route('realization.index');
@@ -233,7 +236,7 @@ class RealizationController extends Controller
         return $redirect;
     }
 
-    public function edit($invoice_no ){
+    public function edit($invoice_no){
         $invoice_no_real = str_replace('~', '/', $invoice_no);
         $RealizationData = Realization::GetRealization($invoice_no_real)[0];
         $Currencies = Utils::GetCurrencies();
@@ -275,9 +278,11 @@ class RealizationController extends Controller
             // }
         }
 
-        // dd($RealizationData);   
+        $Logs = Logger::GetLog(LogStatus::REALIZATION, $RealizationData->ID);
 
-        return view('pages.realization.edit', compact('RealizationData', 'Currencies', 'TypeOfInvoice', 'TypeOfPayment', 'BrokerData', 'PaymentToData', 'TotalAmountRealized', 'TotalAmountRealization', 'invoice_no', 'ApprovalBU', 'ApprovalBUName', 'ApprovalFinance', 'ApprovalFinanceName'));
+        // dd($RealizationData, $Logs);   
+
+        return view('pages.realization.edit', compact('RealizationData', 'Currencies', 'TypeOfInvoice', 'TypeOfPayment', 'BrokerData', 'PaymentToData', 'TotalAmountRealized', 'TotalAmountRealization', 'invoice_no', 'ApprovalBU', 'ApprovalBUName', 'ApprovalFinance', 'ApprovalFinanceName', 'Logs'));
     }
 
     public function update(Request $request, $InvoiceNumber){
@@ -287,6 +292,7 @@ class RealizationController extends Controller
             case 'add_detail':
                 Realization::UpdateRealizationGroup($request, $InvoiceNumber, RealizationStatus::DRAFT);
                 $redirect = redirect()->route('realization.detail-realization.index', $InvoiceNumber);
+                $LogAction = 'ADD DETAIL';
                 break;
             case 'save':
                 Realization::UpdateRealizationGroup($request, $InvoiceNumber, RealizationStatus::DRAFT);
@@ -312,6 +318,7 @@ class RealizationController extends Controller
     public function show($invoice_no){
         $invoice_no_real = str_replace('~', '/', $invoice_no);
         $RealizationData = Realization::GetRealization($invoice_no_real)[0];
+
         $Currencies = Utils::GetCurrencies();
         $BrokerData = null;
         $PaymentToData = null;
@@ -327,6 +334,7 @@ class RealizationController extends Controller
         }
 
         $UserSetting = ReportGenerator_UserSetting::where('UserID', $RealizationData->CreatedBy)->first();
+        
 
         // dd($RealizationData->CreatedBy, $UserSetting);
         $TypeOfInvoice = $this->TypeOfInvoice;
