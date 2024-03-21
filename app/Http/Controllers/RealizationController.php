@@ -362,6 +362,8 @@ class RealizationController extends Controller
             }
         }
 
+        $Logs = Logger::GetLog(LogStatus::REALIZATION, $RealizationData->ID);
+
         return view('pages.realization.show', compact('RealizationData', 'Currencies', 'TypeOfInvoice', 'TypeOfPayment', 'BrokerData', 'PaymentToData', 'TotalAmountRealization', 'TotalRealizationRMF', 'TotalRealizationSponsorship', 'ApprovalBU', 'ApprovalBUName', 'ApprovalFinance', 'ApprovalFinanceName', 'EpoChecker', 'EpoApproval'));
     }
 
