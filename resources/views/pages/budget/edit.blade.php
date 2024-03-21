@@ -182,15 +182,17 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($Logs as $Log)
-                    <tr class="text-center">
-                        <td>{{ $Log->NIK.' - '.$Log->getUser->Name }}</td>
-                        <td>{{ $Log->Status }}</td>
-                        <td>{{ $Log->Description }}</td>
-                        <td>{{ date('Y-m-d', strtotime($Log->Date)) }}</td>
-                        <td>{{ $Log->Time }}</td>
-                    </tr>
-                    @endforeach
+                    @if( isset($Logs) )
+                        @foreach ($Logs as $Log)
+                        <tr class="text-center">
+                            <td>{{ $Log->NIK.' - '.$Log->getUser->Name }}</td>
+                            <td>{{ $Log->Status }}</td>
+                            <td>{{ $Log->Description }}</td>
+                            <td>{{ date('Y-m-d', strtotime($Log->Date)) }}</td>
+                            <td>{{ $Log->Time }}</td>
+                        </tr>
+                        @endforeach
+                    @endif
                 </tbody>
             </table>
         </div>
