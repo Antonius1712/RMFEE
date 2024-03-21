@@ -226,6 +226,8 @@
                     <input type="hidden" name="filter_status_realisasi" id="filter_status_realisasi">
                     <input type="hidden" name="filter_class" id="filter_class">
                     <input type="hidden" name="filter_status_budget" id="filter_status_budget">
+                    <input type="hidden" name="filter_booking_date_from" id="filter_booking_date_from">
+                    <input type="hidden" name="filter_booking_date_to" id="filter_booking_date_to">
                 </tbody>
             </table>
         </div>
@@ -624,6 +626,8 @@
             obj_filter['branch'] = branch;
             obj_filter['status_pembayaran_premi'] = status_pembayaran_premi;
             obj_filter['start_date'] = start_date;
+            obj_filter['booking_date_from'] = booking_date_from;
+            obj_filter['booking_date_to'] = booking_date_to;
             obj_filter['no_policy'] = no_policy;
             obj_filter['aging_rmf'] = aging_rmf;
             obj_filter['nb_rn'] = nb_rn;

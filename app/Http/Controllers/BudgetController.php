@@ -100,6 +100,8 @@ class BudgetController extends Controller
         $ClassBusiness = isset($filter_ClassBusiness) ? $filter_ClassBusiness : '';
         $status_budget = isset($filter_status_budget) ? $filter_status_budget : '';
         $to_do_list = isset($filter_to_do_list) ? $filter_to_do_list : '';
+        $booking_date_from = isset($filter_booking_date_from) ? $filter_booking_date_from : '';
+        $booking_date_to = isset($filter_booking_date_to) ? $filter_booking_date_to : '';
 
         $message = $request->comment;
         $RedirectVoucher = str_replace('~', '/', $voucher);
@@ -118,7 +120,9 @@ class BudgetController extends Controller
         ->with('status_realisasi', $status_realisasi)
         ->with('ClassBusiness', $ClassBusiness)
         ->with('status_budget', $status_budget)
-        ->with('to_do_list', $to_do_list);
+        ->with('to_do_list', $to_do_list)
+        ->with('booking_date_from', $booking_date_from)
+        ->with('booking_date_to', $booking_date_to);
     }
 
     public function approve($voucher, Request $request){
@@ -139,6 +143,8 @@ class BudgetController extends Controller
         $ClassBusiness = isset($filter_ClassBusiness) ? $filter_ClassBusiness : '';
         $status_budget = isset($filter_status_budget) ? $filter_status_budget : '';
         $to_do_list = isset($filter_to_do_list) ? $filter_to_do_list : '';
+        $booking_date_from = isset($filter_booking_date_from) ? $filter_booking_date_from : '';
+        $booking_date_to = isset($filter_booking_date_to) ? $filter_booking_date_to : '';
 
         // dd($to_do_list);
 
@@ -157,7 +163,9 @@ class BudgetController extends Controller
         ->with('status_realisasi', $status_realisasi)
         ->with('ClassBusiness', $ClassBusiness)
         ->with('status_budget', $status_budget)
-        ->with('to_do_list', $to_do_list);
+        ->with('to_do_list', $to_do_list)
+        ->with('booking_date_from', $booking_date_from)
+        ->with('booking_date_to', $booking_date_to);
     }
 
     public function undo_approve($voucher, Request $request){
@@ -178,6 +186,8 @@ class BudgetController extends Controller
         $ClassBusiness = isset($filter_ClassBusiness) ? $filter_ClassBusiness : '';
         $status_budget = isset($filter_status_budget) ? $filter_status_budget : '';
         $to_do_list = isset($filter_to_do_list) ? $filter_to_do_list : '';
+        $booking_date_from = isset($filter_booking_date_from) ? $filter_booking_date_from : '';
+        $booking_date_to = isset($filter_booking_date_to) ? $filter_booking_date_to : '';
 
         $RedirectVoucher = str_replace('~', '/', $voucher);
         Budget::UpdateBudgetOnlyStatus('undo_approve', $voucher, null);
@@ -196,7 +206,9 @@ class BudgetController extends Controller
         ->with('status_realisasi', $status_realisasi)
         ->with('ClassBusiness', $ClassBusiness)
         ->with('status_budget', $status_budget)
-        ->with('to_do_list', $to_do_list);
+        ->with('to_do_list', $to_do_list)
+        ->with('booking_date_from', $booking_date_from)
+        ->with('booking_date_to', $booking_date_to);
     }
 
     public function BudgetDataTable(Request $request){
