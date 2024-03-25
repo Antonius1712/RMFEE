@@ -183,7 +183,7 @@
                             </div>
                             <div class="row">
                                 <div class="col-lg-12 mb-2">
-                                    <a href="{{ route('realization.detail-realization.index', $RealizationData->Invoice_No) }}" style="width: 100%; height: 60px;" class="btn btn-outline-primary radius-100">
+                                    <a href="{{ route('realization.detail-realization.index', str_replace('/', '~', $RealizationData->Invoice_No)) }}" style="width: 100%; height: 60px;" class="btn btn-outline-primary radius-100">
                                         <b style="font-size: 18px;">View Detail</b>
                                     </a>
                                     <a href="{{ route('realization.index') }}" style="width: 100%; height: 60px;" class="btn btn-primary radius-100 mt-2">
@@ -197,6 +197,32 @@
             </div>
             <input type="hidden" name="from" value="edit"/>
         </form>
+
+        <div class="card-body default text-center">Log Activity</div>
+        <table class="table table-bordered">
+            <thead>
+                <tr class="default">
+                    <th>Name</th>
+                    <th>Status</th>
+                    <th>Desc</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if( isset($Logs) )
+                    @foreach ($Logs as $Log)
+                    <tr class="text-center">
+                        <td>{{ $Log->NIK.' - '.$Log->getUser->Name }}</td>
+                        <td>{{ $Log->Status }}</td>
+                        <td>{{ $Log->Description }}</td>
+                        <td>{{ date('Y-m-d', strtotime($Log->Date)) }}</td>
+                        <td>{{ $Log->Time }}</td>
+                    </tr>
+                    @endforeach
+                @endif
+            </tbody>
+        </table>
     </div>
 </div>
 @include('add-on.modal-view-file-realization')

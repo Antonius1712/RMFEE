@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Enums\BudgetStatus;
 use App\Enums\HardCoded;
+use App\Enums\LogStatus;
 use App\Helpers\Budget;
 use App\Helpers\Logger;
 use App\Helpers\GetData;
@@ -40,7 +41,7 @@ class BudgetController extends Controller
     public function edit($voucher, $archived = 0){
         $voucher = str_replace('~', '/', $voucher);
         $Budget = Budget::GetBudget($voucher, $archived);
-        $Logs = Logger::GetLog($voucher);
+        $Logs = Logger::GetLog(LogStatus::BUDGET, $voucher);
         $BudgetInAmount = ($Budget->Budget/100) * $Budget->LGI_PREMIUM;
         $VoucherId = str_replace("/", "~", $Budget->VOUCHER);
         $BrokerId = explode('-', $Budget->BROKERNAME, 2)[0];
@@ -57,7 +58,7 @@ class BudgetController extends Controller
         }
         $RedirectVoucher = str_replace('~', '/', $voucher);
         Budget::UpdateBudget($request, $voucher);
-        Logger::SaveLog($RedirectVoucher, $desc);
+        Logger::SaveLog(LogStatus::BUDGET, $RedirectVoucher, $desc);
         return redirect()->route('budget.list')->with('noticication', 'Voucher <b>'.$RedirectVoucher.'</b> Successfully '. $desc);
     }
 
@@ -69,14 +70,14 @@ class BudgetController extends Controller
     public function archive($voucher){
         $RedirectVoucher = str_replace('~', '/', $voucher);
         Budget::UpdateBudgetOnlyStatus('archive', $voucher, null);
-        Logger::SaveLog($RedirectVoucher, 'Archived');
+        Logger::SaveLog(LogStatus::BUDGET, $RedirectVoucher, 'Archived');
         return redirect()->route('budget.archive-list')->with('noticication', 'Voucher <b>'.$RedirectVoucher.'</b> Successfully Archived');
     }
 
     public function unarchive($voucher){
         $RedirectVoucher = str_replace('~', '/', $voucher);
         Budget::UpdateBudgetOnlyStatus('draft', $voucher, null);
-        Logger::SaveLog($RedirectVoucher, 'Unarchived');
+        Logger::SaveLog(LogStatus::BUDGET, $RedirectVoucher, 'Unarchived');
         return redirect()->route('budget.archive-list')->with('noticication', 'Voucher <b>'.$RedirectVoucher.'</b> Successfully UnArchived');
     }
 
@@ -98,12 +99,15 @@ class BudgetController extends Controller
         $status_realisasi = isset($filter_status_realisasi) ? $filter_status_realisasi : '';
         $ClassBusiness = isset($filter_ClassBusiness) ? $filter_ClassBusiness : '';
         $status_budget = isset($filter_status_budget) ? $filter_status_budget : '';
+        $to_do_list = isset($filter_to_do_list) ? $filter_to_do_list : '';
+        $booking_date_from = isset($filter_booking_date_from) ? $filter_booking_date_from : '';
+        $booking_date_to = isset($filter_booking_date_to) ? $filter_booking_date_to : '';
 
         $message = $request->comment;
         $RedirectVoucher = str_replace('~', '/', $voucher);
         Budget::UpdateBudgetOnlyStatus('reject', $voucher, null);
         $message = $message != null ? ' | '.$message : null;
-        Logger::SaveLog($RedirectVoucher, 'Rejected', $message);
+        Logger::SaveLog(LogStatus::BUDGET, $RedirectVoucher, 'Rejected', $message);
         return redirect()->route('budget.list')->with('noticication', 'Voucher <b>'.$RedirectVoucher.'</b> Successfully Rejected')
         ->with('broker_name', $broker_name)
         ->with('branch', $branch)
@@ -115,7 +119,10 @@ class BudgetController extends Controller
         ->with('holder_name', $holder_name)
         ->with('status_realisasi', $status_realisasi)
         ->with('ClassBusiness', $ClassBusiness)
-        ->with('status_budget', $status_budget);
+        ->with('status_budget', $status_budget)
+        ->with('to_do_list', $to_do_list)
+        ->with('booking_date_from', $booking_date_from)
+        ->with('booking_date_to', $booking_date_to);
     }
 
     public function approve($voucher, Request $request){
@@ -135,10 +142,15 @@ class BudgetController extends Controller
         $status_realisasi = isset($filter_status_realisasi) ? $filter_status_realisasi : '';
         $ClassBusiness = isset($filter_ClassBusiness) ? $filter_ClassBusiness : '';
         $status_budget = isset($filter_status_budget) ? $filter_status_budget : '';
+        $to_do_list = isset($filter_to_do_list) ? $filter_to_do_list : '';
+        $booking_date_from = isset($filter_booking_date_from) ? $filter_booking_date_from : '';
+        $booking_date_to = isset($filter_booking_date_to) ? $filter_booking_date_to : '';
+
+        // dd($to_do_list);
 
         $RedirectVoucher = str_replace('~', '/', $voucher);
         Budget::UpdateBudgetOnlyStatus('approve', $voucher, null);
-        Logger::SaveLog($RedirectVoucher, 'Approved');
+        Logger::SaveLog(LogStatus::BUDGET, $RedirectVoucher, 'Approved');
         return redirect()->route('budget.list')->with('noticication', 'Voucher <b>'.$RedirectVoucher.'</b> Successfully Approved')
         ->with('broker_name', $broker_name)
         ->with('branch', $branch)
@@ -150,7 +162,10 @@ class BudgetController extends Controller
         ->with('holder_name', $holder_name)
         ->with('status_realisasi', $status_realisasi)
         ->with('ClassBusiness', $ClassBusiness)
-        ->with('status_budget', $status_budget);
+        ->with('status_budget', $status_budget)
+        ->with('to_do_list', $to_do_list)
+        ->with('booking_date_from', $booking_date_from)
+        ->with('booking_date_to', $booking_date_to);
     }
 
     public function undo_approve($voucher, Request $request){
@@ -170,12 +185,13 @@ class BudgetController extends Controller
         $status_realisasi = isset($filter_status_realisasi) ? $filter_status_realisasi : '';
         $ClassBusiness = isset($filter_ClassBusiness) ? $filter_ClassBusiness : '';
         $status_budget = isset($filter_status_budget) ? $filter_status_budget : '';
-
-        // dd($ClassBusiness);
+        $to_do_list = isset($filter_to_do_list) ? $filter_to_do_list : '';
+        $booking_date_from = isset($filter_booking_date_from) ? $filter_booking_date_from : '';
+        $booking_date_to = isset($filter_booking_date_to) ? $filter_booking_date_to : '';
 
         $RedirectVoucher = str_replace('~', '/', $voucher);
         Budget::UpdateBudgetOnlyStatus('undo_approve', $voucher, null);
-        Logger::SaveLog($voucher, 'Undo Approved');
+        Logger::SaveLog(LogStatus::BUDGET, $voucher, 'Undo Approved');
         return redirect()
         ->route('budget.list')
         ->with('noticication', 'Voucher <b>'.$RedirectVoucher.'</b> Successfully Undo Approved')
@@ -189,7 +205,10 @@ class BudgetController extends Controller
         ->with('holder_name', $holder_name)
         ->with('status_realisasi', $status_realisasi)
         ->with('ClassBusiness', $ClassBusiness)
-        ->with('status_budget', $status_budget);
+        ->with('status_budget', $status_budget)
+        ->with('to_do_list', $to_do_list)
+        ->with('booking_date_from', $booking_date_from)
+        ->with('booking_date_to', $booking_date_to);
     }
 
     public function BudgetDataTable(Request $request){
@@ -265,6 +284,14 @@ class BudgetController extends Controller
 
                 // dd($BtnAction);
                 return $BtnAction;
+            })
+            // ->editColumn('Start_Date', function($row){
+            //     // return date('Y-m-d', strtotime($row->Start_Date));
+            //     return date('d-M-Y', strtotime($row->Start_Date));
+            // })
+            ->editColumn('ADATE', function($row){
+                // return date('Y-m-d', strtotime($row->Start_Date));
+                return date('d-M-Y', strtotime($row->ADATE));
             })
             ->editColumn('Start_Date', function($row){
                 // return date('Y-m-d', strtotime($row->Start_Date));
@@ -355,6 +382,11 @@ class BudgetController extends Controller
                 }
             })
             ->rawColumns(['ACTION', 'STATUS_BUDGET'])
+            ->setRowAttr([
+                'data-comment' => function($row){
+                    return $row->COMMENT;
+                }
+            ])
         ->make(true);
         
         // dd($Budgets);
