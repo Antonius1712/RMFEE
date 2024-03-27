@@ -291,6 +291,7 @@ class BudgetController extends Controller
             // })
             ->editColumn('ADATE', function($row){
                 // return date('Y-m-d', strtotime($row->Start_Date));
+                // dd('zz', $row);
                 return date('d-M-Y', strtotime($row->ADATE));
             })
             ->editColumn('Start_Date', function($row){

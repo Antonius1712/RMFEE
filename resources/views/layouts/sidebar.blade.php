@@ -71,13 +71,13 @@
                 </a>
                 <ul class="menu-content">
                     <li class="{{ Request()->segment(2) == 'report-budget' ? 'active' : '' }}">
-                        <a class="d-flex align-items-center" href="#">
+                        <a class="d-flex align-items-center" href="{{ route('report.budget') }}">
                             <i data-feather="corner-down-right" class="feather icon-corner-down-right"></i>
                             <span class="menu-item text-truncate" data-i18n="Report Budget">Report Budget</span>
                         </a>
                     </li>
                     <li class="{{ Request()->segment(2) == 'report-realization' ? 'active' : '' }}">
-                        <a class="d-flex align-items-center" href="#">
+                        <a class="d-flex align-items-center" href="{{ route('report.realization') }}">
                             <i data-feather="corner-down-right" class="feather icon-corner-down-right"></i>
                             <span class="menu-item text-truncate" data-i18n="Report Realization">Report
                                 Realization</span>
