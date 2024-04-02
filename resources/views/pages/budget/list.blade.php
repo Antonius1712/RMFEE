@@ -486,9 +486,9 @@
         $('#btn_apply_filter').click(function(){
             let returned = AssignValueFilter();
             SearchDataTable();
-            setTimeout(() => {
-                AddQueryUrlParameterToButtons(returned);
-            }, 500);
+            // setTimeout(() => {
+            //     AddQueryUrlParameterToButtons(returned);
+            // }, 500);
         });
 
         // Checkbox to Apply Specific filters.
@@ -654,14 +654,45 @@
             return filter;
         }
 
-        function AddQueryUrlParameterToButtons(filters){
+        $('body').on('click', '.approve', function(e){
+            e.preventDefault();
+            let urlApprove = $(this).data('url');
+            let returned = AssignValueFilter();
+            
+            let approve = `${urlApprove}?${returned}`;
+            window.location.replace(approve);
+            // $(this).attr('href', `${urlApprove}?${returned}`);
+        });
+
+        $('body').on('click', '.undo_approve', function(e){
+            e.preventDefault();
+            let urlApprove = $(this).data('url');
+            let returned = AssignValueFilter();
+            
+            let approve = `${urlApprove}?${returned}`;
+            window.location.replace(approve);
+            // $(this).attr('href', `${urlApprove}?${returned}`);
+        });
+
+        function AddQueryUrlParameterToButtons(filters, url=null){
             /* ?Approve */
-            let hrefApprove = $('body').find('.approve').attr('href'); /*Get Href Value*/
-            if( typeof hrefApprove !== 'undefined' ){
-                hrefApprove = hrefApprove.split('?')[0]; /*Remove Query Parameter from url.*/
+            // let hrefApprove = $('body').find('.approve').attr('href'); /*Get Href Value*/
+            
+            // if( typeof hrefApprove !== 'undefined' ){
+            //     hrefApprove = hrefApprove.split('?')[0]; /*Remove Query Parameter from url.*/
+            // }
+
+            hrefApprove = '';
+
+            if( url != null ){
+                hrefApprove = url.split('?')[0];
             }
+
             hrefApprove = `${hrefApprove}?${filters}`;
             $('body').find('.approve').attr('href', hrefApprove); /*Assign new url with Query Parameter*/
+
+            console.log(hrefApprove);
+            return false;
             
 
             /* ?Undo Approve */
