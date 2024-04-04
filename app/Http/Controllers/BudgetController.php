@@ -239,13 +239,13 @@ class BudgetController extends Controller
                 $BtnShowHide = Budget::ShowHideButtonBudget($row->STATUS_BUDGET, auth()->user()->getUserGroup->GroupCode);
 
                 // dd($BtnShowHide);
-
+                
                 if( $BtnShowHide['BtnApprove'] ){
-                    $BtnApprove = "<a class='dropdown-item success approve' href='".route('budget.approve', $Voucher)."'><i class='feather icon-check-circle'></i>Approve</a>";
+                    $BtnApprove = "<a class='dropdown-item success approve' href='javascript:;' data-url='".route('budget.approve', $Voucher)."'><i class='feather icon-check-circle'></i>Approve</a>";
                 }
 
                 if( $BtnShowHide['BtnUndoApproval'] ){
-                    $BtnUndoApproval = "<a class='dropdown-item danger undo_approve' href='".route('budget.undo_approve', [$Voucher])."'><i class='feather icon-delete'></i>Undo Approval</a>";
+                    $BtnUndoApproval = "<a class='dropdown-item danger undo_approve' href='javascript:;' data-url='".route('budget.undo_approve', [$Voucher])."'><i class='feather icon-delete'></i>Undo Approval</a>";
                 }
 
                 if( $BtnShowHide['BtnEdit'] ){
@@ -281,6 +281,10 @@ class BudgetController extends Controller
                 }
 
                 $BtnAction = "<div class='btn-group' role='group' aria-label='Button group with nested dropdown'><div class='btn-group' role='group'><a href='#' id='BtnActionGroup' data-toggle='dropdown' aria-haspopup='true'aria-expanded='false' style=''><i class='feather icon-plus-circle icon-btn-group'></i></a><div class='dropdown-menu' aria-labelledby='BtnActionGroup'>".$BtnApprove.$BtnUndoApproval.$BtnEdit.$BtnDownloadDocument.$Divider.$BtnReject.$BtnArchive.$BtnUnArchive."</div></div></div>";
+
+                // if( $Voucher = '00049~DN~18~02~24'){
+                //     dd($BtnApprove, $BtnAction);
+                // }
 
                 // dd($BtnAction);
                 return $BtnAction;
