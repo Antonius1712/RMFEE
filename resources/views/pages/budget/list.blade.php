@@ -3,7 +3,6 @@
 @endsection
 
 @section('content')
-{{-- {{ dd(session()->all()) }} --}}
     <div class="row">
         <div class="col-lg-6 mb-2">
             {{-- <a class="btn btn-primary pull-left" style="border-radius: 100px; font-size: 18px;" aria-expanded="false" data-toggle="collapse" data-target="#FilterCollapse">
@@ -486,9 +485,6 @@
         $('#btn_apply_filter').click(function(){
             let returned = AssignValueFilter();
             SearchDataTable();
-            // setTimeout(() => {
-            //     AddQueryUrlParameterToButtons(returned);
-            // }, 500);
         });
 
         // Checkbox to Apply Specific filters.
@@ -586,15 +582,6 @@
             // DataTableBudget.column('#th_status_realisasi').search(status_realisasi).draw();
         }
 
-        async function Loader(fn, par = '') {
-            ShowLoader();
-            await fn(par);
-
-            // return await setTimeout(async function() {
-            // await fn(par);
-            // }, 3000, fn, par);
-        }
-
         function HideLoader(){
             $('#loading').hide();
         }
@@ -659,9 +646,9 @@
             let urlApprove = $(this).data('url');
             let returned = AssignValueFilter();
             
+            //? To get query parameters for filtered value display.
             let approve = `${urlApprove}?${returned}`;
             window.location.replace(approve);
-            // $(this).attr('href', `${urlApprove}?${returned}`);
         });
 
         $('body').on('click', '.undo_approve', function(e){
@@ -669,52 +656,9 @@
             let urlApprove = $(this).data('url');
             let returned = AssignValueFilter();
             
+            //? To get query parameters for filtered value display.
             let approve = `${urlApprove}?${returned}`;
             window.location.replace(approve);
-            // $(this).attr('href', `${urlApprove}?${returned}`);
         });
-
-        function AddQueryUrlParameterToButtons(filters, url=null){
-            /* ?Approve */
-            // let hrefApprove = $('body').find('.approve').attr('href'); /*Get Href Value*/
-            
-            // if( typeof hrefApprove !== 'undefined' ){
-            //     hrefApprove = hrefApprove.split('?')[0]; /*Remove Query Parameter from url.*/
-            // }
-
-            hrefApprove = '';
-
-            if( url != null ){
-                hrefApprove = url.split('?')[0];
-            }
-
-            hrefApprove = `${hrefApprove}?${filters}`;
-            $('body').find('.approve').attr('href', hrefApprove); /*Assign new url with Query Parameter*/
-
-            console.log(hrefApprove);
-            return false;
-            
-
-            /* ?Undo Approve */
-            let hrefUndoApprove = $('body').find('.undo_approve').attr('href'); /*Get Href Value*/
-            if( typeof hrefUndoApprove !== 'undefined' ){
-                hrefUndoApprove = hrefUndoApprove.split('?')[0]; /*Remove Query Parameter from url.*/
-            }
-            hrefUndoApprove = `${hrefUndoApprove}?${filters}`;
-            $('body').find('.undo_approve').attr('href', hrefUndoApprove); /*Assign new url with Query Parameter*/
-
-            
-            // /* ?Reject on different function. */
-            // let hrefReject = $('body').find('#form-reject-budget').attr('action'); /*Get Href Value*/
-            // if( typeof hrefReject !== 'undefined' ){
-            //     hrefReject = hrefReject.split('?')[0]; /*Remove Query Parameter from url.*/
-            // }
-            // hrefReject = `${hrefReject}?${filters}`;
-
-            // console.log(hrefReject, filters, );
-
-            // $('body').find('#form-reject-budget').attr('action', hrefReject); /*Assign new url with Query Parameter*/
-
-        }
     </script>
 @endsection
