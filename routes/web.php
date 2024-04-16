@@ -93,6 +93,8 @@ Route::middleware(['breadcrumbs', 'auth'])->group(function(){
     Route::prefix('report')->as('report.')->group(function(){
         Route::get('/budget', 'Report\ReportBudgetController@index')->name('budget');
         Route::get('/realization', 'Report\ReportRealizationController@index')->name('realization');
+
+        Route::post('/budget', 'Report\ReportBudgetController@GenerateReport')->name('budget.generate');
     });
 
     //? Setting Budget Group & User Module.

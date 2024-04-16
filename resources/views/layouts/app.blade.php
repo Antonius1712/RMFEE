@@ -53,7 +53,7 @@
 <!-- BEGIN: Body-->
 
 <body class="vertical-layout vertical-menu-modern 2-columns  navbar-floating footer-static  " data-open="click"
-    data-menu="vertical-menu-modern" data-col="2-columns" style="zoom:80%;">
+    data-menu="vertical-menu-modern" data-col="2-columns" style="zoom:100%;">
     <style>
         #loading {
             position: fixed;
