@@ -3,7 +3,6 @@
 @endsection
 
 @section('content')
-{{-- {{ dd(session()->all()) }} --}}
     <div class="row">
         <div class="col-lg-6 mb-2">
             {{-- <a class="btn btn-primary pull-left" style="border-radius: 100px; font-size: 18px;" aria-expanded="false" data-toggle="collapse" data-target="#FilterCollapse">
@@ -89,6 +88,12 @@
             <div class="clearfix"></div>
             <div class="col-lg-4">
                 <div class="form-group">
+                    <label for="booking_date_from">Booking Date From</label>
+                    <input type="text" class="form-control" id="booking_date_from" value="{{ session()->get('booking_date_from') }}">
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="form-group">
                     <label for="nb_rn">NB/RN</label>
                     <select name="nb_rn" id="nb_rn" class="form-control radius">
                         <option value="">All</option>
@@ -105,6 +110,23 @@
                         placeholder="Type Here..">
                 </div>
             </div>
+            <div class="clearfix"></div>
+            <div class="col-lg-4">
+                <div class="form-group">
+                    <label for="booking_date_to">Booking Date To</label>
+                    <input type="text" name="booking_date_to" id="booking_date_to" class="form-control" value="{{ session()->get('booking_date_to') }}">
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="form-group">
+                    <label for="ClassBusiness">Class</label>
+                    <select name="ClassBusiness" id="ClassBusiness" class="form-control radius">
+                        <option value="">All</option>
+                        <option {{ session()->get('ClassBusiness') == '02-MOTOR VEHICLE' ? 'selected' : '' }} value="02-MOTOR VEHICLE">02-MOTOR VEHICLE</option>
+                        <option {{ session()->get('ClassBusiness') == '01-PROPERTY' ? 'selected' : '' }} value="01-PROPERTY">01-PROPERTY</option>
+                    </select>
+                </div>
+            </div>
             <div class="col-lg-4">
                 <div class="form-group">
                     <label for="status_realisasi">Status Realisasi</label>
@@ -117,16 +139,7 @@
                 </div>
             </div>
             <div class="clearfix"></div>
-            <div class="col-lg-4">
-                <div class="form-group">
-                    <label for="ClassBusiness">Class</label>
-                    <select name="ClassBusiness" id="ClassBusiness" class="form-control radius">
-                        <option value="">All</option>
-                        <option {{ session()->get('ClassBusiness') == '02-MOTOR VEHICLE' ? 'selected' : '' }} value="02-MOTOR VEHICLE">02-MOTOR VEHICLE</option>
-                        <option {{ session()->get('ClassBusiness') == '01-PROPERTY' ? 'selected' : '' }} value="01-PROPERTY">01-PROPERTY</option>
-                    </select>
-                </div>
-            </div>
+            <div class="col-lg-4"></div>
             <div class="col-lg-4"></div>
             <div class="col-lg-4">
                 <div class="form-group">
@@ -161,7 +174,7 @@
 
     <div class="card">
         <div class="card-body table-responsive">
-            <table class="table  table-budget dataTable" style="overflow-x: auto; overflow-y: none; height:">
+            <table class="table table-budget dataTable" style="overflow-x: auto; overflow-y: none; height:">
                 <thead>
                     <tr class="default tr-budget">
                         <th>Action</th>
@@ -171,6 +184,7 @@
                         <th id="th_branch">BRANCH</th>
                         <th id="th_policy_number">POLICY NUMBER</th>
                         <th id="th_holder_name">HOLDER NAME</th>
+                        <th id="th_booking_date">BOOKING DATE</th>
                         <th id="th_start_date">START DATE</th>
                         <th id="th_end_date">END DATE</th>
                         <th id="th_currency">CURRENCY</th>
@@ -211,10 +225,18 @@
                     <input type="hidden" name="filter_status_realisasi" id="filter_status_realisasi">
                     <input type="hidden" name="filter_class" id="filter_class">
                     <input type="hidden" name="filter_status_budget" id="filter_status_budget">
+                    <input type="hidden" name="filter_booking_date_from" id="filter_booking_date_from">
+                    <input type="hidden" name="filter_booking_date_to" id="filter_booking_date_to">
                 </tbody>
             </table>
         </div>
     </div>
+
+    <style>
+        .td_comment {
+            cursor: pointer;
+        }
+    </style>
 
     <!-- Modal Reject-->
     @include('add-on.modal-reject')
@@ -245,8 +267,20 @@
             $('#append').html(AddHiddenInputForFilters);
             $('#ModalReject').modal('toggle');
         });
+
+        $('body').on('click', '.td_comment', function(){
+            let thisClass = $(this);
+            let comment = thisClass.parent().data('comment');
+            swal({
+                title: 'Full Comment',
+                html: `<p style="font-size: 20px; word-spacing: 10px; padding: 15px; line-height: 1.6"><strong>${comment}</strong></p>`,
+                icon: 'info',
+                width: '800px'
+            });
+        });
+
         // Define Variable of Auth User NIK, Group Code, Datatable of Budget.
-            var DataTableBudget = '';
+        var DataTableBudget = '';
 
         // Document Ready
         $(document).ready(function() {
@@ -260,13 +294,14 @@
                 $('#to_do_list').attr('checked', true);
             }
 
-
             // Datepicker Start Date
-            $('#start_date').datepicker({
+            $('#start_date, #booking_date_from, #booking_date_to').datepicker({
                 dateFormat: 'dd-M-yy',
                 // format: 'd-M-Y',
                 autoclose: true,
                 todayHighlight: true,
+                changeMonth: true,
+                changeYear: true
             });
 
             // Datatable Budget
@@ -280,6 +315,8 @@
                 serverSide: false, 
                 responsive: true,
                 scrollX: true, /* PAGINATION STAY ON THE BOTTOM RIGHT. */
+                // scrollResize: true,
+                scrollY: '100vh',
                 search: {
                     caseInsensitive: true,
                     regex: true,
@@ -338,6 +375,7 @@
                     { data: 'BRANCH' },
                     { data: 'POLICYNO' },
                     { data: 'Holder_Name' },
+                    { data: 'ADATE' },
                     { data: 'Start_Date' },
                     { data: 'End_Date' },
                     { data: 'CURRENCY' },
@@ -352,7 +390,7 @@
                     { data: 'Status_Premium' },
                     { data: 'VOUCHER' },
                     { data: 'OCCUPATION' },
-                    { data: 'COMMENT' },
+                    { data: 'COMMENT', className:'td_comment' },
                     { data: 'CAEP' },
                     { data: 'Persentage' },
                     { data: 'AGING_REALIZATION' },
@@ -365,6 +403,22 @@
                     { data: 'ProposedTo', searchable: true, visible: false },
                     { data: 'LAST_EDITED_BY', searchable: true, visible: false }
                 ],
+                initComplete: function(){
+                    let AllInputFormFilter = $('#card-filter').find('input');
+                    let AllSelectFormFilter = $('#card-filter').find('select');
+
+                    let countValueInput = AllInputFormFilter.filter(function(){
+                        return this.value;
+                    }).length;
+
+                    let countValueSelect = AllSelectFormFilter.filter(function(){
+                        return this.value;
+                    }).length;
+                    /*console.log({countValueInput, countValueSelect});*/
+                    if( (countValueInput > 0) || (countValueSelect > 0) ){
+                        $('body').find('#btn_apply_filter').trigger('click');
+                    }
+                }
             }).on('select', function(e, dt, node, config){
                 let selectedData = dt.rows('.selected').data();
             });
@@ -404,21 +458,8 @@
             }, 5);
 
 
-            let AllInputFormFilter = $('#card-filter').find('input');
-            let AllSelectFormFilter = $('#card-filter').find('select');
-
-            let countValueInput = AllInputFormFilter.filter(function(){
-                return this.value;
-            }).length;
-
-            let countValueSelect = AllSelectFormFilter.filter(function(){
-                return this.value;
-            }).length;
-            setTimeout(() => {
-                if( (countValueInput > 0) || (countValueSelect > 0) ){
-                    $('#btn_apply_filter').trigger('click');
-                }
-            }, 100);
+            
+            
         });
 
         // // Show Loader when exports.
@@ -444,9 +485,6 @@
         $('#btn_apply_filter').click(function(){
             let returned = AssignValueFilter();
             SearchDataTable();
-            setTimeout(() => {
-                AddQueryUrlParameterToButtons(returned);
-            }, 500);
         });
 
         // Checkbox to Apply Specific filters.
@@ -469,7 +507,8 @@
             $('#broker_name').val('');
             $('#branch').val('');
             $('#nb_rn').val('');
-            $('#start_date').val('');
+            $('#booking_date_from').val('');
+            $('#booking_date_to').val('');
             $('#start_date').val('');
             $('#no_policy').val('');
             $('#holder_name').val('');
@@ -498,9 +537,24 @@
             let to_do_list_check_proposed_to = $('#to_do_list_check_proposed_to').val();     
             let to_do_list_check_last_edited_by = $('#to_do_list_check_last_edited_by').val();     
             let ClassBusiness = $('#ClassBusiness').val();
+            let booking_date_from = $('#booking_date_from').val();
+            let booking_date_to = $('#booking_date_to').val();
+            var AllDate = [];
 
             if( start_date == 'Invalid date' ){
                 start_date = '';
+            }
+
+            if( booking_date_from == 'Invalid date' ){
+                booking_date_from = '';
+            }
+
+            if( booking_date_to == 'Invalid date' ){
+                booking_date_to = '';
+            }
+
+            if( booking_date_from != '' && booking_date_to != '' ){
+                AllDate = getDatesInRange(booking_date_from, booking_date_to);
             }
 
             DataTableBudget.column('#th_branch').search(branch).draw();
@@ -515,6 +569,9 @@
             DataTableBudget.column('#th_last_edited_by').search(to_do_list_check_last_edited_by).draw();
             DataTableBudget.column('#th_class').search(ClassBusiness).draw();
 
+            /*SEARCH COLUMN BOOKING DATE WITH DATE RANGE. ALLDATE => ALL DATE BETWEEN THE DATE RANGE.*/
+            DataTableBudget.column('#th_booking_date').search(AllDate.join('|'), true).draw();
+
             /* IF DATATABLE SERVER SIDE ABOVE = TRUE, THIS SEARCH WITH REGEX DOESN'T WORK.  */
             /* WITH REGEX */
             DataTableBudget.column('#th_status_premium').search(status_pembayaran_premi ? '^'+status_pembayaran_premi+'$' : '', true, false, false).draw();
@@ -523,15 +580,6 @@
             /* WITHOUT REGEX */
             // DataTableBudget.column('#th_status_premium').search(status_pembayaran_premi).draw();
             // DataTableBudget.column('#th_status_realisasi').search(status_realisasi).draw();
-        }
-
-        async function Loader(fn, par = '') {
-            ShowLoader();
-            await fn(par);
-
-            // return await setTimeout(async function() {
-            // await fn(par);
-            // }, 3000, fn, par);
         }
 
         function HideLoader(){
@@ -550,6 +598,8 @@
             var branch = $('#branch').val();
             var status_pembayaran_premi = $('#status_pembayaran_premi').val();
             var start_date = $('#start_date').val();
+            var booking_date_from = $('#booking_date_from').val();
+            var booking_date_to = $('#booking_date_to').val();
             var no_policy = $('#no_policy').val();
             var aging_rmf = $('#aging_rmf').val();
             var nb_rn = $('#nb_rn').val();
@@ -563,6 +613,8 @@
             obj_filter['branch'] = branch;
             obj_filter['status_pembayaran_premi'] = status_pembayaran_premi;
             obj_filter['start_date'] = start_date;
+            obj_filter['booking_date_from'] = booking_date_from;
+            obj_filter['booking_date_to'] = booking_date_to;
             obj_filter['no_policy'] = no_policy;
             obj_filter['aging_rmf'] = aging_rmf;
             obj_filter['nb_rn'] = nb_rn;
@@ -589,36 +641,24 @@
             return filter;
         }
 
-        function AddQueryUrlParameterToButtons(filters){
-            /* ?Approve */
-            let hrefApprove = $('body').find('.approve').attr('href'); /*Get Href Value*/
-            if( typeof hrefApprove !== 'undefined' ){
-                hrefApprove = hrefApprove.split('?')[0]; /*Remove Query Parameter from url.*/
-            }
-            hrefApprove = `${hrefApprove}?${filters}`;
-            $('body').find('.approve').attr('href', hrefApprove); /*Assign new url with Query Parameter*/
+        $('body').on('click', '.approve', function(e){
+            e.preventDefault();
+            let urlApprove = $(this).data('url');
+            let returned = AssignValueFilter();
             
+            //? To get query parameters for filtered value display.
+            let approve = `${urlApprove}?${returned}`;
+            window.location.replace(approve);
+        });
 
-            /* ?Undo Approve */
-            let hrefUndoApprove = $('body').find('.undo_approve').attr('href'); /*Get Href Value*/
-            if( typeof hrefUndoApprove !== 'undefined' ){
-                hrefUndoApprove = hrefUndoApprove.split('?')[0]; /*Remove Query Parameter from url.*/
-            }
-            hrefUndoApprove = `${hrefUndoApprove}?${filters}`;
-            $('body').find('.undo_approve').attr('href', hrefUndoApprove); /*Assign new url with Query Parameter*/
-
+        $('body').on('click', '.undo_approve', function(e){
+            e.preventDefault();
+            let urlApprove = $(this).data('url');
+            let returned = AssignValueFilter();
             
-            // /* ?Reject on different function. */
-            // let hrefReject = $('body').find('#form-reject-budget').attr('action'); /*Get Href Value*/
-            // if( typeof hrefReject !== 'undefined' ){
-            //     hrefReject = hrefReject.split('?')[0]; /*Remove Query Parameter from url.*/
-            // }
-            // hrefReject = `${hrefReject}?${filters}`;
-
-            // console.log(hrefReject, filters, );
-
-            // $('body').find('#form-reject-budget').attr('action', hrefReject); /*Assign new url with Query Parameter*/
-
-        }
+            //? To get query parameters for filtered value display.
+            let approve = `${urlApprove}?${returned}`;
+            window.location.replace(approve);
+        });
     </script>
 @endsection

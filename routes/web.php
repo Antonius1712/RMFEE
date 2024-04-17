@@ -89,6 +89,14 @@ Route::middleware(['breadcrumbs', 'auth'])->group(function(){
         Route::get('/data-table', 'Realization@RealizationDataTable')->name('realization.data-table');
     });
 
+    //? Report Budget & Realization.
+    Route::prefix('report')->as('report.')->group(function(){
+        Route::get('/budget', 'Report\ReportBudgetController@index')->name('budget');
+        Route::get('/realization', 'Report\ReportRealizationController@index')->name('realization');
+
+        Route::post('/budget', 'Report\ReportBudgetController@GenerateReport')->name('budget.generate');
+    });
+
     //? Setting Budget Group & User Module.
     Route::prefix('setting')->as('setting.')->group(function(){
 

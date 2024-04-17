@@ -27,10 +27,14 @@ class Realization {
         }
     }
 
-    public static function GetRealization($invoice_no = null){
+    public static function GetRealization($invoice_no = null, $FilterStatusRealization = null, $FilterBrokerName = null, $FilterLastUpdate = null, $FilterCOB = null){
+        // dd($invoice_no, $FilterStatusRealization, $FilterBrokerName, $FilterLastUpdate, $FilterCOB);
         $UserGroup = auth()->user()->getUserGroup->GroupCode;
         try {
-            $RealizationData = DB::connection(Database::REPORT_GENERATOR)->select("EXECUTE [dbo].[SP_Get_Group_Realization_Engineering_Fee] '$invoice_no'");
+            $RealizationData = DB::connection(Database::REPORT_GENERATOR)->select("EXECUTE [dbo].[SP_Get_Group_Realization_Engineering_Fee] '$invoice_no', '$FilterStatusRealization', '$FilterBrokerName', '$FilterLastUpdate', '$FilterCOB'");
+
+            // dd($RealizationData);
+            
             $CountRealization = count($RealizationData);
 
             switch ($CountRealization) {
@@ -101,7 +105,7 @@ class Realization {
                 $DocumentPath_upload_survey_report = 'images/Realization/Survey_Report/'.$filename;
             }
 
-            DB::connection(Database::REPORT_GENERATOR)->select("EXECUTE [dbo].[SP_Insert_Group_Realization_Engineering_Fee] '$invoice_no', '$type_of_invoice', '$type_of_payment', '$currency', '$invoice_date', '$broker_id', '$payment_to', '$DocumentPath_upload_invoice', '$DocumentPath_upload_survey_report', '$approval_bu', '$approval_finance', '$epo_checker', '$epo_approval', '$status_realization', '$remarks', '$CreatedBy', '$CreatedDate', '$lastUpdateBy', '$lastUpdate'");
+            DB::connection(Database::REPORT_GENERATOR)->statement("EXECUTE [dbo].[SP_Insert_Group_Realization_Engineering_Fee] '$invoice_no', '$type_of_invoice', '$type_of_payment', '$currency', '$invoice_date', '$broker_id', '$payment_to', '$DocumentPath_upload_invoice', '$DocumentPath_upload_survey_report', '$approval_bu', '$approval_finance', '$epo_checker', '$epo_approval', '$status_realization', '$remarks', '$CreatedBy', '$CreatedDate', '$lastUpdateBy', '$lastUpdate'");
 
             // dd($lastUpdateBy, $lastUpdate);
 
@@ -293,7 +297,7 @@ class Realization {
         }
         
         try {
-            DB::connection("EPO114")->statement("EXECUTE [dbo].[SP_Insert_ePO_Engineering_Fee] '$InvoiceNo', $TotalRealization, $FileSizeInvoice, $Invoice, '$LinkApproval', '$LinkChecker', $FileSizeSurvey_Report, $Survey_Report ");
+            DB::connection("EPO114")->statement("EXECUTE [dbo].[SP_Insert_ePO_Engineering_Fee] '$InvoiceNo', $TotalRealization, $FileSizeInvoice, $Invoice, '$LinkApproval', '$LinkChecker', $FileSizeSurvey_Report, $Survey_Report");
             return ['status' => true, 'message' => 'ok',];
         } catch (Exception $e) {
             Log::error('Error While Inserting EPO When Finance Approve Invoice ' .$InvoiceNo . ' Exception = ' . $e->getMessage());

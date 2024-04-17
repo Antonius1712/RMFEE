@@ -24,7 +24,7 @@ class Budget {
             return DB::connection(Database::REPORT_GENERATOR)
             ->select("
                 EXECUTE [dbo].[SP_Get_Data_Engineering_Fee] 
-                '', '', '', '', '', '', '', '', '', '', '$type', $archive
+                '', '', '', '', '', '', '', '', '', '', '$type', $archive, '', ''
             ");
         } catch (Exception $e) {
             return $e->getMessage();
@@ -38,7 +38,7 @@ class Budget {
             $Datas =  DB::connection(Database::REPORT_GENERATOR)
             ->select("
                 EXECUTE [dbo].[SP_Get_Data_Engineering_Fee] 
-                '', '', '', '', '', '', '', '', '', '".$voucher."', '', $archive
+                '', '', '', '', '', '', '', '', '', '".$voucher."', '', $archive, '', ''
             ");
 
             return $voucher != '' ? $Datas[0] : $Datas;
@@ -361,6 +361,18 @@ class Budget {
         // if( $status == 'WAITING_APPROVAL' ){
         //     dd($BtnEdit, $BtnDownloadDocument, $BtnArchive, $BtnApprove, $BtnUndoApproval, $BtnReject);
         // }
+    }
+
+    public static function GetReportBudgetSummary($start_date, $end_date, $status_budget){
+        $start_date = str_replace('/', '-', $start_date);
+        $end_date = str_replace('/', '-', $end_date);
+        return DB::connection(Database::REPORT_GENERATOR)->select("EXECUTE [dbo].[SP_Report_Budget_Summary_Engineering_Fee] '$start_date', '$end_date', '$status_budget'");
+    }
+
+    public static function GetReportBudgetDetail($start_date, $end_date, $status_budget){
+        $start_date = str_replace('/', '-', $start_date);
+        $end_date = str_replace('/', '-', $end_date);
+        return DB::connection(Database::REPORT_GENERATOR)->select("EXECUTE [dbo].[SP_Report_Budget_Detail_Engineering_Fee] '$start_date', '$end_date', '$status_budget'");
     }
 
     //? Private static function, only used here. not outside the class.
