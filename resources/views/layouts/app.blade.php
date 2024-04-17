@@ -53,7 +53,7 @@
 <!-- BEGIN: Body-->
 
 <body class="vertical-layout vertical-menu-modern 2-columns  navbar-floating footer-static  " data-open="click"
-    data-menu="vertical-menu-modern" data-col="2-columns" style="zoom:80%;">
+    data-menu="vertical-menu-modern" data-col="2-columns" style="zoom:100%;">
     <style>
         #loading {
             position: fixed;
@@ -65,6 +65,16 @@
             background: url('{{ asset('assets/loading-content.gif') }}') 50% 50% no-repeat rgb(249, 249, 249);
             opacity: 0.5;
 
+        }
+
+        #modalBackground {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgb(0 0 0 / 0.7);
+            z-index: 10;
         }
     </style>
 
