@@ -6,9 +6,11 @@
                 <div class="card-header">
                     <h1>Report</h1>
                 </div>
-                {{-- @include('layouts.alert') --}}
                 <div class="card-body">
                     <div class="row">
+                        <div class="col-lg-12">
+                            @include('layouts.alert')
+                        </div>
                         <div class="col-lg-12">
                             {{-- Code removed as per instructions to handle loading animation post Excel generation in ReportBudgetController.php --}}
                             <form action="{{ route('report.budget.generate') }}" method="post">
