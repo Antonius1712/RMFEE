@@ -11,6 +11,7 @@ use App\Helpers\GetData;
 use App\Helpers\Utils;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Yajra\Datatables\Datatables;
 use Yajra\Datatables\Services\DataTable;
 
@@ -24,7 +25,7 @@ class BudgetController extends Controller
         
     }
 
-    public function index(){
+    public function index(Request $request){
         $this->toDoList = isset( request()->to_do_list ) ? request()->to_do_list : '';
         $this->branch = Utils::GetBranch();
 
@@ -35,7 +36,129 @@ class BudgetController extends Controller
 
         $branch = $this->branch;
 
-        return view('pages.budget.list', compact('NBRN', 'branch', 'statusPremi', 'statusRealisasi', 'statusBudget'));
+        // --------------------------------------------------------------------------------
+
+        $broker_name = $request->broker_name;
+        $branch = $request->branch;
+        $status_pembayaran_premi = $request->status_pembayaran_premi;
+        $start_date = $request->start_date;
+        $no_policy = $request->no_policy;
+        $aging_rmf = $request->aging_rmf;
+        $booking_date_from = $request->booking_date_from;
+        $booking_date_to = $request->booking_date_to;
+        $nb_rn = $request->nb_rn;
+        $holder_name = $request->holder_name;
+        $class_business = $request->class_business;
+        $status_realisasi = $request->status_realisasi;
+        $status_budget = $request->status_budget;
+
+        $type = isset($request->type) && $request->type != '' ? $request->type : '';
+
+        $Budgets = Budget::GetBudgetDataTable($broker_name, $branch, $status_pembayaran_premi, $start_date, $no_policy, $aging_rmf, $booking_date_from, $booking_date_to, $nb_rn, $holder_name, $class_business, $status_realisasi, $status_budget, $type);
+
+        $Budgets = collect($Budgets)->map(function($data){
+            $BtnApprove = '';
+            $BtnUndoApproval = '';
+            $BtnEdit = '';
+            $BtnDownloadDocument = '';
+            $BtnReject = '';
+            $BtnArchive = '';
+            $BtnUnArchive = '';
+            $Divider = '';
+            $Voucher = str_replace('/','~',$data->VOUCHER);
+
+            $BtnShowHide['BtnApprove'] = null;
+            $BtnShowHide['BtnUndoApproval'] = null;
+            $BtnShowHide['BtnEdit'] = null;
+            $BtnShowHide['BtnDownloadDocument'] = null;
+            $BtnShowHide['BtnReject'] = null;
+            $BtnShowHide['BtnArchive'] = null;
+            $BtnShowHide['BtnUnArchive'] = null;
+
+            $BtnShowHide = Budget::ShowHideButtonBudget($data->STATUS_BUDGET, auth()->user()->getUserGroup->GroupCode);
+            $UrlParameter = http_build_query(request()->query());
+            if( $BtnShowHide['BtnApprove'] ){
+                $BtnApprove = "<a class='dropdown-item success approve' href='".route('budget.approve', $Voucher)."?".$UrlParameter."' data-url='".route('budget.approve', $Voucher)."'><i class='feather icon-check-circle'></i>Approve</a>";
+            }
+
+            if( $BtnShowHide['BtnUndoApproval'] ){
+                $BtnUndoApproval = "<a class='dropdown-item danger undo_approve' href='".route('budget.undo_approve', [$Voucher])."?".$UrlParameter."' data-url='".route('budget.undo_approve', [$Voucher])."'><i class='feather icon-delete'></i>Undo Approval</a>";
+            }
+
+            if( $BtnShowHide['BtnEdit'] ){
+                $BtnEdit = "<a class='dropdown-item success edit' href='".route('budget.edit', [$Voucher, 0])."?".$UrlParameter."'><i class='feather icon-edit-2'></i>Edit</a>";
+            }
+
+            if( $BtnShowHide['BtnDownloadDocument'] ){
+                if( $data->Document_Path != '' ){
+                        $BtnDownloadDocument = "<a class='dropdown-item success' href='".asset($data->Document_Path)."' class='col-lg-2' target='_blank' download=''>
+                        <i class='feather icon-download'></i>
+                        Download
+                    </a>";
+                }
+            }
+
+            if( $BtnShowHide['BtnReject'] || $BtnShowHide['BtnArchive'] ){
+                $Divider = "<div class='dropdown-divider'></div>";
+            }
+
+            if( $BtnShowHide['BtnReject'] ){
+                $BtnReject = "<a class='dropdown-item danger' id='RejectModal' data-voucher='$Voucher'><i class='feather icon-x-circle'></i>Reject</a>";
+            }
+
+            if( $BtnShowHide['BtnArchive'] ){
+                $BtnArchive = "<a class='dropdown-item danger' href=".route('budget.archive', $Voucher)."><i class='feather icon-archive'></i>Archive</a>";
+            }
+
+            if( $BtnShowHide['BtnUnArchive'] ){
+                $BtnUnArchive = "<a class='dropdown-item success' href=".route('budget.unarchive', $Voucher)."><i class='feather icon-archive'></i>Unarchive</a>";
+            }
+
+            $BtnAction = "<div class='btn-group' role='group' aria-label='Button group with nested dropdown'><div class='btn-group' role='group'><a href='#' id='BtnActionGroup' data-toggle='dropdown' aria-haspopup='true'aria-expanded='false' style=''><i class='feather icon-plus-circle icon-btn-group'></i></a><div class='dropdown-menu' aria-labelledby='BtnActionGroup'>".$BtnApprove.$BtnUndoApproval.$BtnEdit.$BtnDownloadDocument.$Divider.$BtnReject.$BtnArchive.$BtnUnArchive."</div></div></div>";
+            
+            $data->Action = $BtnAction;
+            $data->Start_Date = date('d M Y', strtotime($data->Start_Date));
+            $data->End_Date = date('d M Y', strtotime($data->End_Date));
+            $data->PAYMENT_DATE = date('d M Y', strtotime($data->PAYMENT_DATE));
+            $data->ADATE = date('d M Y', strtotime($data->ADATE));
+            $data->LGI_PREMIUM = number_format($data->LGI_PREMIUM, 0);
+            $data->PREMIUM = number_format($data->PREMIUM, 0);
+            $data->ADMIN = number_format($data->ADMIN, 0);
+            $data->DISCOUNT = number_format($data->DISCOUNT, 0);
+            $data->OTHERINCOME = number_format($data->OTHERINCOME, 0);
+            $data->PAYMENT = number_format($data->PAYMENT, 0);
+            $data->Budget = number_format($data->Budget, 0);
+
+            if( $data->STATUS_BUDGET == 'NEW' ){
+                $data->STATUS_BUDGET =  '<div class="badge badge-pill badge-info" style="font-size: 16px;">
+                    <li>'.$data->STATUS_BUDGET.'</li>
+                </div>';
+            } else if ( $data->STATUS_BUDGET == BudgetStatus::DRAFT ){
+                $data->STATUS_BUDGET =  '<div class="badge badge-pill badge-info" style="font-size: 16px;">
+                    <li>'.$data->STATUS_BUDGET.'</li>
+                </div>'; 
+            } else if ( $data->STATUS_BUDGET == BudgetStatus::WAITING_APPROVAL ){
+                $data->STATUS_BUDGET =  '<div class="badge badge-pill badge-warning" style="font-size: 16px;">
+                    <li>'.$data->STATUS_BUDGET.'</li>
+                </div>'; 
+            } else if ( $data->STATUS_BUDGET == BudgetStatus::ARCHIVED ){
+                $data->STATUS_BUDGET =  '<div class="badge badge-pill badge-danger" style="font-size: 16px;">
+                    <li>'.$data->STATUS_BUDGET.'</li>
+                </div>'; 
+            } else if ( $data->STATUS_BUDGET == BudgetStatus::APPROVED ){
+                $data->STATUS_BUDGET =  '<div class="badge badge-pill badge-success" style="font-size: 16px;">
+                    <li>'.$data->STATUS_BUDGET.'</li>
+                </div>'; 
+            } else if ( $data->STATUS_BUDGET == BudgetStatus::REJECTED ){
+                $data->STATUS_BUDGET =  '<div class="badge badge-pill badge-danger" style="font-size: 16px;">
+                    <li>'.$data->STATUS_BUDGET.'</li>
+                </div>'; 
+            }
+
+            return $data;
+        })->paginate(10);
+
+        return view('pages.budget.list', compact('NBRN', 'branch', 'statusPremi', 'statusRealisasi', 'statusBudget', 'Budgets'));
     }
 
     public function edit($voucher, $archived = 0){
@@ -82,142 +205,68 @@ class BudgetController extends Controller
     }
 
     public function reject($voucher, Request $request){
-        $query_url_filter = $request->query();
-        // dd($request->all(), $request->query(), $voucher);
-        foreach(  $query_url_filter as $key => $val){
-            ${"filter_".$key} = $val;
-        }
-
-        $broker_name = isset($filter_broker_name) ? $filter_broker_name : '';
-        $branch = isset($filter_branch) ? $filter_branch : '';
-        $status_pembayaran_premi = isset($filter_status_pembayaran_premi) ? $filter_status_pembayaran_premi : '';
-        $start_date = isset($filter_start_date) ? $filter_start_date : '';
-        $no_policy = isset($filter_no_policy) ? $filter_no_policy : '';
-        $aging_rmf = isset($filter_aging_rmf) ? $filter_aging_rmf : '';
-        $nb_rn = isset($filter_nb_rn) ? $filter_nb_rn : '';
-        $holder_name = isset($filter_holder_name) ? $filter_holder_name : '';
-        $status_realisasi = isset($filter_status_realisasi) ? $filter_status_realisasi : '';
-        $ClassBusiness = isset($filter_ClassBusiness) ? $filter_ClassBusiness : '';
-        $status_budget = isset($filter_status_budget) ? $filter_status_budget : '';
-        $to_do_list = isset($filter_to_do_list) ? $filter_to_do_list : '';
-        $booking_date_from = isset($filter_booking_date_from) ? $filter_booking_date_from : '';
-        $booking_date_to = isset($filter_booking_date_to) ? $filter_booking_date_to : '';
-
+        $UrlParameter = http_build_query($request->query());
         $message = $request->comment;
         $RedirectVoucher = str_replace('~', '/', $voucher);
         Budget::UpdateBudgetOnlyStatus('reject', $voucher, null);
         $message = $message != null ? ' | '.$message : null;
         Logger::SaveLog(LogStatus::BUDGET, $RedirectVoucher, 'Rejected', $message);
-        return redirect()->route('budget.list')->with('noticication', 'Voucher <b>'.$RedirectVoucher.'</b> Successfully Rejected')
-        ->with('broker_name', $broker_name)
-        ->with('branch', $branch)
-        ->with('status_pembayaran_premi', $status_pembayaran_premi)
-        ->with('start_date', $start_date)
-        ->with('no_policy', $no_policy)
-        ->with('aging_rmf', $aging_rmf)
-        ->with('nb_rn', $nb_rn)
-        ->with('holder_name', $holder_name)
-        ->with('status_realisasi', $status_realisasi)
-        ->with('ClassBusiness', $ClassBusiness)
-        ->with('status_budget', $status_budget)
-        ->with('to_do_list', $to_do_list)
-        ->with('booking_date_from', $booking_date_from)
-        ->with('booking_date_to', $booking_date_to);
+
+        $route = route('budget.list') . '?' . $UrlParameter;
+        return redirect()->to($route)->with('noticication', 'Voucher <b>'.$RedirectVoucher.'</b> Successfully Rejected');
     }
 
     public function approve($voucher, Request $request){
-        $query_url_filter = $request->query();
-        foreach(  $query_url_filter as $key => $val){
-            ${"filter_".$key} = $val;
-        }
-
-        $broker_name = isset($filter_broker_name) ? $filter_broker_name : '';
-        $branch = isset($filter_branch) ? $filter_branch : '';
-        $status_pembayaran_premi = isset($filter_status_pembayaran_premi) ? $filter_status_pembayaran_premi : '';
-        $start_date = isset($filter_start_date) ? $filter_start_date : '';
-        $no_policy = isset($filter_no_policy) ? $filter_no_policy : '';
-        $aging_rmf = isset($filter_aging_rmf) ? $filter_aging_rmf : '';
-        $nb_rn = isset($filter_nb_rn) ? $filter_nb_rn : '';
-        $holder_name = isset($filter_holder_name) ? $filter_holder_name : '';
-        $status_realisasi = isset($filter_status_realisasi) ? $filter_status_realisasi : '';
-        $ClassBusiness = isset($filter_ClassBusiness) ? $filter_ClassBusiness : '';
-        $status_budget = isset($filter_status_budget) ? $filter_status_budget : '';
-        $to_do_list = isset($filter_to_do_list) ? $filter_to_do_list : '';
-        $booking_date_from = isset($filter_booking_date_from) ? $filter_booking_date_from : '';
-        $booking_date_to = isset($filter_booking_date_to) ? $filter_booking_date_to : '';
-
-        // dd($to_do_list);
-
+        $UrlParameter = http_build_query($request->query());
         $RedirectVoucher = str_replace('~', '/', $voucher);
         Budget::UpdateBudgetOnlyStatus('approve', $voucher, null);
         Logger::SaveLog(LogStatus::BUDGET, $RedirectVoucher, 'Approved');
-        return redirect()->route('budget.list')->with('noticication', 'Voucher <b>'.$RedirectVoucher.'</b> Successfully Approved')
-        ->with('broker_name', $broker_name)
-        ->with('branch', $branch)
-        ->with('status_pembayaran_premi', $status_pembayaran_premi)
-        ->with('start_date', $start_date)
-        ->with('no_policy', $no_policy)
-        ->with('aging_rmf', $aging_rmf)
-        ->with('nb_rn', $nb_rn)
-        ->with('holder_name', $holder_name)
-        ->with('status_realisasi', $status_realisasi)
-        ->with('ClassBusiness', $ClassBusiness)
-        ->with('status_budget', $status_budget)
-        ->with('to_do_list', $to_do_list)
-        ->with('booking_date_from', $booking_date_from)
-        ->with('booking_date_to', $booking_date_to);
+
+        $route = route('budget.list') . '?' . $UrlParameter;
+        return redirect()->to($route)->with('notification', 'Voucher <b>' . $RedirectVoucher . '</b> Successfully Approved');
     }
 
     public function undo_approve($voucher, Request $request){
-        $query_url_filter = $request->query();
-        foreach(  $query_url_filter as $key => $val){
-            ${"filter_".$key} = $val;
-        }
-
-        $broker_name = isset($filter_broker_name) ? $filter_broker_name : '';
-        $branch = isset($filter_branch) ? $filter_branch : '';
-        $status_pembayaran_premi = isset($filter_status_pembayaran_premi) ? $filter_status_pembayaran_premi : '';
-        $start_date = isset($filter_start_date) ? $filter_start_date : '';
-        $no_policy = isset($filter_no_policy) ? $filter_no_policy : '';
-        $aging_rmf = isset($filter_aging_rmf) ? $filter_aging_rmf : '';
-        $nb_rn = isset($filter_nb_rn) ? $filter_nb_rn : '';
-        $holder_name = isset($filter_holder_name) ? $filter_holder_name : '';
-        $status_realisasi = isset($filter_status_realisasi) ? $filter_status_realisasi : '';
-        $ClassBusiness = isset($filter_ClassBusiness) ? $filter_ClassBusiness : '';
-        $status_budget = isset($filter_status_budget) ? $filter_status_budget : '';
-        $to_do_list = isset($filter_to_do_list) ? $filter_to_do_list : '';
-        $booking_date_from = isset($filter_booking_date_from) ? $filter_booking_date_from : '';
-        $booking_date_to = isset($filter_booking_date_to) ? $filter_booking_date_to : '';
-
+        $UrlParameter = http_build_query($request->query());
         $RedirectVoucher = str_replace('~', '/', $voucher);
         Budget::UpdateBudgetOnlyStatus('undo_approve', $voucher, null);
         Logger::SaveLog(LogStatus::BUDGET, $voucher, 'Undo Approved');
-        return redirect()
-        ->route('budget.list')
-        ->with('noticication', 'Voucher <b>'.$RedirectVoucher.'</b> Successfully Undo Approved')
-        ->with('broker_name', $broker_name)
-        ->with('branch', $branch)
-        ->with('status_pembayaran_premi', $status_pembayaran_premi)
-        ->with('start_date', $start_date)
-        ->with('no_policy', $no_policy)
-        ->with('aging_rmf', $aging_rmf)
-        ->with('nb_rn', $nb_rn)
-        ->with('holder_name', $holder_name)
-        ->with('status_realisasi', $status_realisasi)
-        ->with('ClassBusiness', $ClassBusiness)
-        ->with('status_budget', $status_budget)
-        ->with('to_do_list', $to_do_list)
-        ->with('booking_date_from', $booking_date_from)
-        ->with('booking_date_to', $booking_date_to);
+
+        $route = route('budget.list') . '?' . $UrlParameter;
+        return redirect()->to($route)->with('notification', 'Voucher <b>' . $RedirectVoucher . '</b> Successfully Undo Approved');
     }
 
     public function BudgetDataTable(Request $request){
+        $broker_name = $request->broker_name;
+        $branch = $request->branch;
+        $status_pembayaran_premi = $request->status_pembayaran_premi;
+        $start_date = $request->start_date;
+        $no_policy = $request->no_policy;
+        $aging_rmf = $request->aging_rmf;
+        $booking_date_from = $request->booking_date_from;
+        $booking_date_to = $request->booking_date_to;
+        $nb_rn = $request->nb_rn;
+        $holder_name = $request->holder_name;
+        $class_business = $request->class_business;
+        $status_realisasi = $request->status_realisasi;
+        $status_budget = $request->status_budget;
+
         $type = isset($request->type) && $request->type != '' ? $request->type : '';
-        $Budgets = collect(Budget::GetBudgetDataTable($type));
-        // $Budgets = DataTables::of($Budgets)->make();
+
+        $CacheBudget = Cache::remember('BudgetDataTable', 1440, function() use ($broker_name, $branch, $status_pembayaran_premi, $start_date, $no_policy, $aging_rmf, $booking_date_from, $booking_date_to, $nb_rn, $holder_name, $class_business, $status_realisasi, $status_budget, $type){
+            return Budget::GetBudgetDataTable($broker_name, $branch, $status_pembayaran_premi, $start_date, $no_policy, $aging_rmf, $booking_date_from, $booking_date_to, $nb_rn, $holder_name, $class_business, $status_realisasi, $status_budget, $type);
+        });
+
+        // dd($CacheBudget);
+
+        $Budgets = collect($CacheBudget);
+
         // dd($Budgets);
+
+        $time_start = microtime(true);
         $Budgets = Datatables::of($Budgets)
             ->addColumn('ACTION', function($row){
+                // return 'OK';
                 $BtnApprove = '';
                 $BtnUndoApproval = '';
                 $BtnEdit = '';
@@ -238,8 +287,6 @@ class BudgetController extends Controller
 
                 $BtnShowHide = Budget::ShowHideButtonBudget($row->STATUS_BUDGET, auth()->user()->getUserGroup->GroupCode);
 
-                // dd($BtnShowHide);
-                
                 if( $BtnShowHide['BtnApprove'] ){
                     $BtnApprove = "<a class='dropdown-item success approve' href='javascript:;' data-url='".route('budget.approve', $Voucher)."'><i class='feather icon-check-circle'></i>Approve</a>";
                 }
@@ -253,8 +300,6 @@ class BudgetController extends Controller
                 }
 
                 if( $BtnShowHide['BtnDownloadDocument'] ){
-                    // $BtnDownloadDocument = "<a class='dropdown-item success btnViewDocumentBudget' href='#' data-toggle='modal' data-path='$row->Document_Path'><i class='feather icon-eye'></i>View Document</a>";
-
                     if( $row->Document_Path != '' ){
                             $BtnDownloadDocument = "<a class='dropdown-item success' href='".asset($row->Document_Path)."' class='col-lg-2' target='_blank' download=''>
                             <i class='feather icon-download'></i>
@@ -268,7 +313,6 @@ class BudgetController extends Controller
                 }
 
                 if( $BtnShowHide['BtnReject'] ){
-                    // $BtnReject = "<a class='dropdown-item danger' id='RejectModal' href=".route('budget.reject', $Voucher)." data-toggle='modal'data-target='#ModalReject' data-voucher='$Voucher'><i class='feather icon-x-circle'></i>Reject</a>";
                     $BtnReject = "<a class='dropdown-item danger' id='RejectModal' data-voucher='$Voucher'><i class='feather icon-x-circle'></i>Reject</a>";
                 }
 
@@ -281,35 +325,24 @@ class BudgetController extends Controller
                 }
 
                 $BtnAction = "<div class='btn-group' role='group' aria-label='Button group with nested dropdown'><div class='btn-group' role='group'><a href='#' id='BtnActionGroup' data-toggle='dropdown' aria-haspopup='true'aria-expanded='false' style=''><i class='feather icon-plus-circle icon-btn-group'></i></a><div class='dropdown-menu' aria-labelledby='BtnActionGroup'>".$BtnApprove.$BtnUndoApproval.$BtnEdit.$BtnDownloadDocument.$Divider.$BtnReject.$BtnArchive.$BtnUnArchive."</div></div></div>";
-
-                // if( $Voucher = '00049~DN~18~02~24'){
-                //     dd($BtnApprove, $BtnAction);
-                // }
-
-                // dd($BtnAction);
+                
                 return $BtnAction;
             })
-            // ->editColumn('Start_Date', function($row){
-            //     // return date('Y-m-d', strtotime($row->Start_Date));
-            //     return date('d-M-Y', strtotime($row->Start_Date));
+            // ->addColumn('ACTION', function($row){
+            //     return 'ok';
             // })
             ->editColumn('ADATE', function($row){
-                // return date('Y-m-d', strtotime($row->Start_Date));
-                // dd('zz', $row);
                 return date('d-M-Y', strtotime($row->ADATE));
             })
             ->editColumn('Start_Date', function($row){
-                // return date('Y-m-d', strtotime($row->Start_Date));
                 return date('d-M-Y', strtotime($row->Start_Date));
             })
             ->editColumn('End_Date', function($row){
-                // return date('Y-m-d', strtotime($row->End_Date));
                 return date('d-M-Y', strtotime($row->End_Date));
             })
             ->editColumn('LGI_PREMIUM', function($row){
                 return number_format($row->LGI_PREMIUM);
             })
-            
             ->editColumn('PREMIUM', function($row){
                 return number_format($row->PREMIUM);
             })
@@ -393,8 +426,9 @@ class BudgetController extends Controller
                 }
             ])
         ->make(true);
-        
-        // dd($Budgets);
+        $time_end = microtime(true);
+        $time_diff = $time_end - $time_start;
+        // dd($Budgets,$time_start, $time_end, $time_diff);
         return $Budgets;
     }
 }
