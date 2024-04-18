@@ -24,7 +24,7 @@ class Budget {
             return DB::connection(Database::REPORT_GENERATOR)
             ->select("
                 EXECUTE [dbo].[SP_Get_Data_Engineering_Fee] 
-                '$broker_name', '$branch', '$nb_rn', '$start_date', '$no_policy', '$holder_name', '', '$aging_rmf', '$status_realisasi', '', '$status_budget', $archive, '$booking_date_from', '$booking_date_to'
+                '$broker_name', '$branch', '$nb_rn', '$start_date', '$no_policy', '$holder_name', '$status_pembayaran_premi', '$aging_rmf', '$status_realisasi', '', '$status_budget', $archive, '$booking_date_from', '$booking_date_to', '$class_business'
             ");
         } catch (Exception $e) {
             return $e->getMessage();
