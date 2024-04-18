@@ -34,7 +34,7 @@ class BudgetController extends Controller
         $statusRealisasi = HardCoded::statusRealisasi;
         $statusBudget = HardCoded::statusBudget;
 
-        $branch = $this->branch;
+        $branchList = $this->branch;
 
         // --------------------------------------------------------------------------------
 
@@ -48,7 +48,7 @@ class BudgetController extends Controller
         $booking_date_to = $request->booking_date_to;
         $nb_rn = $request->nb_rn;
         $holder_name = $request->holder_name;
-        $class_business = $request->class_business;
+        $class_business = $request->ClassBusiness;
         $status_realisasi = $request->status_realisasi;
         $status_budget = $request->status_budget;
 
@@ -158,7 +158,7 @@ class BudgetController extends Controller
             return $data;
         })->paginate(10);
 
-        return view('pages.budget.list', compact('NBRN', 'branch', 'statusPremi', 'statusRealisasi', 'statusBudget', 'Budgets'));
+        return view('pages.budget.list', compact('NBRN', 'branchList', 'statusPremi', 'statusRealisasi', 'statusBudget', 'Budgets'));
     }
 
     public function edit($voucher, $archived = 0){

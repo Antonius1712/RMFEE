@@ -43,9 +43,11 @@
                     <label for="branch">Branch</label>
                     <select name="branch" id="branch" class="form-control radius">
                         <option value="">All</option>
-                        {{-- @foreach ($branch as $val)
+                        @if( count($branchList) > 0 )
+                        @foreach ($branchList as $val)
                             <option {{ request()->get('branch') == $val->Branch ? 'selected' : '' }} value="{{ $val->Branch }}">{{ $val->Branch }}</option>
-                        @endforeach --}}
+                        @endforeach
+                        @endif
                     </select>
                 </div>
             </div>
