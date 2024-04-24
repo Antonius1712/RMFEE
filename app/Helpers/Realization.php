@@ -262,6 +262,20 @@ class Realization {
     }
 
 
+    // ! Report
+    public static function GetReportRealizationSummary($start_date, $end_date, $status_realization){
+        $start_date = str_replace('/', '-', $start_date);
+        $end_date = str_replace('/', '-', $end_date);
+        return DB::connection(Database::REPORT_GENERATOR)->select("EXECUTE [dbo].[SP_Report_Realization_Summary_Engineering_Fee] '$start_date', '$end_date', '$status_realization'");
+    }
+
+    public static function GetReportRealizationDetail($start_date, $end_date, $status_realization){
+        $start_date = str_replace('/', '-', $start_date);
+        $end_date = str_replace('/', '-', $end_date);
+        return DB::connection(Database::REPORT_GENERATOR)->select("EXECUTE [dbo].[SP_Report_Realization_Detail_Engineering_Fee] '$start_date', '$end_date', '$status_realization'");
+    }
+
+
     // ! Untuk EPO
     public static function InsertEpo($RealizationData){
         $LinkApproval = Utils::getRandomString(50, 'lower-string');
