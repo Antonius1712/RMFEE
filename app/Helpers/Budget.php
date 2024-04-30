@@ -38,7 +38,7 @@ class Budget {
             $Datas =  DB::connection(Database::REPORT_GENERATOR)
             ->select("
                 EXECUTE [dbo].[SP_Get_Data_Engineering_Fee] 
-                '', '', '', '', '', '', '', '', '', '".$voucher."', '', $archive, '', ''
+                '', '', '', '', '', '', '', '', '', '".$voucher."', '', $archive, '', '', ''
             ");
 
             return $voucher != '' ? $Datas[0] : $Datas;
