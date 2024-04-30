@@ -26,6 +26,7 @@ class BudgetController extends Controller
     }
 
     public function index(Request $request){
+        // dd($request->all());
         $this->toDoList = isset( request()->to_do_list ) ? request()->to_do_list : '';
         $this->branch = Utils::GetBranch();
 
@@ -51,10 +52,13 @@ class BudgetController extends Controller
         $class_business = $request->ClassBusiness;
         $status_realisasi = $request->status_realisasi;
         $status_budget = $request->status_budget;
+        $ProposedTo = $request->to_do_list_filter == 'true' ? auth()->user()->NIK : '';
 
-        $type = isset($request->type) && $request->type != '' ? $request->type : '';
+        $Budgets = Budget::GetBudgetDataTable(
+            $broker_name, $branch, $status_pembayaran_premi, $start_date, $no_policy, $aging_rmf, $booking_date_from, $booking_date_to, $nb_rn, $holder_name, $class_business, $status_realisasi, $status_budget, $ProposedTo
+        );
 
-        $Budgets = Budget::GetBudgetDataTable($broker_name, $branch, $status_pembayaran_premi, $start_date, $no_policy, $aging_rmf, $booking_date_from, $booking_date_to, $nb_rn, $holder_name, $class_business, $status_realisasi, $status_budget, $type);
+        // dd($ProposedTo);
 
         $Budgets = collect($Budgets)->map(function($data){
             $BtnApprove = '';
@@ -65,6 +69,7 @@ class BudgetController extends Controller
             $BtnArchive = '';
             $BtnUnArchive = '';
             $Divider = '';
+
             $Voucher = str_replace('/','~',$data->VOUCHER);
 
             $BtnShowHide['BtnApprove'] = null;
