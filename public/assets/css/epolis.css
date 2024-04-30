@@ -1,0 +1,98 @@
+thead { display: table-header-group; }
+tfoot { display: table-row-group; }
+tr { page-break-inside: avoid; }
+
+.ds-font-size-12{
+    font-size: 12px;
+}
+
+.ds-color-white{
+    color: white
+}
+
+.ds-background-gray{
+    background: gray !important
+}
+
+.ds-background-silver{
+    background: #e2e2e2;
+}
+
+.ds-cs-nomargin{
+    margin: 0;
+}
+
+.ds-unset-font-weight{
+    font-weight: unset !important;
+    margin: 0 !important;
+}
+
+.ds-padding-left-zero{
+    padding-left: 0px !important
+}
+
+.ds-padding-right-zero{
+    padding-right: 0px !important
+}
+
+.ttd-epolis{
+	width: 150px
+}
+
+.ds-fit-table-column{
+    white-space: nowrap;
+    width: 1%;
+}
+
+.ds-font-size-table-accessories{
+	font-size: 11px
+}
+
+.ds-hidden-thead{
+    border: 1px solid white !important;
+}
+
+.ds-display-none{
+    display:none !important;
+}
+
+.ds-padding-zero{
+    padding: 2px !important
+}
+
+.ds-margin-zero{
+    margin: 0px !important
+}
+
+.ds-background-white{
+    background: white !important;
+}
+
+.ds-font-size{
+    font-size: 14px !important
+}
+
+.table-borderless > tbody {
+    border: none;
+}
+
+.table-borderless > tbody > tr {
+    border: none;
+}
+
+.table-borderless > tbody > tr > td {
+    border: none;
+    border-bottom: 1px solid #ccc;
+}
+
+.table-borderless > tfoot {
+    border: none;
+}
+
+.table-borderless > tfoot > tr {
+    border: none;
+}
+
+.table-borderless > tfoot > tr > td {
+    border: none;
+}
