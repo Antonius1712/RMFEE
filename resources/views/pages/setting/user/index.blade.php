@@ -59,8 +59,8 @@
                                     <td>{{ $val->UserID }}</td>
                                     <td>{{ $val->UserName }}</td>
                                     <td>{{ $val->Type_Of_Payment }}</td>
-                                    <td>{{ $val->Approval_BU_UserID }}</td>
-                                    <td>{{ $val->Approval_Finance_UserID }}</td>
+                                    <td>{{ $val->Approval_BU_UserID }} - {{ $val->Approval_BU_UserName }}</td>
+                                    <td>{{ $val->Approval_Finance_UserID }} - {{ $val->Approval_Finance_UserName }}</td>
                                     <td>{{ $val->UserID_ePO }}</td>
                                     <td>{{ $val->CheckerID_ePO }}</td>
                                     <td>{{ $val->ApprovalID_ePO }}</td>
