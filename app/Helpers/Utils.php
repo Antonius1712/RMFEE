@@ -158,5 +158,16 @@ class Utils {
         $coefficient = 10 ** $decimals;
         return $negation * floor((string)(abs($number) * $coefficient)) / $coefficient;
     }
+
+    public static function Decrypt($password){
+        $iv = base64_decode( env('PASSWORD_IV_ENCODE_LGI_GLOBAL') );
+        $key = base64_decode( env('PASSWORD_KEY_ENCODE_LGI_GLOBAL') );
+
+        $decrypttext = @mcrypt_decrypt(MCRYPT_RIJNDAEL_128, $key,  base64_decode($password), MCRYPT_MODE_CBC, $iv);
+
+        $result = preg_replace('/[\x00-\x09\x0B\x0C\x0E-\x1F\x7F]/u', '', $decrypttext);// remove unwanted bytes from encrypting binary data
+
+        return $result;
+    }
 }
 ?>

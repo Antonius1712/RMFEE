@@ -126,6 +126,18 @@ return [
             'pooling' => env('APP_POOLING_DB', false)
         ],
 
+        'ISSURANCE_LIVE' => [
+            'driver' => 'sqlsrv',
+            'host' => env('DB_HOST_ISSURANCE_LIVE', 'localhost'),
+            'port' => env('DB_PORT_ISSURANCE_LIVE', '1433'),
+            'database' => env('DB_DATABASE_ISSURANCE_LIVE', 'forge'),
+            'username' => env('DB_USERNAME_ISSURANCE_LIVE', 'forge'),
+            'password' => env('DB_PASSWORD_ISSURANCE_LIVE', ''),
+            'charset' => 'utf8',
+            'prefix' => '',
+            'pooling' => env('APP_POOLING_DB', false)
+        ],
+
     ],
 
     /*
