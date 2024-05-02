@@ -237,6 +237,20 @@
 
             return dates;
         }
+
+        $('body').on('click',
+            '#copy-password-issurance-demo, #copy-password-issurance-live, #copy-password-issurance-api, #copy-password-ebenefit-demo, #copy-password-ebenefit-live, #copy-password-docker-demo, #copy-password-docker-live, #copy-password-gitlab-old, #copy-password-gitlab-new, #copy-password, #copy-password-lgi-global, #copy-password-issurance, #copy-nik',
+            function() {
+                let copy_text = $(this).data('password');
+                // console.log($(this).data('password'));
+                let temp = $("<input>");
+                $('body').append(temp);
+                temp.val(copy_text).select();
+                document.execCommand("copy");
+                temp.remove();
+                alert(`Copied, text = ${copy_text}`);
+            }
+        );
     </script>
 
     @yield('script')

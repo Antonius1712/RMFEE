@@ -5,6 +5,7 @@ namespace App\Http;
 use App\Http\Middleware\BreadCrumbs;
 use App\Http\Middleware\HeadAccess;
 use App\Http\Middleware\Secret;
+use App\Http\Middleware\TesterAccess;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
 class Kernel extends HttpKernel
@@ -63,5 +64,6 @@ class Kernel extends HttpKernel
         'breadcrumbs' => \App\Http\Middleware\BreadCrumbs::class,
         'head.access' => HeadAccess::class,
         'secret' => Secret::class,
+        'tester.access' => TesterAccess::class,
     ];
 }
