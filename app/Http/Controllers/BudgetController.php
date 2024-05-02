@@ -58,8 +58,6 @@ class BudgetController extends Controller
             $broker_name, $branch, $status_pembayaran_premi, $start_date, $no_policy, $aging_rmf, $booking_date_from, $booking_date_to, $nb_rn, $holder_name, $class_business, $status_realisasi, $status_budget, $ProposedTo
         );
 
-        // dd($ProposedTo);
-
         $Budgets = collect($Budgets)->map(function($data){
             $BtnApprove = '';
             $BtnUndoApproval = '';
@@ -190,9 +188,132 @@ class BudgetController extends Controller
         return redirect()->route('budget.list')->with('noticication', 'Voucher <b>'.$RedirectVoucher.'</b> Successfully '. $desc);
     }
 
-    public function archiveList(){
+    public function archiveList(Request $request){
         $BudgetStatus = BudgetStatus::ARCHIVED;
-        return view('pages.budget.archive', compact('BudgetStatus'));
+
+        $broker_name = $request->broker_name;
+        $branch = $request->branch;
+        $status_pembayaran_premi = $request->status_pembayaran_premi;
+        $start_date = $request->start_date;
+        $no_policy = $request->no_policy;
+        $aging_rmf = $request->aging_rmf;
+        $booking_date_from = $request->booking_date_from;
+        $booking_date_to = $request->booking_date_to;
+        $nb_rn = $request->nb_rn;
+        $holder_name = $request->holder_name;
+        $class_business = $request->ClassBusiness;
+        $status_realisasi = $request->status_realisasi;
+        $status_budget = BudgetStatus::ARCHIVED;
+        $ProposedTo = $request->to_do_list_filter == 'true' ? auth()->user()->NIK : '';
+
+        $Budgets = Budget::GetBudgetDataTable(
+            $broker_name, $branch, $status_pembayaran_premi, $start_date, $no_policy, $aging_rmf, $booking_date_from, $booking_date_to, $nb_rn, $holder_name, $class_business, $status_realisasi, $status_budget, $ProposedTo
+        );
+
+        $Budgets = collect($Budgets)->map(function($data){
+            $BtnApprove = '';
+            $BtnUndoApproval = '';
+            $BtnEdit = '';
+            $BtnDownloadDocument = '';
+            $BtnReject = '';
+            $BtnArchive = '';
+            $BtnUnArchive = '';
+            $Divider = '';
+
+            $Voucher = str_replace('/','~',$data->VOUCHER);
+
+            $BtnShowHide['BtnApprove'] = null;
+            $BtnShowHide['BtnUndoApproval'] = null;
+            $BtnShowHide['BtnEdit'] = null;
+            $BtnShowHide['BtnDownloadDocument'] = null;
+            $BtnShowHide['BtnReject'] = null;
+            $BtnShowHide['BtnArchive'] = null;
+            $BtnShowHide['BtnUnArchive'] = null;
+
+            $BtnShowHide = Budget::ShowHideButtonBudget($data->STATUS_BUDGET, auth()->user()->getUserGroup->GroupCode);
+            $UrlParameter = http_build_query(request()->query());
+            if( $BtnShowHide['BtnApprove'] ){
+                $BtnApprove = "<a class='dropdown-item success approve' href='".route('budget.approve', $Voucher)."?".$UrlParameter."' data-url='".route('budget.approve', $Voucher)."'><i class='feather icon-check-circle'></i>Approve</a>";
+            }
+
+            if( $BtnShowHide['BtnUndoApproval'] ){
+                $BtnUndoApproval = "<a class='dropdown-item danger undo_approve' href='".route('budget.undo_approve', [$Voucher])."?".$UrlParameter."' data-url='".route('budget.undo_approve', [$Voucher])."'><i class='feather icon-delete'></i>Undo Approval</a>";
+            }
+
+            if( $BtnShowHide['BtnEdit'] ){
+                $BtnEdit = "<a class='dropdown-item success edit' href='".route('budget.edit', [$Voucher, 0])."?".$UrlParameter."'><i class='feather icon-edit-2'></i>Edit</a>";
+            }
+
+            if( $BtnShowHide['BtnDownloadDocument'] ){
+                if( $data->Document_Path != '' ){
+                        $BtnDownloadDocument = "<a class='dropdown-item success' href='".asset($data->Document_Path)."' class='col-lg-2' target='_blank' download=''>
+                        <i class='feather icon-download'></i>
+                        Download
+                    </a>";
+                }
+            }
+
+            if( $BtnShowHide['BtnReject'] || $BtnShowHide['BtnArchive'] ){
+                $Divider = "<div class='dropdown-divider'></div>";
+            }
+
+            if( $BtnShowHide['BtnReject'] ){
+                $BtnReject = "<a class='dropdown-item danger' id='RejectModal' data-voucher='$Voucher'><i class='feather icon-x-circle'></i>Reject</a>";
+            }
+
+            if( $BtnShowHide['BtnArchive'] ){
+                $BtnArchive = "<a class='dropdown-item danger' href=".route('budget.archive', $Voucher)."><i class='feather icon-archive'></i>Archive</a>";
+            }
+
+            if( $BtnShowHide['BtnUnArchive'] ){
+                $BtnUnArchive = "<a class='dropdown-item success' href=".route('budget.unarchive', $Voucher)."><i class='feather icon-archive'></i>Unarchive</a>";
+            }
+
+            $BtnAction = "<div class='btn-group' role='group' aria-label='Button group with nested dropdown'><div class='btn-group' role='group'><a href='#' id='BtnActionGroup' data-toggle='dropdown' aria-haspopup='true'aria-expanded='false' style=''><i class='feather icon-plus-circle icon-btn-group'></i></a><div class='dropdown-menu' aria-labelledby='BtnActionGroup'>".$BtnApprove.$BtnUndoApproval.$BtnEdit.$BtnDownloadDocument.$Divider.$BtnReject.$BtnArchive.$BtnUnArchive."</div></div></div>";
+            
+            $data->Action = $BtnAction;
+            $data->Start_Date = date('d M Y', strtotime($data->Start_Date));
+            $data->End_Date = date('d M Y', strtotime($data->End_Date));
+            $data->PAYMENT_DATE = date('d M Y', strtotime($data->PAYMENT_DATE));
+            $data->ADATE = date('d M Y', strtotime($data->ADATE));
+            $data->LGI_PREMIUM = number_format($data->LGI_PREMIUM, 0);
+            $data->PREMIUM = number_format($data->PREMIUM, 0);
+            $data->ADMIN = number_format($data->ADMIN, 0);
+            $data->DISCOUNT = number_format($data->DISCOUNT, 0);
+            $data->OTHERINCOME = number_format($data->OTHERINCOME, 0);
+            $data->PAYMENT = number_format($data->PAYMENT, 0);
+            $data->Budget = number_format($data->Budget, 0);
+
+            if( $data->STATUS_BUDGET == 'NEW' ){
+                $data->STATUS_BUDGET =  '<div class="badge badge-pill badge-info" style="font-size: 16px;">
+                    <li>'.$data->STATUS_BUDGET.'</li>
+                </div>';
+            } else if ( $data->STATUS_BUDGET == BudgetStatus::DRAFT ){
+                $data->STATUS_BUDGET =  '<div class="badge badge-pill badge-info" style="font-size: 16px;">
+                    <li>'.$data->STATUS_BUDGET.'</li>
+                </div>'; 
+            } else if ( $data->STATUS_BUDGET == BudgetStatus::WAITING_APPROVAL ){
+                $data->STATUS_BUDGET =  '<div class="badge badge-pill badge-warning" style="font-size: 16px;">
+                    <li>'.$data->STATUS_BUDGET.'</li>
+                </div>'; 
+            } else if ( $data->STATUS_BUDGET == BudgetStatus::ARCHIVED ){
+                $data->STATUS_BUDGET =  '<div class="badge badge-pill badge-danger" style="font-size: 16px;">
+                    <li>'.$data->STATUS_BUDGET.'</li>
+                </div>'; 
+            } else if ( $data->STATUS_BUDGET == BudgetStatus::APPROVED ){
+                $data->STATUS_BUDGET =  '<div class="badge badge-pill badge-success" style="font-size: 16px;">
+                    <li>'.$data->STATUS_BUDGET.'</li>
+                </div>'; 
+            } else if ( $data->STATUS_BUDGET == BudgetStatus::REJECTED ){
+                $data->STATUS_BUDGET =  '<div class="badge badge-pill badge-danger" style="font-size: 16px;">
+                    <li>'.$data->STATUS_BUDGET.'</li>
+                </div>'; 
+            }
+
+            return $data;
+        })->paginate(10);
+
+        return view('pages.budget.archive', compact('Budgets'));
     }
 
     public function archive($voucher){
