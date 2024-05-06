@@ -161,6 +161,8 @@ class BudgetController extends Controller
             return $data;
         })->paginate(10);
 
+        // dd($booking_date_from, $booking_date_to);
+
         return view('pages.budget.list', compact('NBRN', 'branchList', 'statusPremi', 'statusRealisasi', 'statusBudget', 'Budgets'));
     }
 
