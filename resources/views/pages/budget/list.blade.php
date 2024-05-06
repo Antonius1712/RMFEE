@@ -91,7 +91,7 @@
                 <div class="col-lg-4">
                     <div class="form-group">
                         <label for="booking_date_from">Booking Date From</label>
-                        <input type="text" class="form-control" id="booking_date_from"
+                        <input type="text" class="form-control" name="booking_date_from" id="booking_date_from"
                             value="{{ request()->get('booking_date_from') }}">
                     </div>
                 </div>
