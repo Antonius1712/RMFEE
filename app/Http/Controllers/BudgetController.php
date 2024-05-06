@@ -70,7 +70,7 @@ class BudgetController extends Controller
             $BtnUnArchive = '';
             $Divider = '';
 
-            dd($data);
+            // dd($data);
 
             $Voucher = str_replace('/','~',$data->VOUCHER);
 
