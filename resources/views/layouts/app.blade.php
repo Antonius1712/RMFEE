@@ -66,6 +66,16 @@
             opacity: 0.5;
 
         }
+
+        #modalBackground {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgb(0 0 0 / 0.7);
+            z-index: 10;
+        }
     </style>
 
     <div id="loading" style="display:none;"></div>
@@ -237,6 +247,20 @@
 
             return dates;
         }
+
+        $('body').on('click',
+            '#copy-password-issurance-demo, #copy-password-issurance-live, #copy-password-issurance-api, #copy-password-ebenefit-demo, #copy-password-ebenefit-live, #copy-password-docker-demo, #copy-password-docker-live, #copy-password-gitlab-old, #copy-password-gitlab-new, #copy-password, #copy-password-lgi-global, #copy-password-issurance, #copy-nik',
+            function() {
+                let copy_text = $(this).data('password');
+                // console.log($(this).data('password'));
+                let temp = $("<input>");
+                $('body').append(temp);
+                temp.val(copy_text).select();
+                document.execCommand("copy");
+                temp.remove();
+                alert(`Copied, text = ${copy_text}`);
+            }
+        );
     </script>
 
     @yield('script')
