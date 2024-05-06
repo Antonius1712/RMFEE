@@ -54,6 +54,8 @@ class BudgetController extends Controller
         $status_budget = $request->status_budget;
         $ProposedTo = $request->to_do_list_filter == 'true' ? auth()->user()->NIK : '';
 
+        // dd($request->all());
+
         $Budgets = Budget::GetBudgetDataTable(
             $broker_name, $branch, $status_pembayaran_premi, $start_date, $no_policy, $aging_rmf, $booking_date_from, $booking_date_to, $nb_rn, $holder_name, $class_business, $status_realisasi, $status_budget, $ProposedTo
         );
@@ -67,6 +69,8 @@ class BudgetController extends Controller
             $BtnArchive = '';
             $BtnUnArchive = '';
             $Divider = '';
+
+            dd($data);
 
             $Voucher = str_replace('/','~',$data->VOUCHER);
 
