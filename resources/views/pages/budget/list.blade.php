@@ -328,7 +328,6 @@
         var data_table_budget = '';
         $('body').on('click', '#RejectModal', function(e) {
             e.preventDefault();
-            alert('ok');
             let Voucher = $(this).data('voucher');
             let Action = `${url}/budget/reject/${Voucher}`;
             let Filters = `{{ http_build_query(request()->query()) }}`;
