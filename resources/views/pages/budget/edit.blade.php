@@ -202,41 +202,69 @@
 @section('script')
     <script>
         // Budget Percentage to calculate Budget in Amount.
-            $('#budget').on('keyup', function(){
-                // Validation Percentage.
-                    if( $(this).val() > 100 || $(this).val() < 0 ){
-                        alert('Errors');
-                        $(this).val(0);
-                        return false;
-                    }
+        $('#budget').on('change', function(){
+            // Validation Percentage.
+            if( $(this).val() > 100 || $(this).val() < 0 ){
+                alert('Errors');
+                $(this).val(0);
+                return false;
+            }
 
-                // Define Variable
-                    let budgetPercent = ($(this).val() / 100);
-                    let lgiPremi = $('#gross_premi').val();
-                    let budgetInAmount = 0;
+            // Define Variable
+            let budgetPercent = ($(this).val() / 100);
+            let lgiPremi = $('#gross_premi').val();
+            let budgetInAmount = 0;
 
-                // Calculate Budget in Amount.
-                    budgetInAmount = budgetPercent * clear_number_format(lgiPremi);
+            
+            // Calculate Budget in Amount.
+            budgetInAmount = budgetPercent * clear_number_format(lgiPremi);
+            
+            let CurrentBudget = parseInt(`{{ $Budget->Budget }}`);
 
-                // Show Calculation Result of Budget in Amount
-                    $('#budget_in_amount').val(number_format(budgetInAmount));
-            });
+            if( CurrentBudget > 0 ){
+                if( budgetInAmount < CurrentBudget ){
+                    swal(
+                            'Whoops!',
+                            `Budget must be higher than current budget.`,
+                            'warning'
+                        );
+                    return false;
+                }
+            }
+            // Show Calculation Result of Budget in Amount
+            $('#budget_in_amount').val(number_format(budgetInAmount));
+        });
 
         // Budget in Amount to calculate Budget Percentage.
-            $('#budget_in_amount').on('keyup', function(){
-                // Define Variable
-                    let budgetInAmount = $(this).val();
-                    let lgiPremi = $('#gross_premi').val();
-                    let budgetPercent = 0;
+        $('#budget_in_amount').on('change', function(){
+            // Define Variable
+            let budgetInAmount = $(this).val();
+            let lgiPremi = $('#gross_premi').val();
+            let budgetPercent = 0;
 
-                // Calculate Budget Percentage.
-                    budgetPercent = (clear_number_format(budgetInAmount) / clear_number_format(lgiPremi)) * 100;
+            // Calculate Budget Percentage.
+            budgetPercent = (clear_number_format(budgetInAmount) / clear_number_format(lgiPremi)) * 100;
 
-                // Show Calculation Budget Percentage.
-                    $('#budget').val(parseFloat(budgetPercent).toFixed(4));
+            let CurrentBudget = parseInt(`{{ $Budget->Budget }}`);
 
-                // Formating to Thousand Separator on Budget in Amount.
-                    $(this).val(number_format($(this).val()));
-            });
+            budgetInAmount = parseFloat(clear_number_format(budgetInAmount));
+
+            if( CurrentBudget > 0 ){
+                if( budgetInAmount < CurrentBudget ){
+                    swal(
+                            'Whoops!',
+                            `Budget must be higher than current budget.`,
+                            'warning'
+                        );
+                    return false;
+                }
+            }
+
+            // Show Calculation Budget Percentage.
+            $('#budget').val(parseFloat(budgetPercent).toFixed(4));
+
+            // Formating to Thousand Separator on Budget in Amount.
+            $(this).val(number_format($(this).val()));
+        });
     </script>
 @endsection
