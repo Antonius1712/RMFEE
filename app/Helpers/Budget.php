@@ -228,6 +228,7 @@ class Budget {
                 switch ($role) {
                     case "USER_RMFEE":
                         $BtnDownloadDocument = true;
+                        $BtnEdit = true;
                         return [
                             'BtnEdit' => $BtnEdit,
                             'BtnDownloadDocument' => $BtnDownloadDocument,
