@@ -18,7 +18,7 @@ class Budget {
     public static function GetBudgetDataTable($broker_name, $branch, $status_pembayaran_premi, $start_date, $no_policy, $aging_rmf, $booking_date_from, $booking_date_to, $nb_rn, $holder_name, $class_business, $status_realisasi, $status_budget = '', $ProposedTo){
         $status_budget = strtoupper($status_budget);
         $archive = $status_budget == BudgetStatus::ARCHIVED ? 1 : 0;
-        // dd($ProposedTo, $status_budget);
+        // dd($ProposedTo, $status_budget, $booking_date_from, $booking_date_to);
         try {
             // ! Parameters : '@BrokerName', '@Branch', '@Type', '@StartDate', '@StatusPremium','@AgingRealization', '@StatusRealization', '@Voucher';
             return DB::connection(Database::REPORT_GENERATOR)

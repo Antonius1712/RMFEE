@@ -332,19 +332,18 @@
             let Action = `${url}/budget/reject/${Voucher}`;
             let Filters = `{{ http_build_query(request()->query()) }}`;
             let AddHiddenInputForFilters = '';
+            let ArrayFilter = @json(request()->query());
 
             let FullUrl = `${Action}?${Filters}`;
 
-            // console.log({Action, FullUrl});
-
-            // $.each(Filters, function(key, val){
-            //     AddHiddenInputForFilters += `
-        //         <input type="hidden" name="${key}" value="${val}" />
-        //     `;
-            // });
+            $.each(ArrayFilter, function(key, val){
+                AddHiddenInputForFilters += `
+                <input type="hidden" name="${key}" value="${val ?? ''}" />
+            `;
+            });
 
             $('#form-reject-budget').attr('action', FullUrl);
-            // $('#append').html(AddHiddenInputForFilters);
+            $('#append').html(AddHiddenInputForFilters);
             $('#ModalReject').modal('toggle');
         });
 
