@@ -381,6 +381,10 @@ class RealizationController extends Controller
                     try {
 
                         //TODO harus di cek dulu budget per voucher apakah statusnya sudah approve atau belum.
+
+                        $test = ReportGenerator_Realization_Group::where('invoice_no', $invoice_no_real)->get();
+                        dd($test);
+
                         //TODO jika ada yang belum approve, return redirect back with error status voucher $voucher belum approved.
 
                         $Budget = Realization::UpdateBudgetRealization($RealizationData);

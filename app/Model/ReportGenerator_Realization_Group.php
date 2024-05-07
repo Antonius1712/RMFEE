@@ -13,4 +13,8 @@ class ReportGenerator_Realization_Group extends Model
     public function GetUserSetting(){
         return $this->hasOne(ReportGenerator_UserSetting::class, 'UserID', 'CreatedBy');
     }
+
+    public function DetailRealizationGroupEngineeringFee(){
+        return $this->hasMany(ReportGenerator_Detail_Realization_Group_Engineering_Fee::class, 'realization_id', 'id');
+    }
 }
