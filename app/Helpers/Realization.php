@@ -117,6 +117,7 @@ class Realization {
     public static function UpdateRealizationGroup($param = null, $InvoiceNumber = null, $status_realization = RealizationStatus::DRAFT){
         try {
             $invoice_no = isset($param->invoice_no) ? $param->invoice_no : (isset($InvoiceNumber) ? $InvoiceNumber : null);
+            $invoice_no_real = str_replace('~', '/', $invoice_no);
             $type_of_invoice = isset($param->type_of_invoice) ? $param->type_of_invoice : null;
             $type_of_payment = isset($param->type_of_payment) ? $param->type_of_payment : null;
             $currency = isset($param->currency) ? $param->currency : null;
@@ -157,7 +158,7 @@ class Realization {
             // dd('xx');
 
             if( $DocumentPath_upload_invoice == null || $DocumentPath_upload_survey_report == null ) {
-                $RealizationFileData = DB::connection(Database::REPORT_GENERATOR)->select("EXECUTE [dbo].[SP_Get_Group_Realization_Engineering_Fee] '$InvoiceNumber', '', '', '', ''")[0];
+                $RealizationFileData = DB::connection(Database::REPORT_GENERATOR)->select("EXECUTE [dbo].[SP_Get_Group_Realization_Engineering_Fee] '$invoice_no_real', '', '', '', ''")[0];
 
                 if( $DocumentPath_upload_invoice == null ) {
                     $DocumentPath_upload_invoice = $RealizationFileData->Upload_Invoice_Path;
