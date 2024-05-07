@@ -98,6 +98,7 @@ class RealizationController extends Controller
                                 $string = trim(preg_replace('/\s+/', ' ', $Action[$key]));
 
                                 $val->Action = $string;
+                                break;
                             default:
                                 $Action[$key] = "
                                     <a class='dropdown-item success' href='".route('realization.show', $invoice_no)."'>
