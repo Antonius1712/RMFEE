@@ -378,6 +378,10 @@ class RealizationController extends Controller
                     break;
                 case GroupCodeApplication::HEAD_FINANCE_RMFEE:
                     try {
+
+                        //TODO harus di cek dulu budget per voucher apakah statusnya sudah approve atau belum.
+                        //TODO jika ada yang belum approve, return redirect back with error status voucher $voucher belum approved.
+
                         $Budget = Realization::UpdateBudgetRealization($RealizationData);
                         if( $Budget == BudgetStatus::OVERLIMIT ) {
                             return redirect()->back()->withErrors('You Have an Overlimit Budget inside this Invoice. <strong>'.$invoice_no_real.'</strong>');
