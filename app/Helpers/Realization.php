@@ -169,23 +169,29 @@ class Realization {
                 }
             }
 
+            
             //! INI UNTUK SAVE PATH UPLOAD_INVOICE
             try {
                 DB::connection(Database::REPORT_GENERATOR)->statement("EXECUTE [dbo].[SP_Update_Invoice_Group_Realization_Engineering_Fee] '$invoice_no', '$DocumentPath_upload_invoice'");
             } catch(Exception $e) {
                 Log::error('Error Update Realization Invoice Exception = ' . $e->getMessage());
             }
-
+            
             //! INI UNTUK SAVE PATH UPLOAD_SURBEY_REPORT 
             try {
                 DB::connection(Database::REPORT_GENERATOR)->statement("EXECUTE [dbo].[SP_Update_Survey_Group_Realization_Engineering_Fee] '$invoice_no', '$DocumentPath_upload_survey_report'");   
             } catch(Exception $e) {
                 Log::error('Error Update Realization Survey Exception = ' . $e->getMessage());
             }
-
+            
+            // dd('zz', $DocumentPath_upload_invoice, $DocumentPath_upload_survey_report);
             //! INI UNTUK UPDATE REALISASI TANPA UPDATE KOLOM UPLOAD_INVOICE DAN UPLOAD_SURVEY.
             //? KOLOM UPLOAD _INVOICE DAN _SURVEY DI UPDATE DI ATAS.
-            return DB::connection(Database::REPORT_GENERATOR)->statement("EXECUTE [dbo].[SP_Update_Group_Realization_Engineering_Fee] '$InvoiceNumber', '$type_of_invoice', '$type_of_payment', '$currency', '$invoice_date', '$broker_id', '$payment_to', '$approval_bu', '$approval_finance', '$epo_checker', '$epo_approval', '$status_realization', '$remarks', '$lastUpdateBy', '$lastUpdate'");
+            $test = DB::connection(Database::REPORT_GENERATOR)->statement("EXECUTE [dbo].[SP_Update_Group_Realization_Engineering_Fee] '$InvoiceNumber', '$type_of_invoice', '$type_of_payment', '$currency', '$invoice_date', '$broker_id', '$payment_to', '$approval_bu', '$approval_finance', '$epo_checker', '$epo_approval', '$status_realization', '$remarks', '$lastUpdateBy', '$lastUpdate'");
+
+            // dd('xc');
+
+            return 'ok';
         } catch (Exception $e) {
             Log::error('Error Update Realization Group on Realization Helper Update Exception = ' . $e->getMessage());
         }
