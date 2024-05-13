@@ -40,7 +40,7 @@
                                         </div>
                                     </div>
                                     <div class="col-lg-12">
-                                        <button type="submit" name="btn-generate-summary-budget" class="btn btn-primary">Generate Sumarry</button>
+                                        <button type="submit" name="btn-generate-summary-budget" class="btn btn-primary">Generate Summary</button>
                                         <button type="submit" name="btn-generate-detail-budget" class="btn btn-primary">Generate Detail</button>
                                     </div>
                                 </div>
