@@ -49,7 +49,8 @@
                                             <i class="feather icon-plus-circle" style="font-size: 32px;"></i>
                                         </a>
                                         <div class="dropdown-menu" aria-labelledby="BtnActionGroup">
-                                            @if( $RealizationData->Status_Realization == config('RealizationStatus.DRAFT') )
+                                            @if( $RealizationData->Status_Realization == config('RealizationStatus.DRAFT') 
+                                                    || $RealizationData->Status_Realization == config('RealizationStatus.REJECTED') )
                                                 <a class="dropdown-item success" href="{{ route('realization.detail-realization.edit', [$invoice_no, $val->id]) }}">
                                                     <i class="feather icon-edit-2"></i>
                                                     Edit

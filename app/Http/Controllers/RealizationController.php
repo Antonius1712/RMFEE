@@ -53,6 +53,7 @@ class RealizationController extends Controller
         
         $RealizationStatus = $this->RealizationStatus;
         $COB = $this->COB;
+
         // dd($FilterStatusRealization,   $FilterBrokerName, $FilterLastUpdate, $FilterInvoiceNo, $FilterCOB);
 
         $RealizationData = Realization::GetRealization($FilterInvoiceNo, $FilterStatusRealization, $FilterBrokerName, $FilterLastUpdate, $FilterCOB);
@@ -90,6 +91,10 @@ class RealizationController extends Controller
                                 break;
                             case RealizationStatus::REJECTED:
                                 $Action[$key] = "
+                                    <a name='propose' class='dropdown-item success' href='".route('realization.propose', $invoice_no)."'>
+                                        <i class='feather icon-check'></i>
+                                        Propose
+                                    </a>
                                     <a name='propose' class='dropdown-item success' href='".route('realization.edit', $invoice_no)."'>
                                         <i class='feather icon-edit-2'></i>
                                         Edit
@@ -98,6 +103,7 @@ class RealizationController extends Controller
                                 $string = trim(preg_replace('/\s+/', ' ', $Action[$key]));
 
                                 $val->Action = $string;
+                                break;
                             default:
                                 $Action[$key] = "
                                     <a class='dropdown-item success' href='".route('realization.show', $invoice_no)."'>
@@ -286,6 +292,7 @@ class RealizationController extends Controller
     }
 
     public function update(Request $request, $InvoiceNumber){
+        $invoice_no_real = str_replace('~', '/', $InvoiceNumber);
         $action = $request->action;
         $LogAction = '';
         switch ($action) {
@@ -300,6 +307,7 @@ class RealizationController extends Controller
                 $LogAction = 'UPDATE';
                 break;
             case 'propose':
+                Realization::UpdateRealizationGroupStatus(RealizationStatus::WAITING_APPROVAL_BU, $invoice_no_real);
                 Realization::UpdateRealizationGroup($request, $InvoiceNumber, RealizationStatus::WAITING_APPROVAL_BU);
                 $redirect = redirect()->route('realization.index');
                 $LogAction = 'PROPOSE';
@@ -309,7 +317,8 @@ class RealizationController extends Controller
                 break;
         }
 
-        $Realization_id = ReportGenerator_Realization_Group::where('invoice_no', $InvoiceNumber)->value('id');
+        $Realization_id = ReportGenerator_Realization_Group::where('invoice_no', $invoice_no_real)->value('id');
+
         Logger::SaveLog(LogStatus::REALIZATION, $Realization_id, $LogAction);
 
         return $redirect;
