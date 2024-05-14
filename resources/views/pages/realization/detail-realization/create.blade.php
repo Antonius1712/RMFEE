@@ -262,11 +262,10 @@
 
             total_amount_realization = amount_realization * exchange_rate;
 
-            /* VatSubsidies = nilai VAT yang di subsidi. */
-            vat = vat - VatSubsidies;
-
             if( lob == '02' ){
+                /* VatSubsidies = nilai VAT yang di subsidi. */
                 vat = (vat / 100) * 0.2
+                vat = vat - VatSubsidies;
             }else{
                 vat = vat / 100;
             }
