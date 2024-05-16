@@ -251,6 +251,7 @@
             let vat = `{{ $PaymentTo->VAT }}`;
             let tax = `{{ $PaymentTo->TAX }}`;
             let lob = `{{ $PaymentTo->LOB }}`;
+            let VatSubsidies = `{{ $PaymentTo->VATSubsidies }}`;
 
             let total_vat = 0;
             let total_tax = 0;
@@ -262,6 +263,8 @@
             total_amount_realization = amount_realization * exchange_rate;
 
             if( lob == '02' ){
+                /* VatSubsidies = nilai VAT yang di subsidi. */
+                vat = vat - VatSubsidies;
                 vat = (vat / 100) * 0.2
             }else{
                 vat = vat / 100;

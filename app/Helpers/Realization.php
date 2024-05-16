@@ -117,6 +117,7 @@ class Realization {
     public static function UpdateRealizationGroup($param = null, $InvoiceNumber = null, $status_realization = RealizationStatus::DRAFT){
         try {
             $invoice_no = isset($param->invoice_no) ? $param->invoice_no : (isset($InvoiceNumber) ? $InvoiceNumber : null);
+            $invoice_no_real = str_replace('~', '/', $invoice_no);
             $type_of_invoice = isset($param->type_of_invoice) ? $param->type_of_invoice : null;
             $type_of_payment = isset($param->type_of_payment) ? $param->type_of_payment : null;
             $currency = isset($param->currency) ? $param->currency : null;
@@ -157,7 +158,7 @@ class Realization {
             // dd('xx');
 
             if( $DocumentPath_upload_invoice == null || $DocumentPath_upload_survey_report == null ) {
-                $RealizationFileData = DB::connection(Database::REPORT_GENERATOR)->select("EXECUTE [dbo].[SP_Get_Group_Realization_Engineering_Fee] '$InvoiceNumber'")[0];
+                $RealizationFileData = DB::connection(Database::REPORT_GENERATOR)->select("EXECUTE [dbo].[SP_Get_Group_Realization_Engineering_Fee] '$invoice_no_real', '', '', '', ''")[0];
 
                 if( $DocumentPath_upload_invoice == null ) {
                     $DocumentPath_upload_invoice = $RealizationFileData->Upload_Invoice_Path;
@@ -168,23 +169,29 @@ class Realization {
                 }
             }
 
+            
             //! INI UNTUK SAVE PATH UPLOAD_INVOICE
             try {
                 DB::connection(Database::REPORT_GENERATOR)->statement("EXECUTE [dbo].[SP_Update_Invoice_Group_Realization_Engineering_Fee] '$invoice_no', '$DocumentPath_upload_invoice'");
             } catch(Exception $e) {
                 Log::error('Error Update Realization Invoice Exception = ' . $e->getMessage());
             }
-
+            
             //! INI UNTUK SAVE PATH UPLOAD_SURBEY_REPORT 
             try {
                 DB::connection(Database::REPORT_GENERATOR)->statement("EXECUTE [dbo].[SP_Update_Survey_Group_Realization_Engineering_Fee] '$invoice_no', '$DocumentPath_upload_survey_report'");   
             } catch(Exception $e) {
                 Log::error('Error Update Realization Survey Exception = ' . $e->getMessage());
             }
-
+            
+            // dd('zz', $DocumentPath_upload_invoice, $DocumentPath_upload_survey_report);
             //! INI UNTUK UPDATE REALISASI TANPA UPDATE KOLOM UPLOAD_INVOICE DAN UPLOAD_SURVEY.
             //? KOLOM UPLOAD _INVOICE DAN _SURVEY DI UPDATE DI ATAS.
-            return DB::connection(Database::REPORT_GENERATOR)->statement("EXECUTE [dbo].[SP_Update_Group_Realization_Engineering_Fee] '$InvoiceNumber', '$type_of_invoice', '$type_of_payment', '$currency', '$invoice_date', '$broker_id', '$payment_to', '$approval_bu', '$approval_finance', '$epo_checker', '$epo_approval', '$status_realization', '$remarks', '$lastUpdateBy', '$lastUpdate'");
+            $test = DB::connection(Database::REPORT_GENERATOR)->statement("EXECUTE [dbo].[SP_Update_Group_Realization_Engineering_Fee] '$InvoiceNumber', '$type_of_invoice', '$type_of_payment', '$currency', '$invoice_date', '$broker_id', '$payment_to', '$approval_bu', '$approval_finance', '$epo_checker', '$epo_approval', '$status_realization', '$remarks', '$lastUpdateBy', '$lastUpdate'");
+
+            // dd('xc');
+
+            return 'ok';
         } catch (Exception $e) {
             Log::error('Error Update Realization Group on Realization Helper Update Exception = ' . $e->getMessage());
         }
@@ -259,6 +266,20 @@ class Realization {
         } catch(Exception $e) {
             Log::error('Error Update Realization Group on Realization Helper Update Epo_No Exception = ' . $e->getMessage());
         }
+    }
+
+
+    // ! Report
+    public static function GetReportRealizationSummary($start_date, $end_date, $status_realization){
+        $start_date = str_replace('/', '-', $start_date);
+        $end_date = str_replace('/', '-', $end_date);
+        return DB::connection(Database::REPORT_GENERATOR)->select("EXECUTE [dbo].[SP_Report_Realization_Summary_Engineering_Fee] '$start_date', '$end_date', '$status_realization'");
+    }
+
+    public static function GetReportRealizationDetail($start_date, $end_date, $status_realization){
+        $start_date = str_replace('/', '-', $start_date);
+        $end_date = str_replace('/', '-', $end_date);
+        return DB::connection(Database::REPORT_GENERATOR)->select("EXECUTE [dbo].[SP_Report_Realization_Detail_Engineering_Fee] '$start_date', '$end_date', '$status_realization'");
     }
 
 

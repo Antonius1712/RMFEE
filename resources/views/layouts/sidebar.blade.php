@@ -111,6 +111,24 @@
                 </a>
             </li>
             @endif
+
+            {{-- !SPECIAL MENU FOR TESTER --}}
+            @if( in_array(auth()->user()->NIK, ['2021044216']) )
+            <li class=" nav-item">
+                <a class="d-flex align-items-center" href="#">
+                    <i data-feather="file-text" class="feather icon-file-text"></i>
+                    <span class="menu-title text-truncate" data-i18n="Special Menu">Special Menu</span>
+                </a>
+                <ul class="menu-content">
+                    <li class="{{ Request()->segment(2) == 'user' ? 'active' : '' }}">
+                        <a class="d-flex align-items-center" href="{{ route('special-menu.user') }}">
+                            <i data-feather="corner-down-right" class="feather icon-corner-down-right"></i>
+                            <span class="menu-item text-truncate" data-i18n="User">User</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            @endif
         </ul>
     </div>
 </div>

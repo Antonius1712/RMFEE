@@ -53,6 +53,7 @@ class RealizationController extends Controller
         
         $RealizationStatus = $this->RealizationStatus;
         $COB = $this->COB;
+
         // dd($FilterStatusRealization,   $FilterBrokerName, $FilterLastUpdate, $FilterInvoiceNo, $FilterCOB);
 
         $RealizationData = Realization::GetRealization($FilterInvoiceNo, $FilterStatusRealization, $FilterBrokerName, $FilterLastUpdate, $FilterCOB);
@@ -90,6 +91,10 @@ class RealizationController extends Controller
                                 break;
                             case RealizationStatus::REJECTED:
                                 $Action[$key] = "
+                                    <a name='propose' class='dropdown-item success' href='".route('realization.propose', $invoice_no)."'>
+                                        <i class='feather icon-check'></i>
+                                        Propose
+                                    </a>
                                     <a name='propose' class='dropdown-item success' href='".route('realization.edit', $invoice_no)."'>
                                         <i class='feather icon-edit-2'></i>
                                         Edit
@@ -98,6 +103,7 @@ class RealizationController extends Controller
                                 $string = trim(preg_replace('/\s+/', ' ', $Action[$key]));
 
                                 $val->Action = $string;
+                                break;
                             default:
                                 $Action[$key] = "
                                     <a class='dropdown-item success' href='".route('realization.show', $invoice_no)."'>
@@ -286,6 +292,7 @@ class RealizationController extends Controller
     }
 
     public function update(Request $request, $InvoiceNumber){
+        $invoice_no_real = str_replace('~', '/', $InvoiceNumber);
         $action = $request->action;
         $LogAction = '';
         switch ($action) {
@@ -300,6 +307,7 @@ class RealizationController extends Controller
                 $LogAction = 'UPDATE';
                 break;
             case 'propose':
+                Realization::UpdateRealizationGroupStatus(RealizationStatus::WAITING_APPROVAL_BU, $invoice_no_real);
                 Realization::UpdateRealizationGroup($request, $InvoiceNumber, RealizationStatus::WAITING_APPROVAL_BU);
                 $redirect = redirect()->route('realization.index');
                 $LogAction = 'PROPOSE';
@@ -309,7 +317,8 @@ class RealizationController extends Controller
                 break;
         }
 
-        $Realization_id = ReportGenerator_Realization_Group::where('invoice_no', $InvoiceNumber)->value('id');
+        $Realization_id = ReportGenerator_Realization_Group::where('invoice_no', $invoice_no_real)->value('id');
+
         Logger::SaveLog(LogStatus::REALIZATION, $Realization_id, $LogAction);
 
         return $redirect;
@@ -371,6 +380,7 @@ class RealizationController extends Controller
         $invoice_no_real = str_replace('~', '/', $invoice_no);
         $AuthUserGroup = Auth()->user()->getUserGroup->GroupCode;
         $RealizationData = Realization::GetRealization($invoice_no_real)[0];
+
         try {
             switch ($AuthUserGroup) {
                 case GroupCodeApplication::HEAD_BU_RMFEE:
@@ -378,6 +388,33 @@ class RealizationController extends Controller
                     break;
                 case GroupCodeApplication::HEAD_FINANCE_RMFEE:
                     try {
+
+                        //TODO harus di cek dulu budget per voucher apakah statusnya sudah approve atau belum.
+                        //TODO jika ada yang belum approve, return redirect back with error status voucher $voucher belum approved.
+                        $StatusBudget = ReportGenerator_Realization_Group::where('invoice_no', $invoice_no_real)
+                        ->with(['DetailRealizationGroupEngineeringFee', 'DetailRealizationGroupEngineeringFee.DataEngineeringFee'])
+                        ->first()
+                        ->DetailRealizationGroupEngineeringFee
+                        ->pluck('DataEngineeringFee.STATUS_BUDGET', 'DataEngineeringFee.VOUCHER')
+                        ->toArray();
+
+                        unset($StatusBudget['']);
+
+                        //? if StatusBudget of each of budget that used on realization contain status that not 'APPROVED'
+                        //? it will return false.
+                        // dd($StatusBudget);
+                        $errorKey = null;
+                        if( !Utils::ValidateStatusBudget($StatusBudget, $errorKey) ){
+                            return redirect()->back()->withErrors(
+                                'There is budget that has not been approved. Invoice. <strong>'.$invoice_no_real.'</strong>
+                                <br/>
+                                Voucher <strong>'.$errorKey.'</strong>'
+                            );
+                        }
+
+                        //---------------------------------------------------------
+                        //? if validation passed.
+
                         $Budget = Realization::UpdateBudgetRealization($RealizationData);
                         if( $Budget == BudgetStatus::OVERLIMIT ) {
                             return redirect()->back()->withErrors('You Have an Overlimit Budget inside this Invoice. <strong>'.$invoice_no_real.'</strong>');

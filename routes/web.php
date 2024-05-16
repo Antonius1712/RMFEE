@@ -95,6 +95,7 @@ Route::middleware(['breadcrumbs', 'auth'])->group(function(){
         Route::get('/realization', 'Report\ReportRealizationController@index')->name('realization');
 
         Route::post('/budget', 'Report\ReportBudgetController@GenerateReport')->name('budget.generate');
+        Route::post('/realization', 'Report\ReportRealizationController@GenerateReport')->name('realization.generate');
     });
 
     //? Setting Budget Group & User Module.
@@ -125,6 +126,12 @@ Route::middleware(['breadcrumbs', 'auth'])->group(function(){
         Route::get('/search_occupation', 'UtilsController@SearchOccupation')->name('search_occupation');
         Route::get('/search_profile_on_setting_budget', 'UtilsController@SearchProfileOnSettingBudget')->name('search_profile_on_setting_budget');
         Route::get('/search_budget_by_policy_no_and_broker_name', 'UtilsController@SearchBudgetByPolicyNoAndBrokerName')->name('search_budget_by_policy_no_and_broker_name');
+    });
+
+    //? Menu Khusus Tester.
+    Route::prefix('special-menu')->as('special-menu.')->middleware('tester.access')->group(function(){
+        Route::get('/user', 'SpecialMenuController@user')->name('user');
+        Route::post('/user', 'SpecialMenuController@user_search')->name('user-search');
     });
 });
 
