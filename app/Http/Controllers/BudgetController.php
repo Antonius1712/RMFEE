@@ -32,7 +32,7 @@ class BudgetController extends Controller
 
         $NBRN = HardCoded::NBRN;
         $statusPremi = HardCoded::statusPremi;
-        $statusRealisasi = HardCoded::statusRealisasi;
+        $statusRealisasi = HardCoded::statusRealisasiOnBudget;
         $statusBudget = HardCoded::statusBudget;
 
         $branchList = $this->branch;
