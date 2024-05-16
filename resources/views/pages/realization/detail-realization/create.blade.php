@@ -264,8 +264,8 @@
 
             if( lob == '02' ){
                 /* VatSubsidies = nilai VAT yang di subsidi. */
-                vat = (vat / 100) * 0.2
                 vat = vat - VatSubsidies;
+                vat = (vat / 100) * 0.2
             }else{
                 vat = vat / 100;
             }
