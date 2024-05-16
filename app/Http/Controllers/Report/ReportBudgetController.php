@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Report;
 
 use App\Enums\BudgetStatus;
 use App\Enums\HardCoded;
+use App\Exports\BudgetDetailExport;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
@@ -12,6 +13,8 @@ use PHPExcel_Style_Alignment;
 use PHPExcel_Style_Fill;
 use PHPExcel_Style_NumberFormat;
 use App\Helpers\Budget;
+
+use App\Exports\BudgetSummaryExport;
 
 class ReportBudgetController extends Controller
 {
@@ -71,47 +74,50 @@ class ReportBudgetController extends Controller
             // dd($data);
             $formatedStartDate = date('d M Y', strtotime($start_date));
             $formatedEndDate = date('d M Y', strtotime($end_date));
-            Excel::create('Budget Summary ('.$formatedStartDate.' - '.$formatedEndDate.')', function($excel) use($data){
-                $excel->sheet('Budget Summary', function($sheet) use ($data) {
-                    $sheet->freezeFirstRow();
-                    $sheet->setAllBorders('thin');
 
-                    // Styling Cell A1 - AJ1.
-                    $sheet->getStyle('A1:F1')->applyFromArray([
-                        'font' => [
-                            'name'      =>  'Calibri',
-                            'size'      =>  15,
-                            'bold'      =>  true,
-                            'align'     =>  'center'
-                        ],
-                        'fill' => [
-                            'type'  => PHPExcel_Style_Fill::FILL_SOLID,
-                            'color' => array('rgb' => 'FFF200')
-                        ],
-                        'alignment' => [
-                            'horizontal' => PHPExcel_Style_Alignment::VERTICAL_CENTER,
-                            'vertical' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER
-                        ]
-                    ]);
+            return Excel::download(new BudgetSummaryExport($data, $formatedStartDate, $formatedEndDate), 'BudgetSummary.xlsx');
+
+            // Excel::create('Budget Summary ('.$formatedStartDate.' - '.$formatedEndDate.')', function($excel) use($data){
+            //     $excel->sheet('Budget Summary', function($sheet) use ($data) {
+            //         $sheet->freezeFirstRow();
+            //         $sheet->setAllBorders('thin');
+
+            //         // Styling Cell A1 - AJ1.
+            //         $sheet->getStyle('A1:F1')->applyFromArray([
+            //             'font' => [
+            //                 'name'      =>  'Calibri',
+            //                 'size'      =>  15,
+            //                 'bold'      =>  true,
+            //                 'align'     =>  'center'
+            //             ],
+            //             'fill' => [
+            //                 'type'  => PHPExcel_Style_Fill::FILL_SOLID,
+            //                 'color' => array('rgb' => 'FFF200')
+            //             ],
+            //             'alignment' => [
+            //                 'horizontal' => PHPExcel_Style_Alignment::VERTICAL_CENTER,
+            //                 'vertical' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER
+            //             ]
+            //         ]);
                     
-                    // Set the size for cells.
-                    $sheet->setSize('A1:F1', '', 50);
+            //         // Set the size for cells.
+            //         $sheet->setSize('A1:F1', '', 50);
                     
-                    // Set the data.
-                    $sheet->fromArray($data);
+            //         // Set the data.
+            //         $sheet->fromArray($data);
 
-                    // Apply number format for columns declare below start from 2 to end.
-                    $lastRow = count($data) + 1;
-                    for ($row = 2; $row <= $lastRow; $row++) {
-                        $sheet->getStyle('E' . $row . ':F' . $row)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
-                    }
+            //         // Apply number format for columns declare below start from 2 to end.
+            //         $lastRow = count($data) + 1;
+            //         for ($row = 2; $row <= $lastRow; $row++) {
+            //             $sheet->getStyle('E' . $row . ':F' . $row)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
+            //         }
 
-                    // Auto-size columns.
-                    foreach(range('A','F') as $column) {
-                        $sheet->getColumnDimension($column)->setAutoSize(true);
-                    }
-                });
-            })->export('xls')->download('xls');
+            //         // Auto-size columns.
+            //         foreach(range('A','F') as $column) {
+            //             $sheet->getColumnDimension($column)->setAutoSize(true);
+            //         }
+            //     });
+            // })->export('xls')->download('xls');
         }else{
             return redirect()->back()->with(['status' => 404, 'notification' => 'Empty Data.']);
         }
@@ -142,47 +148,50 @@ class ReportBudgetController extends Controller
             $formatedStartDate = date('d M Y', strtotime($start_date));
             $formatedEndDate = date('d M Y', strtotime($end_date));
 
-            Excel::create('Budget Detail ('.$formatedStartDate.' - '.$formatedEndDate.')', function($excel) use($data){
-                $excel->sheet('Budget Detail', function($sheet) use ($data) {
-                    $sheet->freezeFirstRow();
-                    $sheet->setAllBorders('thin');
+            return Excel::download(new BudgetDetailExport($data, $formatedStartDate, $formatedEndDate), 'BudgetDetail.xlsx');
 
-                    // Styling Cell A1 - AJ1.
-                    $sheet->getStyle('A1:K1')->applyFromArray([
-                        'font' => [
-                            'name'      =>  'Calibri',
-                            'size'      =>  15,
-                            'bold'      =>  true,
-                            'align'     =>  'center'
-                        ],
-                        'fill' => [
-                            'type'  => PHPExcel_Style_Fill::FILL_SOLID,
-                            'color' => array('rgb' => 'FFF200')
-                        ],
-                        'alignment' => [
-                            'horizontal' => PHPExcel_Style_Alignment::VERTICAL_CENTER,
-                            'vertical' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER
-                        ]
-                    ]);
+
+            // Excel::create('Budget Detail ('.$formatedStartDate.' - '.$formatedEndDate.')', function($excel) use($data){
+            //     $excel->sheet('Budget Detail', function($sheet) use ($data) {
+            //         $sheet->freezeFirstRow();
+            //         $sheet->setAllBorders('thin');
+
+            //         // Styling Cell A1 - AJ1.
+            //         $sheet->getStyle('A1:K1')->applyFromArray([
+            //             'font' => [
+            //                 'name'      =>  'Calibri',
+            //                 'size'      =>  15,
+            //                 'bold'      =>  true,
+            //                 'align'     =>  'center'
+            //             ],
+            //             'fill' => [
+            //                 'type'  => PHPExcel_Style_Fill::FILL_SOLID,
+            //                 'color' => array('rgb' => 'FFF200')
+            //             ],
+            //             'alignment' => [
+            //                 'horizontal' => PHPExcel_Style_Alignment::VERTICAL_CENTER,
+            //                 'vertical' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER
+            //             ]
+            //         ]);
                     
-                    // Set the size for cells.
-                    $sheet->setSize('A1:K1', '', 50);
+            //         // Set the size for cells.
+            //         $sheet->setSize('A1:K1', '', 50);
                     
-                    // Set the data.
-                    $sheet->fromArray($data);
+            //         // Set the data.
+            //         $sheet->fromArray($data);
 
-                    // Apply number format for columns declare below start from 2 to end.
-                    $lastRow = count($data) + 1;
-                    for ($row = 2; $row <= $lastRow; $row++) {
-                        $sheet->getStyle('H' . $row . ':K' . $row)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
-                    }
+            //         // Apply number format for columns declare below start from 2 to end.
+            //         $lastRow = count($data) + 1;
+            //         for ($row = 2; $row <= $lastRow; $row++) {
+            //             $sheet->getStyle('H' . $row . ':K' . $row)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
+            //         }
 
-                    // Auto-size columns.
-                    foreach(range('A','K') as $column) {
-                        $sheet->getColumnDimension($column)->setAutoSize(true);
-                    }
-                });
-            })->export('xls')->download('xls');
+            //         // Auto-size columns.
+            //         foreach(range('A','K') as $column) {
+            //             $sheet->getColumnDimension($column)->setAutoSize(true);
+            //         }
+            //     });
+            // })->export('xls')->download('xls');
         }else{
             return redirect()->back()->with(['status' => 404, 'notification' => 'Empty Data.']);
         }
