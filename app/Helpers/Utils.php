@@ -169,5 +169,15 @@ class Utils {
 
         return $result;
     }
+
+    public static function ValidateStatusBudget($arr, &$errorKey = null) {
+        foreach ($arr as $key => $value) {
+            if ($value !== 'APPROVED') {
+                $errorKey = $key;
+                return false;
+            }
+        }
+        return true;
+    }
 }
 ?>
