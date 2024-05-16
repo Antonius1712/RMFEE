@@ -252,25 +252,44 @@
                             <td>{{ $Budget->OS }}</td>
                             <td>{{ $Budget->Status_Premium }}</td>
                             <td>{{ $Budget->VOUCHER }}</td>
-                            <td>{{ $Budget->OCCUPATION }}</td>
-                            <td class="td_comment" data-comment="{{ $Budget->COMMENT }}">
+                            <td class="td_occupation" data-occupation="{{ $Budget->OCCUPATION }}">
+                                {{-- {{ $Budget->OCCUPATION }} --}}
                                 @php
-                                    $arrayOfWord = explode(' ', $Budget->COMMENT);
-                                    $displayText = '';
+                                    $arrayOfWord = explode(' ', $Budget->OCCUPATION);
+                                    $displayTextOccupation = '';
 
                                     if (count($arrayOfWord) >= 15) {
                                         foreach ($arrayOfWord as $key => $val) {
                                             if ($key <= 10) {
-                                                $displayText .= $val . ' ';
+                                                $displayTextOccupation .= $val . ' ';
                                             }
                                         }
-                                        $displayText = rtrim($displayText, ' ');
-                                        $displayText .= '...';
+                                        $displayTextOccupation = rtrim($displayTextOccupation, ' ');
+                                        $displayTextOccupation .= '...';
                                     } else {
-                                        $displayText = $Budget->COMMENT;
+                                        $displayTextOccupation = $Budget->OCCUPATION;
                                     }
                                 @endphp
-                                {{ $displayText }}
+                                {{ $displayTextOccupation }}
+                            </td>
+                            <td class="td_comment" data-comment="{{ $Budget->COMMENT }}">
+                                @php
+                                    $arrayOfWord = explode(' ', $Budget->COMMENT);
+                                    $displayTextComment = '';
+
+                                    if (count($arrayOfWord) >= 15) {
+                                        foreach ($arrayOfWord as $key => $val) {
+                                            if ($key <= 10) {
+                                                $displayTextComment .= $val . ' ';
+                                            }
+                                        }
+                                        $displayTextComment = rtrim($displayTextComment, ' ');
+                                        $displayTextComment .= '...';
+                                    } else {
+                                        $displayTextComment = $Budget->COMMENT;
+                                    }
+                                @endphp
+                                {{ $displayTextComment }}
                             </td>
                             <td>{{ $Budget->CAEP }}</td>
                             <td>{{ $Budget->Persentage }}</td>
@@ -307,7 +326,7 @@
     </div>
 
     <style>
-        .td_comment {
+        .td_comment, .td_occupation {
             cursor: pointer;
         }
     </style>
@@ -337,7 +356,6 @@
             let FullUrl = `${Action}?${Filters}`;
 
             $('#form-reject-budget').attr('action', FullUrl);
-            // $('#append').html(AddHiddenInputForFilters);
             $('#ModalReject').modal('toggle');
         });
 
@@ -347,6 +365,17 @@
             swal({
                 title: 'Full Comment',
                 html: `<p style="font-size: 20px; word-spacing: 10px; padding: 15px; line-height: 1.6"><strong>${comment}</strong></p>`,
+                icon: 'info',
+                width: '800px'
+            });
+        });
+
+        $('body').on('click', '.td_occupation', function() {
+            let thisClass = $(this);
+            let occupation = thisClass.data('occupation');
+            swal({
+                title: 'Full Occupation',
+                html: `<p style="font-size: 20px; word-spacing: 10px; padding: 15px; line-height: 1.6"><strong>${occupation}</strong></p>`,
                 icon: 'info',
                 width: '800px'
             });
