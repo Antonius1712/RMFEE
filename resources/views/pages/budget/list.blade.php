@@ -336,14 +336,6 @@
 
             let FullUrl = `${Action}?${Filters}`;
 
-            // console.log({Action, FullUrl});
-
-            // $.each(Filters, function(key, val){
-            //     AddHiddenInputForFilters += `
-        //         <input type="hidden" name="${key}" value="${val}" />
-        //     `;
-            // });
-
             $('#form-reject-budget').attr('action', FullUrl);
             // $('#append').html(AddHiddenInputForFilters);
             $('#ModalReject').modal('toggle');
