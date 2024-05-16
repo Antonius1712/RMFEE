@@ -163,7 +163,7 @@
                 </div>
                 <div class="clearfix"></div>
                 <div class="col-lg-6">
-                    <button id="btn_reset_filter" class="btn btn-outline-primary waves-effect waves-light radius-100"
+                    <button id="btn_reset_filter" name="btn_reset_filter" value="btn_reset_filter" class="btn btn-outline-primary waves-effect waves-light radius-100"
                         style="width: 100%;">
                         Reset Filter
                     </button>
@@ -336,14 +336,6 @@
 
             let FullUrl = `${Action}?${Filters}`;
 
-            // console.log({Action, FullUrl});
-
-            // $.each(Filters, function(key, val){
-            //     AddHiddenInputForFilters += `
-        //         <input type="hidden" name="${key}" value="${val}" />
-        //     `;
-            // });
-
             $('#form-reject-budget').attr('action', FullUrl);
             // $('#append').html(AddHiddenInputForFilters);
             $('#ModalReject').modal('toggle');
@@ -368,6 +360,25 @@
             }
 
             console.log( $('#to_do_list_filter').val() );
+        });
+
+        $('body').on('click', '#btn_reset_filter', function(e) {
+            e.preventDefault();
+            $('#broker_name').val('');
+            $('#start_date').val('');
+            $('#booking_date_from').val('');
+            $('#booking_date_to').val('');
+            $('#no_policy').val('');
+            $('#aging_rmf').val('');
+            $('#holder_name').val('');
+            $('#branch').val('').trigger('change');
+            $('#nb_rn').val('').trigger('change');
+            $('#class').val('').trigger('change');
+            $('#status_pembayaran_premi').val('').trigger('change');
+            $('#status_realisasi').val('').trigger('change');
+            $('#status_budget').val('').trigger('change');
+
+            $('#btn_apply_filter').trigger('click');
         });
 
         $(document).ready(function() {
