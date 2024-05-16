@@ -15,16 +15,16 @@ use Illuminate\Support\Facades\Log;
 // ! Only Put Function that used only in Budgets. (usuallly method to Select, Insert, Update, Delete, and some customization).
 class Budget {
     // !For DataTable Purposes only.
-    public static function GetBudgetDataTable($type = ''){
-        $type = strtoupper($type);
-        $archive = $type == BudgetStatus::ARCHIVED ? 1 : 0;
-        // dd($type, $archive);
+    public static function GetBudgetDataTable($broker_name, $branch, $status_pembayaran_premi, $start_date, $no_policy, $aging_rmf, $booking_date_from, $booking_date_to, $nb_rn, $holder_name, $class_business, $status_realisasi, $status_budget = '', $ProposedTo){
+        $status_budget = strtoupper($status_budget);
+        $archive = $status_budget == BudgetStatus::ARCHIVED ? 1 : 0;
+        // dd($ProposedTo, $status_budget);
         try {
             // ! Parameters : '@BrokerName', '@Branch', '@Type', '@StartDate', '@StatusPremium','@AgingRealization', '@StatusRealization', '@Voucher';
             return DB::connection(Database::REPORT_GENERATOR)
             ->select("
                 EXECUTE [dbo].[SP_Get_Data_Engineering_Fee] 
-                '', '', '', '', '', '', '', '', '', '', '$type', $archive, '', ''
+                '$broker_name', '$branch', '$nb_rn', '$start_date', '$no_policy', '$holder_name', '$status_pembayaran_premi', '$aging_rmf', '$status_realisasi', '', '$status_budget', $archive, '$booking_date_from', '$booking_date_to', '$class_business', '$ProposedTo'
             ");
         } catch (Exception $e) {
             return $e->getMessage();
@@ -361,6 +361,18 @@ class Budget {
         // if( $status == 'WAITING_APPROVAL' ){
         //     dd($BtnEdit, $BtnDownloadDocument, $BtnArchive, $BtnApprove, $BtnUndoApproval, $BtnReject);
         // }
+    }
+
+    public static function GetReportBudgetSummary($start_date, $end_date, $status_budget){
+        $start_date = str_replace('/', '-', $start_date);
+        $end_date = str_replace('/', '-', $end_date);
+        return DB::connection(Database::REPORT_GENERATOR)->select("EXECUTE [dbo].[SP_Report_Budget_Summary_Engineering_Fee] '$start_date', '$end_date', '$status_budget'");
+    }
+
+    public static function GetReportBudgetDetail($start_date, $end_date, $status_budget){
+        $start_date = str_replace('/', '-', $start_date);
+        $end_date = str_replace('/', '-', $end_date);
+        return DB::connection(Database::REPORT_GENERATOR)->select("EXECUTE [dbo].[SP_Report_Budget_Detail_Engineering_Fee] '$start_date', '$end_date', '$status_budget'");
     }
 
     //? Private static function, only used here. not outside the class.
