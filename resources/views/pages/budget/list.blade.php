@@ -337,7 +337,6 @@
             let FullUrl = `${Action}?${Filters}`;
 
             $('#form-reject-budget').attr('action', FullUrl);
-            // $('#append').html(AddHiddenInputForFilters);
             $('#ModalReject').modal('toggle');
         });
 
