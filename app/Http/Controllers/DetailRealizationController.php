@@ -29,6 +29,8 @@ class DetailRealizationController extends Controller
         $Broker = Utils::GetProfile($RealizationData->Broker_ID, $RealizationData->Currency);
         $BrokerName = $Broker != null ? $Broker->Name : "";
 
+        // dd($BrokerName);
+
         $PaymentTo = Utils::GetProfile($RealizationData->Payment_To_ID, $RealizationData->Currency);
         $PaymentToName = $PaymentTo != null ? $PaymentTo->Name : "";
 
