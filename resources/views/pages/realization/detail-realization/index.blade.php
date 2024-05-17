@@ -55,6 +55,11 @@
                                                     <i class="feather icon-edit-2"></i>
                                                     Edit
                                                 </a>
+                                                <div class='dropdown-divider'></div>
+                                                <a class="dropdown-item danger" href="{{ route('realization.detail-realization.destroy', $val->id) }}">
+                                                    <i class="feather icon-trash-2"></i>
+                                                    Delete
+                                                </a>
                                             @else
                                             <a class="dropdown-item success" href="{{ route('realization.detail-realization.show', [$invoice_no, $val->id]) }}">
                                                 <i class="feather icon-eye"></i>
