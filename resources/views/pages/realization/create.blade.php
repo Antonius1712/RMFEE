@@ -85,6 +85,11 @@
                                     <input type="text" name="payment_to" id="payment_to" class="form-control col-lg-8" placeholder="Payment To" required>
                                 </div>
                                 <div class="form-group row">
+                                    <label for="date_of_request" class="col-lg-3 col-form-label-lg">Date of Request</label>
+                                    <label class="col-lg-1 col-form-label-lg">:</label>
+                                    <input type="text" name="date_of_request" id="date_of_request" class="form-control col-lg-8" placeholder="Date of Request" required>
+                                </div>
+                                <div class="form-group row">
                                     <label for="account_name" class="col-lg-3 col-form-label-lg">Account Name</label>
                                     <label class="col-lg-1 col-form-label-lg">:</label>
                                     <input type="text" name="account_name" id="account_name" class="form-control col-lg-8" placeholder="Account Name" readonly>
@@ -214,7 +219,7 @@
             });
         }); 
         // ! Datepicker Invoice Date
-            $('#invoice_date').datepicker({
+            $('#invoice_date, #date_of_request').datepicker({
                 dateFormat: 'dd M yy',
                 autoclose: true,
                 todayHighlight: true,

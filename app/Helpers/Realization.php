@@ -51,6 +51,7 @@ class Realization {
                     break;
             }
         } catch (Exception $e) {
+            // dd($e->getMessage());
             return $e->getMessage();
         }
     }
