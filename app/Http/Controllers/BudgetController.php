@@ -39,6 +39,8 @@ class BudgetController extends Controller
 
         // --------------------------------------------------------------------------------
 
+        $perPage = $request->get('per_page', 10); // Default to 10 if not set
+
         $broker_name = $request->broker_name;
         $branch = $request->branch;
         $status_pembayaran_premi = $request->status_pembayaran_premi;
@@ -159,7 +161,7 @@ class BudgetController extends Controller
             }
 
             return $data;
-        })->paginate(10);
+        })->paginate($perPage);
 
         return view('pages.budget.list', compact('NBRN', 'branchList', 'statusPremi', 'statusRealisasi', 'statusBudget', 'Budgets'));
     }
