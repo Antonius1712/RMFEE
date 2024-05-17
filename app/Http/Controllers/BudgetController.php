@@ -354,6 +354,17 @@ class BudgetController extends Controller
         return redirect()->to($route)->with('notification', 'Voucher <b>' . $RedirectVoucher . '</b> Successfully Approved');
     }
 
+    public function multipleApprove(Request $request){
+        $UrlParameter = http_build_query($request->query());
+        $Vouchers = json_decode($request->vouchers);
+        foreach($Vouchers as $voucher){
+            Budget::UpdateBudgetOnlyStatus('approve', $voucher, null);
+            Logger::SaveLog(LogStatus::BUDGET, $voucher, 'Approved');
+        }
+        $route = route('budget.list') . '?' . $UrlParameter;
+        return redirect()->to($route)->with('notification', 'Voucher <b>' . implode(', ', $Vouchers) . '</b> Successfully Approved');
+    }
+
     public function undo_approve($voucher, Request $request){
         $UrlParameter = http_build_query($request->query());
         $RedirectVoucher = str_replace('~', '/', $voucher);

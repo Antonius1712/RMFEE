@@ -10,7 +10,8 @@
                     style="width: 30px; height: 30px; vertical-align: middle;" value=""
                     {{ request()->get('to_do_list_filter') == 'Yes' ? 'checked' : '' }}> --}}
                 <input type="checkbox" name="to_do_list" id="to_do_list" class="to-do-list"
-                    style="width: 30px; height: 30px; vertical-align: middle;" {{ request()->get('to_do_list_filter') == 'true' ? 'checked' : '' }} />
+                    style="width: 30px; height: 30px; vertical-align: middle;"
+                    {{ request()->get('to_do_list_filter') == 'true' ? 'checked' : '' }} />
                 <b style="font-size: 20px; vertical-align: middle;" class="ml-1">To do List</b>
             </label>
         </div>
@@ -26,7 +27,8 @@
 
     <div class="card collapse" id="FilterCollapse">
         <form action="{{ route('budget.list') }}" method="get">
-            <input type="hidden" id="to_do_list_filter" name="to_do_list_filter" value="{{ request()->get('to_do_list_filter') == 'true' ? 'checked' : 'false' }}" />
+            <input type="hidden" id="to_do_list_filter" name="to_do_list_filter"
+                value="{{ request()->get('to_do_list_filter') == 'true' ? 'checked' : 'false' }}" />
             <div class="card-body row" id="card-filter">
                 <div class="col-lg-4">
                     <div class="form-group">
@@ -163,8 +165,8 @@
                 </div>
                 <div class="clearfix"></div>
                 <div class="col-lg-6">
-                    <button id="btn_reset_filter" name="btn_reset_filter" value="btn_reset_filter" class="btn btn-outline-primary waves-effect waves-light radius-100"
-                        style="width: 100%;">
+                    <button id="btn_reset_filter" name="btn_reset_filter" value="btn_reset_filter"
+                        class="btn btn-outline-primary waves-effect waves-light radius-100" style="width: 100%;">
                         Reset Filter
                     </button>
                 </div>
@@ -183,12 +185,27 @@
             {!! session()->get('notification') !!}
         </div>
     @endif
+    <div class="row">
+        <div class="col-lg-12 mb-2">
+            <form id="multiple_approve_budget_form" action="{{ route('budget.multiple_approve') }}" method="POST"
+                style="display:none;">
+                {{ csrf_field() }}
+                <input type="hidden" name="vouchers" id="vouchersInput">
+            </form>
+
+            <button id="btn_approve_selected_voucher" class="btn btn-success pull-right"
+                style="border-radius: 100px; font-size: 18px;">
+                Approve
+            </button>
+        </div>
+    </div>
 
     <div class="card">
         <div class="card-body table-responsive" style="overflow-x: auto; overflow-y: auto; height: 600px;">
             <form method="GET" action="{{ route('budget.list') }}" id="recordsPerPageForm">
                 <label for="recordsPerPage">Show</label>
-                <select name="per_page" id="recordsPerPage" onchange="document.getElementById('recordsPerPageForm').submit();">
+                <select name="per_page" id="recordsPerPage"
+                    onchange="document.getElementById('recordsPerPageForm').submit();">
                     <option value="10" {{ request()->get('per_page') == 10 ? 'selected' : '' }}>10</option>
                     <option value="20" {{ request()->get('per_page') == 20 ? 'selected' : '' }}>20</option>
                     <option value="30" {{ request()->get('per_page') == 30 ? 'selected' : '' }}>30</option>
@@ -198,7 +215,8 @@
                 <!-- Hidden inputs to carry over filter values -->
                 <input type="hidden" name="broker_name" value="{{ request()->get('broker_name') }}">
                 <input type="hidden" name="branch" value="{{ request()->get('branch') }}">
-                <input type="hidden" name="status_pembayaran_premi" value="{{ request()->get('status_pembayaran_premi') }}">
+                <input type="hidden" name="status_pembayaran_premi"
+                    value="{{ request()->get('status_pembayaran_premi') }}">
                 <input type="hidden" name="start_date" value="{{ request()->get('start_date') }}">
                 <input type="hidden" name="no_policy" value="{{ request()->get('no_policy') }}">
                 <input type="hidden" name="aging_rmf" value="{{ request()->get('aging_rmf') }}">
@@ -213,6 +231,9 @@
             <table class="table table-budget dataTable">
                 <thead>
                     <tr class="default tr-budget">
+                        <th id="th_check">
+                            <input type="checkbox" id="select_all" /> All
+                        </th>
                         <th>Action</th>
                         <th id="th_class">CLASS</th>
                         <th id="th_broker_name">BROKER NAME</th>
@@ -253,6 +274,10 @@
                     @foreach ($Budgets as $Budget)
                         {{-- {{ dd($Budget) }} --}}
                         <tr>
+                            <td class="clickable-td">
+                                <input type="checkbox" name="check_budget[]" id="" class="check_budget"
+                                    value="" data-voucher_budget="{{ $Budget->VOUCHER }}">
+                            </td>
                             <td>
                                 {!! $Budget->Action !!}
                             </td>
@@ -349,7 +374,7 @@
                 $total = $Budgets->total();
                 $currentPage = $Budgets->currentPage();
                 $perPage = $Budgets->perPage();
-                
+
                 $from = ($currentPage - 1) * $perPage + 1;
                 $to = min($currentPage * $perPage, $total);
             @endphp
@@ -361,7 +386,11 @@
     </div>
 
     <style>
-        .td_comment, .td_occupation {
+        .td_comment,
+        .td_occupation,
+        .clickable-td,
+        #th_check 
+        {
             cursor: pointer;
         }
     </style>
@@ -379,6 +408,40 @@
 
 @section('script')
     <script>
+        $('#btn_approve_selected_voucher').on('click', function() {
+            var selectedVouchers = [];
+
+            $('.check_budget:checked').each(function() {
+                selectedVouchers.push($(this).data('voucher_budget'));
+            });
+
+            $('#vouchersInput').val(JSON.stringify(selectedVouchers));
+            $('#multiple_approve_budget_form').submit();
+        });
+
+        $('.clickable-td').click(function(event) {
+            if (event.target.tagName !== 'INPUT') {
+                const checkbox = $(this).find('input[type="checkbox"]');
+                checkbox.prop('checked', !checkbox.prop('checked'));
+            }
+        });
+
+        $('#th_check').click(function(event) {
+            if (event.target.tagName !== 'INPUT') {
+                const checkbox = $(this).find('#select_all');
+                checkbox.prop('checked', !checkbox.prop('checked'));
+
+                var isChecked = checkbox.is(':checked');
+                $('.check_budget').prop('checked', isChecked);
+            }
+        })
+
+        $('#select_all').on('click', function() {
+            // Check or uncheck all checkboxes based on the state of the Select All checkbox
+            var isChecked = $(this).is(':checked');
+            $('.check_budget').prop('checked', isChecked);
+        });
+
         var data_table_budget = '';
         $('body').on('click', '#RejectModal', function(e) {
             e.preventDefault();
@@ -417,13 +480,13 @@
         });
 
         $('body').on('click', '#to_do_list', function() {
-            if( $(this).is(':checked') ){
+            if ($(this).is(':checked')) {
                 $('#to_do_list_filter').val(true);
-            }else{
+            } else {
                 $('#to_do_list_filter').val(false);
             }
 
-            console.log( $('#to_do_list_filter').val() );
+            console.log($('#to_do_list_filter').val());
         });
 
         $('body').on('click', '#btn_reset_filter', function(e) {
