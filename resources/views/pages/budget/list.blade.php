@@ -185,8 +185,32 @@
     @endif
 
     <div class="card">
-        <div class="card-body table-responsive">
-            <table class="table table-budget dataTable" style="overflow-x: auto; overflow-y: none; height:">
+        <div class="card-body table-responsive" style="overflow-x: auto; overflow-y: auto; height: 600px;">
+            <form method="GET" action="{{ route('budget.list') }}" id="recordsPerPageForm">
+                <label for="recordsPerPage">Show</label>
+                <select name="per_page" id="recordsPerPage" onchange="document.getElementById('recordsPerPageForm').submit();">
+                    <option value="10" {{ request()->get('per_page') == 10 ? 'selected' : '' }}>10</option>
+                    <option value="20" {{ request()->get('per_page') == 20 ? 'selected' : '' }}>20</option>
+                    <option value="30" {{ request()->get('per_page') == 30 ? 'selected' : '' }}>30</option>
+                </select>
+                <label for="recordsPerPage">data</label>
+
+                <!-- Hidden inputs to carry over filter values -->
+                <input type="hidden" name="broker_name" value="{{ request()->get('broker_name') }}">
+                <input type="hidden" name="branch" value="{{ request()->get('branch') }}">
+                <input type="hidden" name="status_pembayaran_premi" value="{{ request()->get('status_pembayaran_premi') }}">
+                <input type="hidden" name="start_date" value="{{ request()->get('start_date') }}">
+                <input type="hidden" name="no_policy" value="{{ request()->get('no_policy') }}">
+                <input type="hidden" name="aging_rmf" value="{{ request()->get('aging_rmf') }}">
+                <input type="hidden" name="booking_date_from" value="{{ request()->get('booking_date_from') }}">
+                <input type="hidden" name="nb_rn" value="{{ request()->get('nb_rn') }}">
+                <input type="hidden" name="holder_name" value="{{ request()->get('holder_name') }}">
+                <input type="hidden" name="booking_date_to" value="{{ request()->get('booking_date_to') }}">
+                <input type="hidden" name="ClassBusiness" value="{{ request()->get('ClassBusiness') }}">
+                <input type="hidden" name="status_realisasi" value="{{ request()->get('status_realisasi') }}">
+                <input type="hidden" name="status_budget" value="{{ request()->get('status_budget') }}">
+            </form>
+            <table class="table table-budget dataTable">
                 <thead>
                     <tr class="default tr-budget">
                         <th>Action</th>
@@ -321,6 +345,17 @@
             </table>
         </div>
         <div class="mt-2 p-2">
+            @php
+                $total = $Budgets->total();
+                $currentPage = $Budgets->currentPage();
+                $perPage = $Budgets->perPage();
+                
+                $from = ($currentPage - 1) * $perPage + 1;
+                $to = min($currentPage * $perPage, $total);
+            @endphp
+            <div class="mb-2">
+                Showing {{ $from }} to {{ $to }} data of {{ number_format($Budgets->total()) }}
+            </div>
             {{ $Budgets->appends(request()->query())->links('pagination::bootstrap-4') }}
         </div>
     </div>
