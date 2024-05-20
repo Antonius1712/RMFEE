@@ -211,6 +211,10 @@
                 <input type="hidden" name="status_budget" value="{{ request()->get('status_budget') }}">
             </form>
             <table class="table table-budget dataTable">
+                {{-- 
+                    TODO use this styling if want the table header stick to the top.
+                    TODO <thead style="position: sticky; top: 0; background-color: #f8f9fa; z-index: 999;"> 
+                --}}
                 <thead>
                     <tr class="default tr-budget">
                         <th>Action</th>
@@ -354,7 +358,7 @@
                 $to = min($currentPage * $perPage, $total);
             @endphp
             <div class="mb-2">
-                Showing {{ $from }} to {{ $to }} data of {{ number_format($Budgets->total()) }}
+                Showing {{ $from }} to {{ $to }} of {{ number_format($Budgets->total()) }} data
             </div>
             {{ $Budgets->appends(request()->query())->links('pagination::bootstrap-4') }}
         </div>
