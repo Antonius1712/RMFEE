@@ -11,6 +11,10 @@
                 <i class="feather icon-file-plus text-white"></i>
                 <span class="text-white">Add Detail Realization</span>
             </a>
+            <a href="{{ route('realization.propose', $invoice_no) }}" class="btn btn-primary pull-right radius-100 mr-2" style="font-size: 18px;">
+                <i class="feather icon-check text-white"></i>
+                <span class="text-white">Propose</span>
+            </a>
             @endif
         </div>
     </div>

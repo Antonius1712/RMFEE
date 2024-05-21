@@ -51,6 +51,7 @@ class Realization {
                     break;
             }
         } catch (Exception $e) {
+            // dd($e->getMessage());
             return $e->getMessage();
         }
     }
@@ -83,6 +84,7 @@ class Realization {
             $CreatedDate = now()->format('Y-m-d');
             $lastUpdateBy = auth()->user()->UserId;
             $lastUpdate = now()->format('Y-m-d');
+            $date_of_request = $param->date_of_request;
 
             // $upload_invoice = $param->upload_invoice;
             // $upload_survey_report = $param->upload_survey_report;
@@ -105,7 +107,7 @@ class Realization {
                 $DocumentPath_upload_survey_report = 'images/Realization/Survey_Report/'.$filename;
             }
 
-            DB::connection(Database::REPORT_GENERATOR)->statement("EXECUTE [dbo].[SP_Insert_Group_Realization_Engineering_Fee] '$invoice_no', '$type_of_invoice', '$type_of_payment', '$currency', '$invoice_date', '$broker_id', '$payment_to', '$DocumentPath_upload_invoice', '$DocumentPath_upload_survey_report', '$approval_bu', '$approval_finance', '$epo_checker', '$epo_approval', '$status_realization', '$remarks', '$CreatedBy', '$CreatedDate', '$lastUpdateBy', '$lastUpdate'");
+            DB::connection(Database::REPORT_GENERATOR)->statement("EXECUTE [dbo].[SP_Insert_Group_Realization_Engineering_Fee] '$invoice_no', '$type_of_invoice', '$type_of_payment', '$currency', '$invoice_date', '$broker_id', '$payment_to', '$DocumentPath_upload_invoice', '$DocumentPath_upload_survey_report', '$approval_bu', '$approval_finance', '$epo_checker', '$epo_approval', '$status_realization', '$remarks', '$CreatedBy', '$CreatedDate', '$lastUpdateBy', '$lastUpdate', '$date_of_request'");
 
             // dd($lastUpdateBy, $lastUpdate);
 
@@ -132,6 +134,7 @@ class Realization {
             $remarks = $param->remarks;
             $lastUpdateBy = auth()->user()->UserId;
             $lastUpdate = now()->format('Y-m-d');
+            $date_of_request = $param->date_of_request;
 
 
             $DocumentPath_upload_invoice = null;
@@ -187,7 +190,7 @@ class Realization {
             // dd('zz', $DocumentPath_upload_invoice, $DocumentPath_upload_survey_report);
             //! INI UNTUK UPDATE REALISASI TANPA UPDATE KOLOM UPLOAD_INVOICE DAN UPLOAD_SURVEY.
             //? KOLOM UPLOAD _INVOICE DAN _SURVEY DI UPDATE DI ATAS.
-            $test = DB::connection(Database::REPORT_GENERATOR)->statement("EXECUTE [dbo].[SP_Update_Group_Realization_Engineering_Fee] '$InvoiceNumber', '$type_of_invoice', '$type_of_payment', '$currency', '$invoice_date', '$broker_id', '$payment_to', '$approval_bu', '$approval_finance', '$epo_checker', '$epo_approval', '$status_realization', '$remarks', '$lastUpdateBy', '$lastUpdate'");
+            $test = DB::connection(Database::REPORT_GENERATOR)->statement("EXECUTE [dbo].[SP_Update_Group_Realization_Engineering_Fee] '$InvoiceNumber', '$type_of_invoice', '$type_of_payment', '$currency', '$invoice_date', '$broker_id', '$payment_to', '$approval_bu', '$approval_finance', '$epo_checker', '$epo_approval', '$status_realization', '$remarks', '$lastUpdateBy', '$lastUpdate', '$date_of_request'");
 
             // dd('xc');
 
