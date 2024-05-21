@@ -92,4 +92,8 @@ class DetailRealizationController extends Controller
         $BrokerName = $BrokerName != null ? $BrokerName->Name : "";
         return view('pages.realization.detail-realization.show', compact('DetailRealization', 'RealizationData', 'BrokerName', 'Currencies', 'invoice_no'));
     }
+
+    public function destroy($id){
+
+    }
 }

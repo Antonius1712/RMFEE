@@ -47,15 +47,15 @@ class RealizationController extends Controller
         $FilterLastUpdate = isset($request->last_update) ? $request->last_update : null;
         $FilterInvoiceNo = isset($request->invoice_no) ? $request->invoice_no : null;
         $FilterCOB = isset($request->cob) ? $request->cob : null;
-
+        
         $FilterLastUpdate = $FilterLastUpdate != '' ? date('m/d/Y', strtotime($FilterLastUpdate)) : null;
-
+        
         
         $RealizationStatus = $this->RealizationStatus;
         $COB = $this->COB;
-
+        
         // dd($FilterStatusRealization,   $FilterBrokerName, $FilterLastUpdate, $FilterInvoiceNo, $FilterCOB);
-
+        
         $RealizationData = Realization::GetRealization($FilterInvoiceNo, $FilterStatusRealization, $FilterBrokerName, $FilterLastUpdate, $FilterCOB);
 
         // dd($RealizationData);

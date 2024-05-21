@@ -11,6 +11,10 @@
                 <i class="feather icon-file-plus text-white"></i>
                 <span class="text-white">Add Detail Realization</span>
             </a>
+            <a href="{{ route('realization.propose', $invoice_no) }}" class="btn btn-primary pull-right radius-100 mr-2" style="font-size: 18px;">
+                <i class="feather icon-check text-white"></i>
+                <span class="text-white">Propose</span>
+            </a>
             @endif
         </div>
     </div>
@@ -54,6 +58,11 @@
                                                 <a class="dropdown-item success" href="{{ route('realization.detail-realization.edit', [$invoice_no, $val->id]) }}">
                                                     <i class="feather icon-edit-2"></i>
                                                     Edit
+                                                </a>
+                                                <div class='dropdown-divider'></div>
+                                                <a class="dropdown-item danger" href="{{ route('realization.detail-realization.destroy', $val->id) }}">
+                                                    <i class="feather icon-trash-2"></i>
+                                                    Delete
                                                 </a>
                                             @else
                                             <a class="dropdown-item success" href="{{ route('realization.detail-realization.show', [$invoice_no, $val->id]) }}">

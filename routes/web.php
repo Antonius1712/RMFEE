@@ -48,6 +48,9 @@ Route::middleware(['breadcrumbs', 'auth'])->group(function(){
         // UnArchive
         Route::get('/unarchive/{voucher}', 'BudgetController@unarchive')->name('budget.unarchive');
 
+        // Multiple Approve
+        Route::post('/multiple-approve-budget', 'BudgetController@multipleApprove')->name('budget.multiple_approve');
+
         // !Data Table Budget.
         Route::get('/data-table', 'BudgetController@BudgetDataTable')->name('budget.data-table');
     });
@@ -80,6 +83,8 @@ Route::middleware(['breadcrumbs', 'auth'])->group(function(){
 
                 Route::get('/{invoice_no}/edit/{id}', 'DetailRealizationController@edit')->name('realization.detail-realization.edit');
                 Route::post('/{invoice_no}/edit/{id}', 'DetailRealizationController@update')->name('realization.detail-realization.update');
+
+                Route::post('/{id}', 'DetailRealizationController@destroy')->name('realization.detail-realization.destroy');
                 
                 // Route::view('/edit', 'pages.realization.detail-realization.edit')->name('realization.detail-realization.edit');
             });
