@@ -29,6 +29,8 @@ class DetailRealizationController extends Controller
         $Broker = Utils::GetProfile($RealizationData->Broker_ID, $RealizationData->Currency);
         $BrokerName = $Broker != null ? $Broker->Name : "";
 
+        // dd($BrokerName);
+
         $PaymentTo = Utils::GetProfile($RealizationData->Payment_To_ID, $RealizationData->Currency);
         $PaymentToName = $PaymentTo != null ? $PaymentTo->Name : "";
 
@@ -89,5 +91,9 @@ class DetailRealizationController extends Controller
         $BrokerName = Utils::GetProfile($RealizationData->Broker_ID, $RealizationData->Currency);
         $BrokerName = $BrokerName != null ? $BrokerName->Name : "";
         return view('pages.realization.detail-realization.show', compact('DetailRealization', 'RealizationData', 'BrokerName', 'Currencies', 'invoice_no'));
+    }
+
+    public function destroy($id){
+
     }
 }
