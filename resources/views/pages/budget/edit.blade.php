@@ -143,7 +143,7 @@
                                 </div>
                                 {{-- {{ dd( Auth()->user()->getUserSetting ) }} --}}
                                 <div class="form-group row">
-                                    <label for="proposed_to_display" class="col-lg-3 col-form-label-lg">Remarks</label>
+                                    <label for="proposed_to_display" class="col-lg-3 col-form-label-lg">Proposed To</label>
                                     <label class="col-lg-1 col-form-label-lg">:</label>
                                     <input type="text" name="proposed_to_display" id="proposed_to_display"
                                         class="form-control col-lg-8" placeholder="Proposed to"
