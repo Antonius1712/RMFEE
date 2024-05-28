@@ -450,6 +450,13 @@
             let Filters = `{{ http_build_query(request()->query()) }}`;
             let AddHiddenInputForFilters = '';
             let ArrayFilter = @json(request()->query());
+            $.each(ArrayFilter, function(x, y){
+                AddHiddenInputForFilters += `
+                    <input type="hidden" name="${x}" value="${y}" />
+                `;
+            });
+
+            $('body').find('#append').html(AddHiddenInputForFilters);
 
             let FullUrl = `${Action}?${Filters}`;
 
