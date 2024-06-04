@@ -27,11 +27,11 @@ class Realization {
         }
     }
 
-    public static function GetRealization($invoice_no = null, $FilterStatusRealization = null, $FilterBrokerName = null, $FilterLastUpdate = null, $FilterCOB = null){
-        // dd($invoice_no, $FilterStatusRealization, $FilterBrokerName, $FilterLastUpdate, $FilterCOB);
+    public static function GetRealization($invoice_no = null, $FilterStatusRealization = null, $FilterBrokerName = null, $FilterLastUpdate = null, $FilterCOB = null, $FilterTypeOfPayment = null){
+        // dd($invoice_no, $FilterStatusRealization, $FilterBrokerName, $FilterLastUpdate, $FilterCOB, $FilterTypeOfPayment);
         $UserGroup = auth()->user()->getUserGroup->GroupCode;
         try {
-            $RealizationData = DB::connection(Database::REPORT_GENERATOR)->select("EXECUTE [dbo].[SP_Get_Group_Realization_Engineering_Fee] '$invoice_no', '$FilterStatusRealization', '$FilterBrokerName', '$FilterLastUpdate', '$FilterCOB'");
+            $RealizationData = DB::connection(Database::REPORT_GENERATOR)->select("EXECUTE [dbo].[SP_Get_Group_Realization_Engineering_Fee] '$invoice_no', '$FilterStatusRealization', '$FilterBrokerName', '$FilterLastUpdate', '$FilterCOB', '$FilterTypeOfPayment'");
 
             // dd($RealizationData);
             
@@ -272,18 +272,18 @@ class Realization {
     }
 
 
-    // ! Report
-    public static function GetReportRealizationSummary($start_date, $end_date, $status_realization){
-        $start_date = str_replace('/', '-', $start_date);
-        $end_date = str_replace('/', '-', $end_date);
-        return DB::connection(Database::REPORT_GENERATOR)->select("EXECUTE [dbo].[SP_Report_Realization_Summary_Engineering_Fee] '$start_date', '$end_date', '$status_realization'");
-    }
+    // // ! Report
+    // public static function GetReportRealizationSummary($start_date, $end_date, $status_realization){
+    //     $start_date = str_replace('/', '-', $start_date);
+    //     $end_date = str_replace('/', '-', $end_date);
+    //     return DB::connection(Database::REPORT_GENERATOR)->select("EXECUTE [dbo].[SP_Report_Realization_Summary_Engineering_Fee] '$start_date', '$end_date', '$status_realization'");
+    // }
 
-    public static function GetReportRealizationDetail($start_date, $end_date, $status_realization){
-        $start_date = str_replace('/', '-', $start_date);
-        $end_date = str_replace('/', '-', $end_date);
-        return DB::connection(Database::REPORT_GENERATOR)->select("EXECUTE [dbo].[SP_Report_Realization_Detail_Engineering_Fee] '$start_date', '$end_date', '$status_realization'");
-    }
+    // public static function GetReportRealizationDetail($start_date, $end_date, $status_realization){
+    //     $start_date = str_replace('/', '-', $start_date);
+    //     $end_date = str_replace('/', '-', $end_date);
+    //     return DB::connection(Database::REPORT_GENERATOR)->select("EXECUTE [dbo].[SP_Report_Realization_Detail_Engineering_Fee] '$start_date', '$end_date', '$status_realization'");
+    // }
 
 
     // ! Untuk EPO

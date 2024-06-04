@@ -63,6 +63,18 @@
                         </select>
                     </div>
                 </div>
+
+                <div class="col-lg-4">
+                    <div class="form-group">
+                        <label for="type_of_payment">Type of Payment</label>
+                        <select name="type_of_payment" id="type_of_payment" class="form-control radius">
+                            <option value="">All</option>
+                            @foreach ($TypeOfPayment as $key => $val)
+                                <option {{ $FilterTypeOfPayment == $val ? 'selected' : '' }} value="{{ $val }}">{{ $val }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
                 <div class="clearfix"></div>
                 <div class="col-lg-6">
                     <button id="btn_reset_filter" class="btn btn-outline-primary waves-effect waves-light radius-100"

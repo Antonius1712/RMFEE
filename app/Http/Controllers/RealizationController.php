@@ -47,6 +47,7 @@ class RealizationController extends Controller
         $FilterLastUpdate = isset($request->last_update) ? $request->last_update : null;
         $FilterInvoiceNo = isset($request->invoice_no) ? $request->invoice_no : null;
         $FilterCOB = isset($request->cob) ? $request->cob : null;
+        $FilterTypeOfPayment = isset($request->type_of_payment) ? $request->type_of_payment : null;
         
         $FilterLastUpdate = $FilterLastUpdate != '' ? date('m/d/Y', strtotime($FilterLastUpdate)) : null;
         
@@ -56,7 +57,7 @@ class RealizationController extends Controller
         
         // dd($FilterStatusRealization,   $FilterBrokerName, $FilterLastUpdate, $FilterInvoiceNo, $FilterCOB);
         
-        $RealizationData = Realization::GetRealization($FilterInvoiceNo, $FilterStatusRealization, $FilterBrokerName, $FilterLastUpdate, $FilterCOB);
+        $RealizationData = Realization::GetRealization($FilterInvoiceNo, $FilterStatusRealization, $FilterBrokerName, $FilterLastUpdate, $FilterCOB, $FilterTypeOfPayment);
 
         // dd($RealizationData);
 
@@ -189,9 +190,9 @@ class RealizationController extends Controller
 
         $RealizationData = collect($RealizationData)->paginate(10);
 
-        
+        $TypeOfPayment = $this->TypeOfPayment;
 
-        return view('pages.realization.index', compact('RealizationData', 'Action', 'RealizationStatus', 'COB', 'FilterStatusRealization', 'FilterBrokerName', 'FilterLastUpdate', 'FilterInvoiceNo', 'FilterCOB'));
+        return view('pages.realization.index', compact('RealizationData', 'Action', 'RealizationStatus', 'COB', 'FilterStatusRealization', 'FilterBrokerName', 'FilterLastUpdate', 'FilterInvoiceNo', 'FilterCOB', 'TypeOfPayment', 'FilterTypeOfPayment'));
     }
 
     public function create(){

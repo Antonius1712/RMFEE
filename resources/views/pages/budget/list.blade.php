@@ -185,6 +185,8 @@
             {!! session()->get('notification') !!}
         </div>
     @endif
+
+    @if( auth()->user()->getUserGroup->GroupCode != 'USER_RMFEE' )
     <div class="row">
         <div class="col-lg-12 mb-2">
             <form id="multiple_approve_budget_form" action="{{ route('budget.multiple_approve') }}" method="POST"
@@ -199,6 +201,7 @@
             </button>
         </div>
     </div>
+    @endif
 
     <div class="card">
         <div class="card-body table-responsive" style="overflow-x: auto; overflow-y: auto; height: 600px;">
@@ -235,9 +238,11 @@
                 --}}
                 <thead>
                     <tr class="default tr-budget">
+                        @if( auth()->user()->getUserGroup->GroupCode != 'USER_RMFEE' )
                         <th id="th_check">
                             <input type="checkbox" id="select_all" /> All
                         </th>
+                        @endif
                         <th>Action</th>
                         <th id="th_class">CLASS</th>
                         <th id="th_broker_name">BROKER NAME</th>
@@ -278,10 +283,12 @@
                     @foreach ($Budgets as $Budget)
                         {{-- {{ dd($Budget) }} --}}
                         <tr>
+                            @if( auth()->user()->getUserGroup->GroupCode != 'USER_RMFEE' )
                             <td class="clickable-td">
                                 <input type="checkbox" name="check_budget[]" id="" class="check_budget"
                                     value="" data-voucher_budget="{{ $Budget->VOUCHER }}">
                             </td>
+                            @endif
                             <td>
                                 {!! $Budget->Action !!}
                             </td>

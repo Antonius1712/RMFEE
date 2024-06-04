@@ -132,14 +132,12 @@
                                         class="form-control {{ $Budget->Document_Path != '' ? 'col-lg-6' : 'col-lg-8' }}"
                                         placeholder="Document" value="">
                                     @if ($Budget->Document_Path != '')
-                                        <a href="{{ $Budget->Document_Path != '' ? asset($Budget->Document_Path) : 'javascript:;' }}"
+                                        {{-- <a href="{{ $Budget->Document_Path != '' ? asset($Budget->Document_Path) : 'javascript:;' }}"
                                             class="col-lg-2" target="_blank" download="">
-                                            {{-- Download --}}
-                                            {{-- UNTUK NAMA FILE di explode('images/Realization/Invoice/', $Budget->Document_Path)[1] aja. --}}
                                             <i class='feather icon-download' style="font-size: 24px;"></i>
-                                        </a>
+                                        </a> --}}
+                                        <button type="button" class="btn btn-primary" id="viewPdfBtn" data-path="{{ asset($Budget->Document_Path) }}">View PDF</button>
                                     @endif
-                                    <button type="button" class="btn btn-primary" id="viewPdfBtn" data-path="{{ asset($Budget->Document_Path) }}">View PDF</button>
                                 </div>
                                 {{-- {{ dd( Auth()->user()->getUserSetting ) }} --}}
                                 <div class="form-group row">
