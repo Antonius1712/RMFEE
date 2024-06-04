@@ -462,10 +462,14 @@
             let AddHiddenInputForFilters = '';
             let ArrayFilter = @json(request()->query());
             $.each(ArrayFilter, function(x, y){
-                AddHiddenInputForFilters += `
-                    <input type="hidden" name="${x}" value="${y}" />
-                `;
+                if( y != null && y != 'null' ){
+                    AddHiddenInputForFilters += `
+                        <input type="hidden" name="${x}" value="${y}" />
+                    `;
+                }
             });
+
+            console.log(ArrayFilter);
 
             $('body').find('#append').html(AddHiddenInputForFilters);
 
