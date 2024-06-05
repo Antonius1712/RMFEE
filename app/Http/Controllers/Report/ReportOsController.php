@@ -36,7 +36,7 @@ class ReportOsController extends Controller
                     if($header == 'Budget' || $header == 'RemainingBudget') {
                         // Set cell value explicitly as a number
                         $data[$row][$header] = (float) $value;
-                    } elseif($header == 'Start_Date' || $header == 'End_Date' || $header == 'ADATE') {
+                    } elseif($header == 'Start_Date' || $header == 'End_Date' || $header == 'Booking_Date') {
                         $data[$row][$header] = date('d M Y', strtotime($value));
                     } else {
                         $data[$row][$header] = $value;
