@@ -189,9 +189,12 @@
     @if( auth()->user()->getUserGroup->GroupCode != 'USER_RMFEE' )
     <div class="row">
         <div class="col-lg-12 mb-2">
-            <form id="multiple_approve_budget_form" action="{{ route('budget.multiple_approve') }}" method="POST"
+            <form id="multiple_approve_budget_form" action="{{ route('budget.multiple_approve') }}" method="GET"
                 style="display:none;">
                 {{ csrf_field() }}
+                <div id="appendFormForMultipleApprove">
+
+                </div>
                 <input type="hidden" name="vouchers" id="vouchersInput">
             </form>
 
@@ -435,6 +438,23 @@
                 const checkbox = $(this).find('input[type="checkbox"]');
                 checkbox.prop('checked', !checkbox.prop('checked'));
             }
+
+            let Filters = `{{ http_build_query(request()->query()) }}`;
+            let AddHiddenInputForFilters = '';
+            let ArrayFilter = @json(request()->query());
+
+            
+            $.each(ArrayFilter, function(x, y){
+                if( y != null && y != 'null' ){
+                    AddHiddenInputForFilters += `
+                    <input type="hidden" name="${x}" value="${y}" />
+                    `;
+                }
+            });
+
+            console.log(Filters, AddHiddenInputForFilters, ArrayFilter);
+
+            $('#appendFormForMultipleApprove').html(AddHiddenInputForFilters);
         });
 
         $('#th_check').click(function(event) {
@@ -451,6 +471,25 @@
             // Check or uncheck all checkboxes based on the state of the Select All checkbox
             var isChecked = $(this).is(':checked');
             $('.check_budget').prop('checked', isChecked);
+
+            let Filters = `{{ http_build_query(request()->query()) }}`;
+            let AddHiddenInputForFilters = '';
+            let ArrayFilter = @json(request()->query());
+
+            
+            $.each(ArrayFilter, function(x, y){
+                if( y != null && y != 'null' ){
+                    AddHiddenInputForFilters += `
+                    <input type="hidden" name="${x}" value="${y}" />
+                    `;
+                }
+            });
+
+            console.log(Filters, AddHiddenInputForFilters, ArrayFilter);
+
+            $('#appendFormForMultipleApprove').html(AddHiddenInputForFilters);
+            
+            // $('body').find('#append').html(AddHiddenInputForFilters);
         });
 
         var data_table_budget = '';
@@ -468,8 +507,6 @@
                     `;
                 }
             });
-
-            console.log(ArrayFilter);
 
             $('body').find('#append').html(AddHiddenInputForFilters);
 

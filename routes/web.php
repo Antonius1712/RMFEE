@@ -49,7 +49,7 @@ Route::middleware(['breadcrumbs', 'auth'])->group(function () {
         Route::get('/unarchive/{voucher}', 'BudgetController@unarchive')->name('budget.unarchive');
 
         // Multiple Approve
-        Route::post('/multiple-approve-budget', 'BudgetController@multipleApprove')->name('budget.multiple_approve');
+        Route::get('/multiple-approve-budget', 'BudgetController@multipleApprove')->name('budget.multiple_approve');
 
         // !Data Table Budget.
         Route::get('/data-table', 'BudgetController@BudgetDataTable')->name('budget.data-table');
