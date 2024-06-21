@@ -364,17 +364,17 @@ class Budget {
         // }
     }
 
-    public static function GetReportBudgetSummary($start_date, $end_date, $status_budget){
-        $start_date = str_replace('/', '-', $start_date);
-        $end_date = str_replace('/', '-', $end_date);
-        return DB::connection(Database::REPORT_GENERATOR)->select("EXECUTE [dbo].[SP_Report_Budget_Summary_Engineering_Fee] '$start_date', '$end_date', '$status_budget'");
-    }
+    // public static function GetReportBudgetSummary($start_date, $end_date, $status_budget){
+    //     $start_date = str_replace('/', '-', $start_date);
+    //     $end_date = str_replace('/', '-', $end_date);
+    //     return DB::connection(Database::REPORT_GENERATOR)->select("EXECUTE [dbo].[SP_Report_Budget_Summary_Engineering_Fee] '$start_date', '$end_date', '$status_budget'");
+    // }
 
-    public static function GetReportBudgetDetail($start_date, $end_date, $status_budget){
-        $start_date = str_replace('/', '-', $start_date);
-        $end_date = str_replace('/', '-', $end_date);
-        return DB::connection(Database::REPORT_GENERATOR)->select("EXECUTE [dbo].[SP_Report_Budget_Detail_Engineering_Fee] '$start_date', '$end_date', '$status_budget'");
-    }
+    // public static function GetReportBudgetDetail($start_date, $end_date, $status_budget){
+    //     $start_date = str_replace('/', '-', $start_date);
+    //     $end_date = str_replace('/', '-', $end_date);
+    //     return DB::connection(Database::REPORT_GENERATOR)->select("EXECUTE [dbo].[SP_Report_Budget_Detail_Engineering_Fee] '$start_date', '$end_date', '$status_budget'");
+    // }
 
     //? Private static function, only used here. not outside the class.
     private static function RemoveThousandSeparator($amount){

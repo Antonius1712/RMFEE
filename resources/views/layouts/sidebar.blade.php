@@ -83,6 +83,13 @@
                                 Realization</span>
                         </a>
                     </li>
+                    <li class="{{ Request()->segment(1) == 'report' && Request()->segment(2) == 'os' ? 'active' : '' }}">
+                        <a class="d-flex align-items-center" href="{{ route('report.os') }}">
+                            <i data-feather="corner-down-right" class="feather icon-corner-down-right"></i>
+                            <span class="menu-item text-truncate" data-i18n="Report Realization">Report
+                                OS</span>
+                        </a>
+                    </li>
                 </ul>
             </li>
 

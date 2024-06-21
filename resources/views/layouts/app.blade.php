@@ -169,6 +169,7 @@
         var url = "{{ ENV('APP_URL') }}";
         var ImageLoading = `<img id="imgLoading" style="width: 100%; height: auto; z-index: 1; position: relative; max-width: 100%; max-height: 100vh; margin: auto;" src="{{ asset('images/loader.gif') }}"/>`;
         const serach_profile_url = '{{ route("utils.search_profile") }}';
+        const search_profile_on_report_os = `{{ route('utils.search_profile_on_report_os') }}`;
         const serach_occupation_url = '{{ route("utils.search_occupation") }}';
         const serach_profile_on_setting_budget_url = '{{ route("utils.search_profile_on_setting_budget") }}';
         const AuthUser = "{{ auth()->user()->NIK }}";

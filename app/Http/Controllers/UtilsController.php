@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Helpers\Realization;
 use App\Helpers\Utils;
+use App\Model\SeaReport_Profile;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -41,5 +42,16 @@ class UtilsController extends Controller
         }
         
         return $Budgets;
+    }
+
+    public function SearchProfileOnReportOs(Request $request){
+        $keywords = $request->input('keywords');
+        $Profile = SeaReport_Profile::select('ID', 'Name')
+            ->where('ID', 'LIKE', '%'.$keywords.'%')
+            ->orWhere('Name', 'LIKE', '%'.$keywords.'%')
+            ->limit(100)
+        ->get();
+
+        return response()->json($Profile);
     }
 }
