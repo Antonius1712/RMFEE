@@ -128,32 +128,16 @@
                                 <div class="form-group row">
                                     <label for="document" class="col-lg-3 col-form-label-lg">Document</label>
                                     <label class="col-lg-1 col-form-label-lg">:</label>
-<<<<<<< HEAD
                                     <input type="file" name="document" id="document"
                                         class="form-control {{ $Budget->Document_Path != '' ? 'col-lg-6' : 'col-lg-8' }}"
                                         placeholder="Document" value="">
                                     @if ($Budget->Document_Path != '')
-                                        <a href="{{ $Budget->Document_Path != '' ? asset($Budget->Document_Path) : 'javascript:;' }}"
+                                        {{-- <a href="{{ $Budget->Document_Path != '' ? asset($Budget->Document_Path) : 'javascript:;' }}"
                                             class="col-lg-2" target="_blank" download="">
-                                            {{-- Download --}}
-                                            {{-- UNTUK NAMA FILE di explode('images/Realization/Invoice/', $Budget->Document_Path)[1] aja. --}}
                                             <i class='feather icon-download' style="font-size: 24px;"></i>
-                                        </a>
-=======
-                                    
-                                    {{-- TODO add readonly pada login HEAD. hanya bisa di ubah pada login user. --}}
-                                    <input type="file" name="document" id="document" class="form-control {{ $Budget->Document_Path != '' ? 'col-lg-6' : 'col-lg-8' }}"
-                                        placeholder="Document" value="">
-
-                                    @if( $Budget->Document_Path != '' )
-                                    <a href="{{ $Budget->Document_Path != '' ? asset($Budget->Document_Path) : 'javascript:;' }}" class="col-lg-2" target="_blank" download="">
-                                        {{-- Download --}}
-                                        {{-- UNTUK NAMA FILE di explode('images/Realization/Invoice/', $Budget->Document_Path)[1] aja. --}}
-                                        <i class='feather icon-download' style="font-size: 24px;"></i>
-                                    </a>
->>>>>>> dev-enhancement-may
+                                        </a> --}}
+                                        <button type="button" class="btn btn-primary" id="viewPdfBtn" data-path="{{ asset($Budget->Document_Path) }}">View PDF</button>
                                     @endif
-                                    <button type="button" class="btn btn-primary" id="viewPdfBtn" data-path="{{ asset($Budget->Document_Path) }}">View PDF</button>
                                 </div>
                                 {{-- {{ dd( Auth()->user()->getUserSetting ) }} --}}
                                 <div class="form-group row">
