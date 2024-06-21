@@ -52,6 +52,15 @@
                     </div>
                 </div>
 
+                {{-- TODO tambah filter type of payment --}}
+                <div class="col-lg-4">
+                    <div class="form-group">
+                        <label for="type_of_payment">Type of Payment</label>
+                        <input type="text" name="type_of_payment" id="type_of_payment" class="form-control radius"
+                            value="{{ $FilterTypeOfPayment }}" placeholder="Type Here..">
+                    </div>
+                </div>
+
                 <div class="col-lg-4">
                     <div class="form-group">
                         <label for="cob">COB</label>

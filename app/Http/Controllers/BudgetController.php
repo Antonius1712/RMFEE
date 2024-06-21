@@ -184,16 +184,20 @@ class BudgetController extends Controller
     }
 
     public function update(Request $request, $voucher){
+        // dd($request->all());
         $action = $request->action;
         if( $action == 'save' ) {
-            $desc = 'Saved';
+            $save_action = 'Saved';
         } else if( $action == 'propose' ) {
-            $desc = 'Proposed';
+            $save_action = 'Proposed';
         }
+
+        $remarks = isset($request->remarks) ? $request->remarks : '';
+
         $RedirectVoucher = str_replace('~', '/', $voucher);
         Budget::UpdateBudget($request, $voucher);
-        Logger::SaveLog(LogStatus::BUDGET, $RedirectVoucher, $desc);
-        return redirect()->route('budget.list')->with('noticication', 'Voucher <b>'.$RedirectVoucher.'</b> Successfully '. $desc);
+        Logger::SaveLog(LogStatus::BUDGET, $RedirectVoucher, $save_action, $remarks);
+        return redirect()->route('budget.list')->with('noticication', 'Voucher <b>'.$RedirectVoucher.'</b> Successfully '. $save_action);
     }
 
     public function archiveList(Request $request){
@@ -358,6 +362,17 @@ class BudgetController extends Controller
 
         $route = route('budget.list') . '?' . $UrlParameter;
         return redirect()->to($route)->with('notification', 'Voucher <b>' . $RedirectVoucher . '</b> Successfully Approved');
+    }
+
+    public function multipleApprove(Request $request){
+        $UrlParameter = http_build_query($request->query());
+        $Vouchers = json_decode($request->vouchers);
+        foreach($Vouchers as $voucher){
+            Budget::UpdateBudgetOnlyStatus('approve', $voucher, null);
+            Logger::SaveLog(LogStatus::BUDGET, $voucher, 'Approved');
+        }
+        $route = route('budget.list') . '?' . $UrlParameter;
+        return redirect()->to($route)->with('notification', 'Voucher <b>' . implode(', ', $Vouchers) . '</b> Successfully Approved');
     }
 
     public function undo_approve($voucher, Request $request){

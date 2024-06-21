@@ -198,10 +198,9 @@
                         RealizationDataId: RealizationDataId
                     },
                     success: function( data ) {
-                        console.log(data);
                         res($.map(data, function (item) {
                             return {
-                                label: `${item.POLICYNO}`,
+                                label: `${item.POLICYNO} - ${item.VOUCHER}`,
                                 value: item.POLICYNO,
                                 data: item
                             };

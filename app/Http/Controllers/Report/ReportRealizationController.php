@@ -131,8 +131,8 @@ class ReportRealizationController extends Controller
                     if($header == 'Realization_Amount') {
                         // Set cell value explicitly as a number
                         $data[$row][$header] = (float) $value;
-                    } elseif($header == 'Policy_Start_Date' || $header == 'Policy_End_Date' || $header == 'Booking_Date' || $header == 'Invoice_Date') {
-                        $data[$row][$header] = date('d M Y', strtotime($value));
+                    } elseif($header == 'Policy_Start_Date' || $header == 'Policy_End_Date' || $header == 'Booking_Date' || $header == 'Invoice_Date' || $header == 'Date_Of_Request') {
+                        $data[$row][$header] = $value != '' ? date('d M Y', strtotime($value)) : null;
                     } else {
                         $data[$row][$header] = $value;
                     }
