@@ -198,7 +198,6 @@
                         RealizationDataId: RealizationDataId
                     },
                     success: function( data ) {
-                        console.log(data);
                         res($.map(data, function (item) {
                             return {
                                 label: `${item.POLICYNO} - ${item.VOUCHER}`,
