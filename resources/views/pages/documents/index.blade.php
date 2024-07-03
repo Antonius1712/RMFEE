@@ -17,7 +17,7 @@
                     <select name="year" id="year" class="form-control" onchange="this.form.submit()">
                         <option value="">Select Year</option>
                         @foreach ($years as $year)
-                            <option {{ request()->query()['year'] == $year ? 'selected' : '' }} value="{{ $year }}">{{ $year }}</option>
+                            <option {{ isset(request()->query()['year']) && request()->query()['year'] == $year ? 'selected' : '' }} value="{{ $year }}">{{ $year }}</option>
                         @endforeach
                     </select>
                 </form>
@@ -31,7 +31,7 @@
         }
     </style>
 
-    <div class="card {{ request()->query()['year'] ? '' : 'hide' }}">
+    <div class="card {{ isset(request()->query()['year']) && request()->query()['year'] ? '' : 'hide' }}">
         <div class="card-body">
             <table class="table table-responsive table-realization dataTable"
                 style="overflow-x: auto; overflow-y: none; height: 650px;">
