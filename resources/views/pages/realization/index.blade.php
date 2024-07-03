@@ -51,7 +51,6 @@
                             value="{{ $FilterInvoiceNo }}" placeholder="Type Here..">
                     </div>
                 </div>
-
                 <div class="col-lg-4">
                     <div class="form-group">
                         <label for="cob">COB</label>

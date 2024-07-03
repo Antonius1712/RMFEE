@@ -200,7 +200,7 @@
                     <tr class="default">
                         <th>Name</th>
                         <th>Status</th>
-                        <th>Desc</th>
+                        <th>Desc / Budget</th>
                         <th>Date</th>
                         <th>Time</th>
                     </tr>
