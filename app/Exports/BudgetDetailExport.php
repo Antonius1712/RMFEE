@@ -45,7 +45,7 @@ class BudgetDetailExport implements FromCollection, WithHeadings, ShouldAutoSize
     {
         return [
             AfterSheet::class => function(AfterSheet $event) {
-                $event->sheet->getStyle('A1:K1')->applyFromArray([
+                $event->sheet->getStyle('A1:M1')->applyFromArray([
                     'font' => [
                         'name'      =>  'Calibri',
                         'size'      =>  15,
@@ -62,7 +62,7 @@ class BudgetDetailExport implements FromCollection, WithHeadings, ShouldAutoSize
                 ]);
 
                 // Auto-size columns.
-                foreach(range('A','K') as $column) {
+                foreach(range('A','M') as $column) {
                     $event->sheet->getColumnDimension($column)->setAutoSize(true);
                 }
             },
