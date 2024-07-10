@@ -429,21 +429,25 @@ class RealizationController extends Controller
                             if( !$InsertEpo['status'] ){
                                 return redirect()->back()->withErrors($InsertEpo['message']);
                             }
+                            
+                            // TODO epo no ini harusnya saat type of payment reimburse saja.
+                            // $PID = Epo_PO_Header::orderBy('PID', 'Desc')->value('PID');
+                            $PID = $InsertEpo['pid'];
+                            Realization::UpdateRealizationGroupEpo($invoice_no_real, $PID);
+    
+    
+                            $LogEmailEpo = ReportGenerator_LogEmailEpo::where('PID', $PID)->count();
+                            if( $LogEmailEpo == 0 ){
+                                ReportGenerator_LogEmailEpo::create([
+                                    'PID' => $PID,
+                                    'Realisasi_ID' => $RealizationData->ID,
+                                    'Email_To' => Utils::GetEmailEpo(),
+                                    'Date' => date('Y-m-d', strtotime(now())),
+                                    'Time' => date('H:i:s', strtotime(now()))
+                                ]);
+                            }
                         }
-
-                        $PID = Epo_PO_Header::orderBy('PID', 'Desc')->value('PID');
-                        Realization::UpdateRealizationGroupEpo($invoice_no_real, $PID);
-
-                        $LogEmailEpo = ReportGenerator_LogEmailEpo::where('PID', $PID)->count();
-                        if( $LogEmailEpo == 0 ){
-                            ReportGenerator_LogEmailEpo::create([
-                                'PID' => $PID,
-                                'Realisasi_ID' => $RealizationData->ID,
-                                'Email_To' => Utils::GetEmailEpo(),
-                                'Date' => date('Y-m-d', strtotime(now())),
-                                'Time' => date('H:i:s', strtotime(now()))
-                            ]);
-                        }
+                        
                         
                     } catch (Exception $e) {
                         Log::error('Error while saving log email epo. Exception = ' . $e->getMessage());
