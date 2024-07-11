@@ -112,9 +112,11 @@ class DocumentController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(ReportGenerator_Documents_Engineering_Fee $Document)
+    public function destroy(ReportGenerator_Documents_Engineering_Fee $Document, Request $request)
     {
+        $UrlParameter = http_build_query(json_decode($request->param));
         $Document->delete();
-        return redirect()->route('documents.index');
+        $route = route('documents.index') . '?' . $UrlParameter;
+        return redirect()->to($route);
     }
 }

@@ -136,10 +136,10 @@ class BudgetController extends Controller
             $data->DISCOUNT = number_format($data->DISCOUNT, 0);
             $data->OTHERINCOME = number_format($data->OTHERINCOME, 0);
             $data->PAYMENT = number_format($data->PAYMENT, 0);
-            $data->Budget = number_format($data->Budget, 0);
-            $data->REALIZATION_RMF = number_format($data->REALIZATION_RMF, 0);
-            $data->REALIZATION_SPONSORSHIP = number_format($data->REALIZATION_SPONSORSHIP, 0);
-            $data->REMAIN_BUDGET = number_format($data->REMAIN_BUDGET, 0);
+            $data->Budget = number_format($data->Budget, 2);
+            $data->REALIZATION_RMF = number_format($data->REALIZATION_RMF, 2);
+            $data->REALIZATION_SPONSORSHIP = number_format($data->REALIZATION_SPONSORSHIP, 2);
+            $data->REMAIN_BUDGET = number_format($data->REMAIN_BUDGET, 2);
 
             if( $data->STATUS_BUDGET == 'NEW' ){
                 $data->STATUS_BUDGET =  '<div class="badge badge-pill badge-info" style="font-size: 16px;">

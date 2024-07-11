@@ -65,6 +65,7 @@
                                         {{ method_field('delete') }}
                                         <button type="submit" class="btn btn-danger"
                                             onclick="return confirm('Are you sure you want to delete this document?');">
+                                            <input type="hidden" name="param" value="{{ json_encode(request()->query()) }}">
                                             Delete
                                         </button>
                                     </form>
