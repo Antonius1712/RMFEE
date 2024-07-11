@@ -296,6 +296,7 @@ class RealizationController extends Controller
         $invoice_no_real = str_replace('~', '/', $InvoiceNumber);
         $action = $request->action;
         $LogAction = '';
+        // dd('zz', $action);
         switch ($action) {
             case 'add_detail':
                 Realization::UpdateRealizationGroup($request, $InvoiceNumber, RealizationStatus::DRAFT);
