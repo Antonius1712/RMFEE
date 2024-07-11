@@ -353,7 +353,7 @@ class BudgetController extends Controller
         $message = $request->comment;
         $RedirectVoucher = str_replace('~', '/', $voucher);
         Budget::UpdateBudgetOnlyStatus('reject', $voucher, null);
-        $message = $message != null ? ' | '.$message : null;
+        $message = $message != null && $message != '' ? ' | '.$message : null;
         Logger::SaveLog(LogStatus::BUDGET, $RedirectVoucher, 'Rejected', $message);
 
         $route = route('budget.list') . '?' . $UrlParameter;

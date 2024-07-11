@@ -161,7 +161,7 @@ class Realization {
             // dd('xx');
 
             if( $DocumentPath_upload_invoice == null || $DocumentPath_upload_survey_report == null ) {
-                $RealizationFileData = DB::connection(Database::REPORT_GENERATOR)->select("EXECUTE [dbo].[SP_Get_Group_Realization_Engineering_Fee] '$invoice_no_real', '', '', '', ''")[0];
+                $RealizationFileData = DB::connection(Database::REPORT_GENERATOR)->select("EXECUTE [dbo].[SP_Get_Group_Realization_Engineering_Fee] '$invoice_no_real', '', '', '', '', ''")[0];
 
                 if( $DocumentPath_upload_invoice == null ) {
                     $DocumentPath_upload_invoice = $RealizationFileData->Upload_Invoice_Path;
