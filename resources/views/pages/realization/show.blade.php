@@ -133,6 +133,11 @@
                                 </a>
                                 @endif
                             </div>
+                            <div class="form-group row">
+                                <label for="tax" class="col-lg-3 col-form-label-lg">Remarks</label>
+                                <label class="col-lg-1 col-form-label-lg">:</label>
+                                <textarea name="remarks" id="remarks" cols="30" rows="10" class="form-control col-lg-8" readonly>{{ $RealizationData->Remarks }}</textarea>
+                            </div>
                         </div>
                     </div>
                 </div>
