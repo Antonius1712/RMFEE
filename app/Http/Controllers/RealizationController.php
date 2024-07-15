@@ -299,18 +299,19 @@ class RealizationController extends Controller
         // dd('zz', $action);
         switch ($action) {
             case 'add_detail':
-                Realization::UpdateRealizationGroup($request, $InvoiceNumber, RealizationStatus::DRAFT);
-                $redirect = redirect()->route('realization.detail-realization.index', $InvoiceNumber);
+                Realization::UpdateRealizationGroup($request, $invoice_no_real, RealizationStatus::DRAFT);
+                $redirect = redirect()->route('realization.detail-realization.index', $invoice_no_real);
                 $LogAction = 'ADD DETAIL';
                 break;
             case 'save':
-                Realization::UpdateRealizationGroup($request, $InvoiceNumber, RealizationStatus::DRAFT);
+                // dd('zz');
+                Realization::UpdateRealizationGroup($request, $invoice_no_real, RealizationStatus::DRAFT);
                 $redirect = redirect()->route('realization.index');
                 $LogAction = 'UPDATE';
                 break;
             case 'propose':
                 Realization::UpdateRealizationGroupStatus(RealizationStatus::WAITING_APPROVAL_BU, $invoice_no_real);
-                Realization::UpdateRealizationGroup($request, $InvoiceNumber, RealizationStatus::WAITING_APPROVAL_BU);
+                Realization::UpdateRealizationGroup($request, $invoice_no_real, RealizationStatus::WAITING_APPROVAL_BU);
                 $redirect = redirect()->route('realization.index');
                 $LogAction = 'PROPOSE';
                 break;
