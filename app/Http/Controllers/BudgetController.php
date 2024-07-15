@@ -180,7 +180,8 @@ class BudgetController extends Controller
         $VoucherId = str_replace("/", "~", $Budget->VOUCHER);
         $BrokerId = explode('-', $Budget->BROKERNAME, 2)[0];
         $BrokerName = explode('-', $Budget->BROKERNAME, 2)[1];
-        return view('pages.budget.edit', compact('Budget', 'BudgetInAmount', 'VoucherId', 'BrokerName', 'BrokerId', 'Logs'));
+        $StatusBudgetWhenEditBudgetAfterApprovalShouldBe = BudgetStatus::APPROVED;
+        return view('pages.budget.edit', compact('Budget', 'BudgetInAmount', 'VoucherId', 'BrokerName', 'BrokerId', 'Logs', 'StatusBudgetWhenEditBudgetAfterApprovalShouldBe'));
     }
 
     public function update(Request $request, $voucher){
