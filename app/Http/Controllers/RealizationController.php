@@ -300,7 +300,7 @@ class RealizationController extends Controller
         switch ($action) {
             case 'add_detail':
                 Realization::UpdateRealizationGroup($request, $invoice_no_real, RealizationStatus::DRAFT);
-                $redirect = redirect()->route('realization.detail-realization.index', $invoice_no_real);
+                $redirect = redirect()->route('realization.detail-realization.index', $InvoiceNumber);
                 $LogAction = 'ADD DETAIL';
                 break;
             case 'save':
