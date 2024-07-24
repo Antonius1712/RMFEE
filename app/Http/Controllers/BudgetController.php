@@ -172,6 +172,18 @@ class BudgetController extends Controller
         return view('pages.budget.list', compact('NBRN', 'branchList', 'statusPremi', 'statusRealisasi', 'statusBudget', 'Budgets'));
     }
 
+    public function show($voucher, $archived = 0){
+        $voucher = str_replace('~', '/', $voucher);
+        $Budget = Budget::GetBudget($voucher, $archived);
+        $Logs = Logger::GetLog(LogStatus::BUDGET, $voucher);
+        $BudgetInAmount = ($Budget->Budget/100) * $Budget->LGI_PREMIUM;
+        $VoucherId = str_replace("/", "~", $Budget->VOUCHER);
+        $BrokerId = explode('-', $Budget->BROKERNAME, 2)[0];
+        $BrokerName = explode('-', $Budget->BROKERNAME, 2)[1];
+        $StatusBudgetWhenEditBudgetAfterApprovalShouldBe = BudgetStatus::APPROVED;
+        return view('pages.budget.show', compact('Budget', 'BudgetInAmount', 'VoucherId', 'BrokerName', 'BrokerId', 'Logs', 'StatusBudgetWhenEditBudgetAfterApprovalShouldBe'));
+    }
+
     public function edit($voucher, $archived = 0){
         $voucher = str_replace('~', '/', $voucher);
         $Budget = Budget::GetBudget($voucher, $archived);
@@ -348,7 +360,7 @@ class BudgetController extends Controller
         $message = $request->comment;
         $RedirectVoucher = str_replace('~', '/', $voucher);
         Budget::UpdateBudgetOnlyStatus('reject', $voucher, null);
-        $message = $message != null && $message != '' ? ' | '.$message : null;
+        $message = $message != null && $message != '' ? $message : null;
         Logger::SaveLog(LogStatus::BUDGET, $RedirectVoucher, 'Rejected', $message);
 
         $route = route('budget.list') . '?' . $UrlParameter;
