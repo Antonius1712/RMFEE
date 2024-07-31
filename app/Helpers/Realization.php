@@ -5,6 +5,7 @@ namespace App\Helpers;
 use App\Enums\BudgetStatus;
 use App\Enums\Database;
 use App\Enums\RealizationStatus;
+use App\Model\SeaReport_Profile;
 use App\Pipeline\Pipes;
 use Exception;
 use Illuminate\Pipeline\Pipeline;
@@ -215,6 +216,8 @@ class Realization {
         $TypeOfInvoice = $RealizationData->Type_Of_Invoice;
         $DetailRealizationData = DetailRealization::GetDetailRealization($RealizationData->ID);
 
+        $ProfilePayment = SeaReport_Profile::where('ID', $RealizationData->Payment_To_ID)->select('LOB', 'TAX', 'VAT', 'ID', 'VATSubsidiesF')->first();
+
         $IsOverLimit = false;
         foreach( $DetailRealizationData as $val ){
             if( $val->total_amount_realization > $val->REMAIN_BUDGET ) {
@@ -233,27 +236,24 @@ class Realization {
                 case 'RMF':
                     $IsOverLimit = $val->total_amount_realization > $val->REMAIN_BUDGET ? true : false;
                     $OriginalAmountRealization = ($val->total_amount_realization  / $val->exchange_rate_realization);
-                    
-                    /*
-                    TODO
-                    Getting LOB dari sp
 
-                    if( lob == '02' ){
-                        /* VatSubsidies = nilai VAT yang di subsidi. *
-                        vat = vat - VatSubsidies;
-                        vat = (vat / 100) * 0.2
+                    if( $ProfilePayment->lob == '02' ){
+                        /*?VatSubsidies = nilai VAT yang di subsidi.*/
+                        $vat = 0;
+                        if( $ProfilePayment->VATSubsidiesF != 1 ){
+                            $vat = $ProfilePayment->vat;
+                        }
+                        $vat = ($vat / 100) * 0.2;
                     }else{
-                        vat = vat / 100;
+                        $vat = $ProfilePayment->vat / 100;
                     }
 
-                    tax = (tax / 100);
+                    $tax = ($ProfilePayment->tax / 100);
 
-                    total_vat = total_amount_realization * vat;
-                    total_tax = total_amount_realization * tax;
+                    $total_vat = $OriginalAmountRealization * $vat;
+                    $total_tax = $OriginalAmountRealization * $tax;
+                    $OriginalAmountRealization = ($OriginalAmountRealization - $total_tax) + $total_vat;
 
-                    total_amount_realization = (total_amount_realization - total_tax) + total_vat;
-
-                    */
                     $IsOverLimit = $OriginalAmountRealization > $val->REMAIN_BUDGET ? true : false;
                     try {
                         $RemainBudget = ($val->REMAIN_BUDGET - $val->total_amount_realization);
