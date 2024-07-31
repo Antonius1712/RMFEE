@@ -14,5 +14,6 @@ yarn-error.log
 /public/Attachment/*
 /public/Document/*
 /public/images/*
+/public/PDF/*
 readme.md
 README.md
