@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Enums\Database;
 use App\Http\Requests\DocumentRequest;
+use App\Model\DocumentsEngineeringFee;
 use App\Model\ReportGenerator_Documents_Engineering_Fee;
+use Error;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -15,7 +17,8 @@ class DocumentController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
+    public $yearList;
+    public function __construct()
     {
         $currentYear = now()->year;
         $yearsBack = 2;
@@ -25,9 +28,13 @@ class DocumentController extends Controller
         $endYear = $currentYear + $yearsAhead;
 
         $years = range($startYear, $endYear);
+        $this->yearList = $years;
+    }
 
+    public function index(Request $request)
+    {
+        $years = $this->yearList;
         $selected_years = $request->year;
-
         $Documents = ReportGenerator_Documents_Engineering_Fee::whereYear('uploadedAt', $selected_years)->get();
         return view('pages.documents.index', compact('Documents', 'years'));
     }
@@ -39,7 +46,8 @@ class DocumentController extends Controller
      */
     public function create()
     {
-        return view('pages.documents.create');
+        $document_years = $this->yearList;
+        return view('pages.documents.create', compact('document_years'));
     }
 
     /**
@@ -50,6 +58,11 @@ class DocumentController extends Controller
      */
     public function store(DocumentRequest $request)
     {
+        $CountDocument = ReportGenerator_Documents_Engineering_Fee::where('year', $request->document_year)->count();
+        if( $CountDocument > 0 ){
+            return redirect()->back()->withInput($request->all())->withErrors(['noticication' => 'Only 1 Document can be uploaded per year.']);
+        }
+
         $document_path = null;
         if ($request->hasFile('document_file')) {
             $document_file = $request->file('document_file');
@@ -59,16 +72,22 @@ class DocumentController extends Controller
             $document_path = 'PDF/Documents/' . now()->format('Y') . '/' . $filename;
         }
 
-        DB::connection(Database::REPORT_GENERATOR)->statement(
-            'EXEC [dbo].[SP_Insert_Documents_Engineering_Fee] @DocumentName = ?, @DocumentDescription = ?, @DocumentFile = ?, @UploadedBy = ?, @UploadedAt = ?',
-            [
-                $request->document_name,
-                $request->document_description,
-                $document_path,
-                auth()->user()->UserId,
-                now()
-            ]
-        );
+        try {
+            DB::connection(Database::REPORT_GENERATOR)->statement(
+                'EXEC [dbo].[SP_Insert_Documents_Engineering_Fee] @DocumentName = ?, @DocumentDescription = ?, @DocumentFile = ?, @UploadedBy = ?, @UploadedAt = ?, @Year = ?',
+                [
+                    $request->document_name,
+                    $request->document_description,
+                    $document_path,
+                    auth()->user()->UserId,
+                    now(),
+                    $request->document_year
+                ]
+            );
+        } catch (Error $e) {
+            // dd($e->getMessage());
+            return redirect()->back()->withErrors(['noticication' => $e->getMessage()]);
+        }
 
         return redirect()->route('documents.index');
     }

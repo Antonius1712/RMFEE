@@ -161,7 +161,7 @@ class Realization {
             // dd('xx');
 
             if( $DocumentPath_upload_invoice == null || $DocumentPath_upload_survey_report == null ) {
-                $RealizationFileData = DB::connection(Database::REPORT_GENERATOR)->select("EXECUTE [dbo].[SP_Get_Group_Realization_Engineering_Fee] '$invoice_no_real', '', '', '', '', ''")[0];
+                $RealizationFileData = DB::connection(Database::REPORT_GENERATOR)->select("EXECUTE [dbo].[SP_Get_Group_Realization_Engineering_Fee] '$invoice_no_real', '', '', '', ''")[0];
 
                 if( $DocumentPath_upload_invoice == null ) {
                     $DocumentPath_upload_invoice = $RealizationFileData->Upload_Invoice_Path;
@@ -217,7 +217,7 @@ class Realization {
 
         $IsOverLimit = false;
         foreach( $DetailRealizationData as $val ){
-            if( ($val->total_amount_realization  / $val->exchange_rate_realization) > $val->REMAIN_BUDGET ) {
+            if( $val->total_amount_realization > $val->REMAIN_BUDGET ) {
                 $IsOverLimit = true;
                 break;
             }
@@ -231,12 +231,34 @@ class Realization {
             $IsOverLimit = false;
             switch ($TypeOfInvoice) {
                 case 'RMF':
+                    $IsOverLimit = $val->total_amount_realization > $val->REMAIN_BUDGET ? true : false;
                     $OriginalAmountRealization = ($val->total_amount_realization  / $val->exchange_rate_realization);
+                    
+                    /*
+                    TODO
+                    Getting LOB dari sp
+
+                    if( lob == '02' ){
+                        /* VatSubsidies = nilai VAT yang di subsidi. *
+                        vat = vat - VatSubsidies;
+                        vat = (vat / 100) * 0.2
+                    }else{
+                        vat = vat / 100;
+                    }
+
+                    tax = (tax / 100);
+
+                    total_vat = total_amount_realization * vat;
+                    total_tax = total_amount_realization * tax;
+
+                    total_amount_realization = (total_amount_realization - total_tax) + total_vat;
+
+                    */
                     $IsOverLimit = $OriginalAmountRealization > $val->REMAIN_BUDGET ? true : false;
                     try {
-                        $RemainBudget = ($val->REMAIN_BUDGET - $OriginalAmountRealization);
+                        $RemainBudget = ($val->REMAIN_BUDGET - $val->total_amount_realization);
 
-                        DB::connection(Database::REPORT_GENERATOR)->statement("EXECUTE [dbo].[SP_Update_Budget_Realization_RMF_Engineering_Fee] $OriginalAmountRealization, '$val->VOUCHER', '' ");
+                        DB::connection(Database::REPORT_GENERATOR)->statement("EXECUTE [dbo].[SP_Update_Budget_Realization_RMF_Engineering_Fee] $val->total_amount_realization, '$val->VOUCHER', '' ");
 
                         DB::connection(Database::REPORT_GENERATOR)->statement("EXECUTE [dbo].[SP_Update_Budget_Realization_Remain_Budget_Engineering_Fee] $RemainBudget, '$val->VOUCHER', '' ");
                     } catch (Exception $e) {
@@ -245,12 +267,11 @@ class Realization {
                     
                     break;
                 case 'Sponsorship':
-                    $OriginalAmountRealization = ($val->total_amount_realization  / $val->exchange_rate_realization);
-                    $IsOverLimit = $OriginalAmountRealization > $val->REMAIN_BUDGET ? true : false;
+                    $IsOverLimit = $val->total_amount_realization > $val->REMAIN_BUDGET ? true : false;
                     try {
-                        $RemainBudget = ($val->REMAIN_BUDGET - $OriginalAmountRealization);
+                        $RemainBudget = ($val->REMAIN_BUDGET - $val->total_amount_realization);
 
-                        DB::connection(Database::REPORT_GENERATOR)->statement("EXECUTE [dbo].[SP_Update_Budget_Realization_Sponsorship_Engineering_Fee] $OriginalAmountRealization, '$val->VOUCHER', '' ");
+                        DB::connection(Database::REPORT_GENERATOR)->statement("EXECUTE [dbo].[SP_Update_Budget_Realization_Sponsorship_Engineering_Fee] $val->total_amount_realization, '$val->VOUCHER', '' ");
 
                         DB::connection(Database::REPORT_GENERATOR)->statement("EXECUTE [dbo].[SP_Update_Budget_Realization_Remain_Budget_Engineering_Fee] $RemainBudget, '$val->VOUCHER', '' ");
                     } catch (Exception $e) {
@@ -323,8 +344,8 @@ class Realization {
         }
         
         try {
-            $PID = DB::connection("EPO114")->statement("EXECUTE [dbo].[SP_Insert_ePO_Engineering_Fee] '$InvoiceNo', $TotalRealization, $FileSizeInvoice, $Invoice, '$LinkApproval', '$LinkChecker', $FileSizeSurvey_Report, $Survey_Report");
-            return ['status' => true, 'message' => 'ok', 'pid' => $PID];
+            DB::connection("EPO114")->statement("EXECUTE [dbo].[SP_Insert_ePO_Engineering_Fee] '$InvoiceNo', $TotalRealization, $FileSizeInvoice, $Invoice, '$LinkApproval', '$LinkChecker', $FileSizeSurvey_Report, $Survey_Report");
+            return ['status' => true, 'message' => 'ok',];
         } catch (Exception $e) {
             Log::error('Error While Inserting EPO When Finance Approve Invoice ' .$InvoiceNo . ' Exception = ' . $e->getMessage());
             return ['status' => false, 'message' => $e->getMessage()];
