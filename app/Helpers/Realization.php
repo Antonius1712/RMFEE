@@ -342,10 +342,16 @@ class Realization {
         }else{
             $Survey_Report = 0;
         }
+
+        // dd($InvoiceNo, $TotalRealization, $FileSizeInvoice, $Invoice, $LinkApproval, $LinkChecker, $FileSizeSurvey_Report, $Survey_Report);
         
         try {
-            DB::connection("EPO114")->statement("EXECUTE [dbo].[SP_Insert_ePO_Engineering_Fee] '$InvoiceNo', $TotalRealization, $FileSizeInvoice, $Invoice, '$LinkApproval', '$LinkChecker', $FileSizeSurvey_Report, $Survey_Report");
-            return ['status' => true, 'message' => 'ok',];
+            $results  = DB::connection("EPO114")->select("EXECUTE [dbo].[SP_Insert_ePO_Engineering_Fee] '$InvoiceNo', $TotalRealization, $FileSizeInvoice, $Invoice, '$LinkApproval', '$LinkChecker', $FileSizeSurvey_Report, $Survey_Report");
+
+            if( !empty($results ) ){
+                return ['status' => true, 'message' => 'ok', 'pid' => $results[0]->pid];
+            }
+            return ['status' => true, 'message' => 'ok', 'pid' => 0];
         } catch (Exception $e) {
             Log::error('Error While Inserting EPO When Finance Approve Invoice ' .$InvoiceNo . ' Exception = ' . $e->getMessage());
             return ['status' => false, 'message' => $e->getMessage()];
