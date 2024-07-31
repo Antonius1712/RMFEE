@@ -23,6 +23,18 @@
                             </div>
                             <div class="card-body">
                                 <div class="form-group row">
+                                    <label for="document_year" class="col-lg-3 col-form-label-lg">Document Year</label>
+                                    <label class="col-lg-1 col-form-label-lg">:</label>
+                                    {{-- <input type="text" name="document_year" id="document_year"
+                                        class="form-control col-lg-8" placeholder="Document Year" value="{{ old('document_year') }}"> --}}
+                                    <select name="document_year" id="document_year" class="form-control col-lg-8"">
+                                        <option value="">Select Document Year</option>
+                                        @foreach ($document_years as $document_year)
+                                            <option {{ old('document_year') != null && old('document_year') == $document_year ? 'selected' : '' }} value="{{ $document_year }}">{{ $document_year }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="form-group row">
                                     <label for="document_name" class="col-lg-3 col-form-label-lg">Document Name</label>
                                     <label class="col-lg-1 col-form-label-lg">:</label>
                                     <input type="text" name="document_name" id="document_name"
@@ -38,7 +50,7 @@
                                     <label for="document_file" class="col-lg-3 col-form-label-lg">Document File</label>
                                     <label class="col-lg-1 col-form-label-lg">:</label>
                                     <input type="file" name="document_file" id="document_file"
-                                        class="form-control col-lg-8" placeholder="Document File">
+                                        class="form-control col-lg-8" placeholder="Document File" value="{{ old('document_file') }}">
                                 </div>
                                 <div class="row">
                                     <button type="submit" class="btn btn-primary col-lg-12">

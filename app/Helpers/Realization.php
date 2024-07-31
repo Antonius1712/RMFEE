@@ -5,6 +5,7 @@ namespace App\Helpers;
 use App\Enums\BudgetStatus;
 use App\Enums\Database;
 use App\Enums\RealizationStatus;
+use App\Model\SeaReport_Profile;
 use App\Pipeline\Pipes;
 use Exception;
 use Illuminate\Pipeline\Pipeline;
@@ -214,7 +215,9 @@ class Realization {
     public static function UpdateBudgetRealization($RealizationData){
         $TypeOfInvoice = $RealizationData->Type_Of_Invoice;
         $DetailRealizationData = DetailRealization::GetDetailRealization($RealizationData->ID);
-
+        
+        $ProfilePayment = SeaReport_Profile::where('ID', $RealizationData->Payment_To_ID)->select('LOB', 'TAX', 'VAT', 'ID', 'VATSubsidiesF')->first();
+        
         $IsOverLimit = false;
         foreach( $DetailRealizationData as $val ){
             if( $val->total_amount_realization > $val->REMAIN_BUDGET ) {
@@ -224,18 +227,46 @@ class Realization {
         }
         
         if( $IsOverLimit ) {
-            return BudgetStatus::OVERLIMIT;
+            // return BudgetStatus::OVERLIMIT;
         }
         
         foreach( $DetailRealizationData as $val ){
-            $IsOverLimit = false;
+            // dd($val, $ProfilePayment);
+            // $IsOverLimit = false;
             switch ($TypeOfInvoice) {
                 case 'RMF':
-                    $IsOverLimit = $val->total_amount_realization > $val->REMAIN_BUDGET ? true : false;
-                    try {
-                        $RemainBudget = ($val->REMAIN_BUDGET - $val->total_amount_realization);
+                    // $IsOverLimit = $val->total_amount_realization > $val->REMAIN_BUDGET ? true : false;
+                    $OriginalAmountRealization = ($val->total_amount_realization  / $val->exchange_rate_realization);
+                    
+                    /*
+                    TODO
+                    Getting LOB dari sp */
 
-                        DB::connection(Database::REPORT_GENERATOR)->statement("EXECUTE [dbo].[SP_Update_Budget_Realization_RMF_Engineering_Fee] $val->total_amount_realization, '$val->VOUCHER', '' ");
+                    if( $ProfilePayment->lob == '02' ){
+                        /*?VatSubsidies = nilai VAT yang di subsidi.*/
+                        $vat = 0;
+                        if( $ProfilePayment->VATSubsidiesF != 1 ){
+                            $vat = $ProfilePayment->vat;
+                        }
+                        $vat = ($vat / 100) * 0.2;
+                    }else{
+                        $vat = $ProfilePayment->vat / 100;
+                    }
+
+                    $tax = ($ProfilePayment->tax / 100);
+
+                    $total_vat = $OriginalAmountRealization * $vat;
+                    $total_tax = $OriginalAmountRealization * $tax;
+
+                    $OriginalAmountRealization = ($OriginalAmountRealization - $total_tax) + $total_vat;
+                    // dd($OriginalAmountRealization);
+
+                    /**/
+                    $IsOverLimit = $OriginalAmountRealization > $val->REMAIN_BUDGET ? true : false;
+                    try {
+                        $RemainBudget = ($val->REMAIN_BUDGET - $OriginalAmountRealization);
+
+                        DB::connection(Database::REPORT_GENERATOR)->statement("EXECUTE [dbo].[SP_Update_Budget_Realization_RMF_Engineering_Fee] $OriginalAmountRealization, '$val->VOUCHER', '' ");
 
                         DB::connection(Database::REPORT_GENERATOR)->statement("EXECUTE [dbo].[SP_Update_Budget_Realization_Remain_Budget_Engineering_Fee] $RemainBudget, '$val->VOUCHER', '' ");
                     } catch (Exception $e) {
@@ -259,6 +290,8 @@ class Realization {
                 break;
             }
         }
+
+        // dd('qwe');
 
         return BudgetStatus::NOTOVERLIMIT;
     }

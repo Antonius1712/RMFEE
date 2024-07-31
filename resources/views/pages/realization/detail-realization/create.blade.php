@@ -277,7 +277,6 @@
 
             total_amount_realization = (total_amount_realization - total_tax) + total_vat;
 
-
             /* Remove Trailing decimals. example : 123.4500000032 -> 123.45 */
             total_amount_realization = parseInt('' + (total_amount_realization * 100)) / 100;
 
