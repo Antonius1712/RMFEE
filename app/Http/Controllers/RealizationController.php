@@ -449,8 +449,6 @@ class RealizationController extends Controller
                                 ]);
                             }
                         }
-                        
-                        
                     } catch (Exception $e) {
                         Log::error('Error while saving log email epo. Exception = ' . $e->getMessage());
                         return redirect()->back()->withErrors('Error on Approve Finance. Invoice. <strong>'.$invoice_no_real.'</strong>');

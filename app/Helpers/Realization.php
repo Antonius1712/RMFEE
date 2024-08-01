@@ -5,6 +5,7 @@ namespace App\Helpers;
 use App\Enums\BudgetStatus;
 use App\Enums\Database;
 use App\Enums\RealizationStatus;
+use App\Model\SeaReport_Profile;
 use App\Pipeline\Pipes;
 use Exception;
 use Illuminate\Pipeline\Pipeline;
@@ -215,6 +216,8 @@ class Realization {
         $TypeOfInvoice = $RealizationData->Type_Of_Invoice;
         $DetailRealizationData = DetailRealization::GetDetailRealization($RealizationData->ID);
 
+        $ProfilePayment = SeaReport_Profile::where('ID', $RealizationData->Payment_To_ID)->select('LOB', 'TAX', 'VAT', 'ID', 'VATSubsidiesF')->first();
+
         $IsOverLimit = false;
         foreach( $DetailRealizationData as $val ){
             if( ($val->total_amount_realization  / $val->exchange_rate_realization) > $val->REMAIN_BUDGET ) {
@@ -232,6 +235,24 @@ class Realization {
             switch ($TypeOfInvoice) {
                 case 'RMF':
                     $OriginalAmountRealization = ($val->total_amount_realization  / $val->exchange_rate_realization);
+
+                    if( $ProfilePayment->lob == '02' ){
+                        /*?VatSubsidies = nilai VAT yang di subsidi.*/
+                        $vat = 0;
+                        if( $ProfilePayment->VATSubsidiesF != 1 ){
+                            $vat = $ProfilePayment->vat;
+                        }
+                        $vat = ($vat / 100) * 0.2;
+                    }else{
+                        $vat = $ProfilePayment->vat / 100;
+                    }
+
+                    $tax = ($ProfilePayment->tax / 100);
+
+                    $total_vat = $OriginalAmountRealization * $vat;
+                    $total_tax = $OriginalAmountRealization * $tax;
+                    $OriginalAmountRealization = ($OriginalAmountRealization - $total_tax) + $total_vat;
+
                     $IsOverLimit = $OriginalAmountRealization > $val->REMAIN_BUDGET ? true : false;
                     try {
                         $RemainBudget = ($val->REMAIN_BUDGET - $OriginalAmountRealization);
@@ -321,10 +342,16 @@ class Realization {
         }else{
             $Survey_Report = 0;
         }
+
+        // dd($InvoiceNo, $TotalRealization, $FileSizeInvoice, $Invoice, $LinkApproval, $LinkChecker, $FileSizeSurvey_Report, $Survey_Report);
         
         try {
-            $PID = DB::connection("EPO114")->statement("EXECUTE [dbo].[SP_Insert_ePO_Engineering_Fee] '$InvoiceNo', $TotalRealization, $FileSizeInvoice, $Invoice, '$LinkApproval', '$LinkChecker', $FileSizeSurvey_Report, $Survey_Report");
-            return ['status' => true, 'message' => 'ok', 'pid' => $PID];
+            $results  = DB::connection("EPO114")->select("EXECUTE [dbo].[SP_Insert_ePO_Engineering_Fee] '$InvoiceNo', $TotalRealization, $FileSizeInvoice, $Invoice, '$LinkApproval', '$LinkChecker', $FileSizeSurvey_Report, $Survey_Report");
+
+            if( !empty($results ) ){
+                return ['status' => true, 'message' => 'ok', 'pid' => $results[0]->pid];
+            }
+            return ['status' => true, 'message' => 'ok', 'pid' => 0];
         } catch (Exception $e) {
             Log::error('Error While Inserting EPO When Finance Approve Invoice ' .$InvoiceNo . ' Exception = ' . $e->getMessage());
             return ['status' => false, 'message' => $e->getMessage()];
