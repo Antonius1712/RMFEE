@@ -139,27 +139,27 @@ class BudgetController extends Controller
             $data->Budget = number_format($data->Budget, 0);
 
             if( $data->STATUS_BUDGET == 'NEW' ){
-                $data->STATUS_BUDGET =  '<div class="badge badge-pill badge-info" style="font-size: 16px;">
+                $data->STATUS_BUDGET_DISPLAY =  '<div class="badge badge-pill badge-info" style="font-size: 16px;">
                     <li>'.$data->STATUS_BUDGET.'</li>
                 </div>';
             } else if ( $data->STATUS_BUDGET == BudgetStatus::DRAFT ){
-                $data->STATUS_BUDGET =  '<div class="badge badge-pill badge-info" style="font-size: 16px;">
+                $data->STATUS_BUDGET_DISPLAY =  '<div class="badge badge-pill badge-info" style="font-size: 16px;">
                     <li>'.$data->STATUS_BUDGET.'</li>
                 </div>'; 
             } else if ( $data->STATUS_BUDGET == BudgetStatus::WAITING_APPROVAL ){
-                $data->STATUS_BUDGET =  '<div class="badge badge-pill badge-warning" style="font-size: 16px;">
+                $data->STATUS_BUDGET_DISPLAY =  '<div class="badge badge-pill badge-warning" style="font-size: 16px;">
                     <li>'.$data->STATUS_BUDGET.'</li>
                 </div>'; 
             } else if ( $data->STATUS_BUDGET == BudgetStatus::ARCHIVED ){
-                $data->STATUS_BUDGET =  '<div class="badge badge-pill badge-danger" style="font-size: 16px;">
+                $data->STATUS_BUDGET_DISPLAY =  '<div class="badge badge-pill badge-danger" style="font-size: 16px;">
                     <li>'.$data->STATUS_BUDGET.'</li>
                 </div>'; 
             } else if ( $data->STATUS_BUDGET == BudgetStatus::APPROVED ){
-                $data->STATUS_BUDGET =  '<div class="badge badge-pill badge-success" style="font-size: 16px;">
+                $data->STATUS_BUDGET_DISPLAY =  '<div class="badge badge-pill badge-success" style="font-size: 16px;">
                     <li>'.$data->STATUS_BUDGET.'</li>
                 </div>'; 
             } else if ( $data->STATUS_BUDGET == BudgetStatus::REJECTED ){
-                $data->STATUS_BUDGET =  '<div class="badge badge-pill badge-danger" style="font-size: 16px;">
+                $data->STATUS_BUDGET_DISPLAY =  '<div class="badge badge-pill badge-danger" style="font-size: 16px;">
                     <li>'.$data->STATUS_BUDGET.'</li>
                 </div>'; 
             }
@@ -380,6 +380,9 @@ class BudgetController extends Controller
     public function multipleApprove(Request $request){
         $UrlParameter = http_build_query($request->query());
         $Vouchers = json_decode($request->vouchers);
+        if( count($Vouchers) == 0 ){
+            return redirect()->back()->with("notification", "There's no Vouchers Selected.");
+        }
         foreach($Vouchers as $voucher){
             Budget::UpdateBudgetOnlyStatus('approve', $voucher, null);
             Logger::SaveLog(LogStatus::BUDGET, $voucher, 'Approved');
