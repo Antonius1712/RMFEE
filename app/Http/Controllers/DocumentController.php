@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Enums\Database;
 use App\Http\Requests\DocumentRequest;
-use App\Model\DocumentsEngineeringFee;
 use App\Model\ReportGenerator_Documents_Engineering_Fee;
 use Error;
 use Illuminate\Http\Request;
@@ -35,7 +34,7 @@ class DocumentController extends Controller
     {
         $years = $this->yearList;
         $selected_years = $request->year;
-        $Documents = ReportGenerator_Documents_Engineering_Fee::whereYear('uploadedAt', $selected_years)->get();
+        $Documents = ReportGenerator_Documents_Engineering_Fee::where('year', $selected_years)->get();
         return view('pages.documents.index', compact('Documents', 'years'));
     }
 
@@ -58,6 +57,7 @@ class DocumentController extends Controller
      */
     public function store(DocumentRequest $request)
     {
+        // dd($request->all());
         $CountDocument = ReportGenerator_Documents_Engineering_Fee::where('year', $request->document_year)->count();
         if( $CountDocument > 0 ){
             return redirect()->back()->withInput($request->all())->withErrors(['noticication' => 'Only 1 Document can be uploaded per year.']);
