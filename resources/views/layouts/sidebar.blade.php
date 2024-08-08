@@ -91,6 +91,7 @@
             </li>
 
             {{-- !SIDEBAR MENU DOCUMENT --}}
+            @if( Auth()->User()->NIK == '2006041565' ) {{-- NIK Pak Timmie. cuma pak timmie yang bisa buka menu ini. --}}
             <li class=" nav-item">
                 <a class="d-flex align-items-center" href="#">
                     <i data-feather="file-text" class="feather icon-file-text"></i>
@@ -105,6 +106,7 @@
                     </li>
                 </ul>
             </li>
+            @endif
 
             {{-- !SIDEBAR MENU HEADER --}}
             <li class=" navigation-header">

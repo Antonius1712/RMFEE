@@ -11,6 +11,8 @@
 |
 */
 
+use App\Http\Controllers\DocumentController;
+
 Auth::routes();
 
 Route::get('/sf', 'HomeController@sf')->name('sf');
@@ -108,7 +110,7 @@ Route::middleware(['breadcrumbs', 'auth'])->group(function () {
         Route::post('/os', 'Report\ReportOsController@GenerateReport')->name('os.generate');
     });
 
-    Route::resource('documents', DocumentController::class);
+    Route::resource('documents', 'DocumentController', ['middleware' => 'only.timmie.access']);
 
     //? Setting Budget Group & User Module.
     Route::prefix('setting')->as('setting.')->group(function () {
