@@ -18,9 +18,6 @@
     </div>
     <div class="shadow-bottom"></div>
 
-    {{-- !DIBACA BAIK BAIK --}}
-    {{-- !PUTRI MINTA SETELAH LOGIN LANGSUNG KE MENU CHECKSHEET TIDAK PERLU ADA HOMEPAGE. --}}
-    {{-- !9 SEPTEMBER 2022 --}}
     <div class="main-menu-content">
         <ul class="navigation navigation-main" id="main-menu-navigation" data-menu="menu-navigation">
             {{-- *DIATAS JGN DI COMMENT, BIAR BISA DI TOGGLE HIDE SIDEBAR. --}}
@@ -66,7 +63,7 @@
             {{-- !SIDEBAR MENU REPORT --}}
             <li class=" nav-item">
                 <a class="d-flex align-items-center" href="#">
-                    <i data-feather="file-text" class="feather icon-file-text"></i>
+                    <i data-feather="file-text" class="feather icon-bar-chart"></i>
                     <span class="menu-title text-truncate" data-i18n="Report">Report</span>
                 </a>
                 <ul class="menu-content">
@@ -88,6 +85,22 @@
                             <i data-feather="corner-down-right" class="feather icon-corner-down-right"></i>
                             <span class="menu-item text-truncate" data-i18n="Report Realization">Report
                                 OS</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+            {{-- !SIDEBAR MENU DOCUMENT --}}
+            <li class=" nav-item">
+                <a class="d-flex align-items-center" href="#">
+                    <i data-feather="file-text" class="feather icon-file-text"></i>
+                    <span class="menu-title text-truncate" data-i18n="Document">Document</span>
+                </a>
+                <ul class="menu-content">
+                    <li class="{{ request()->segment(1) == 'documents' ? 'active' : '' }}">
+                        <a class="d-flex align-items-center" href="{{ route('documents.index') }}">
+                            <i data-feather="corner-down-right" class="feather icon-corner-down-right"></i>
+                            <span class="menu-item text-truncate" data-i18n="Document">Document</span>
                         </a>
                     </li>
                 </ul>

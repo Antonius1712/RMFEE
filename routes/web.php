@@ -94,7 +94,7 @@ Route::middleware(['breadcrumbs', 'auth'])->group(function () {
         });
 
         //? Data Table Realization.
-        Route::get('/data-table', 'Realization@RealizationDataTable')->name('realization.data-table');
+        // Route::get('/data-table', 'Realization@RealizationDataTable')->name('realization.data-table');
     });
 
     //? Report Budget & Realization.
@@ -107,6 +107,8 @@ Route::middleware(['breadcrumbs', 'auth'])->group(function () {
         Route::post('/realization', 'Report\ReportRealizationController@GenerateReport')->name('realization.generate');
         Route::post('/os', 'Report\ReportOsController@GenerateReport')->name('os.generate');
     });
+
+    Route::resource('documents', DocumentController::class);
 
     //? Setting Budget Group & User Module.
     Route::prefix('setting')->as('setting.')->group(function () {
