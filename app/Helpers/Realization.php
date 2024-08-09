@@ -215,15 +215,9 @@ class Realization {
     public static function UpdateBudgetRealization($RealizationData){
         $TypeOfInvoice = $RealizationData->Type_Of_Invoice;
         $DetailRealizationData = DetailRealization::GetDetailRealization($RealizationData->ID);
-<<<<<<< HEAD
 
         $ProfilePayment = SeaReport_Profile::where('ID', $RealizationData->Payment_To_ID)->select('LOB', 'TAX', 'VAT', 'ID', 'VATSubsidiesF')->first();
 
-=======
-        
-        $ProfilePayment = SeaReport_Profile::where('ID', $RealizationData->Payment_To_ID)->select('LOB', 'TAX', 'VAT', 'ID', 'VATSubsidiesF')->first();
-        
->>>>>>> dev-enhancement-june
         $IsOverLimit = false;
         foreach( $DetailRealizationData as $val ){
             if( ($val->total_amount_realization  / $val->exchange_rate_realization) > $val->REMAIN_BUDGET ) {
@@ -241,16 +235,7 @@ class Realization {
             // $IsOverLimit = false;
             switch ($TypeOfInvoice) {
                 case 'RMF':
-<<<<<<< HEAD
                     $OriginalAmountRealization = ($val->total_amount_realization  / $val->exchange_rate_realization);
-=======
-                    // $IsOverLimit = $val->total_amount_realization > $val->REMAIN_BUDGET ? true : false;
-                    $OriginalAmountRealization = ($val->total_amount_realization  / $val->exchange_rate_realization);
-                    
-                    /*
-                    TODO
-                    Getting LOB dari sp */
->>>>>>> dev-enhancement-june
 
                     if( $ProfilePayment->lob == '02' ){
                         /*?VatSubsidies = nilai VAT yang di subsidi.*/
@@ -267,16 +252,8 @@ class Realization {
 
                     $total_vat = $OriginalAmountRealization * $vat;
                     $total_tax = $OriginalAmountRealization * $tax;
-<<<<<<< HEAD
                     $OriginalAmountRealization = ($OriginalAmountRealization - $total_tax) + $total_vat;
 
-=======
-
-                    $OriginalAmountRealization = ($OriginalAmountRealization - $total_tax) + $total_vat;
-                    // dd($OriginalAmountRealization);
-
-                    /**/
->>>>>>> dev-enhancement-june
                     $IsOverLimit = $OriginalAmountRealization > $val->REMAIN_BUDGET ? true : false;
                     try {
                         $RemainBudget = ($val->REMAIN_BUDGET - $OriginalAmountRealization);
