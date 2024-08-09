@@ -234,7 +234,6 @@ class Realization {
             $IsOverLimit = false;
             switch ($TypeOfInvoice) {
                 case 'RMF':
-                    $IsOverLimit = $val->total_amount_realization > $val->REMAIN_BUDGET ? true : false;
                     $OriginalAmountRealization = ($val->total_amount_realization  / $val->exchange_rate_realization);
 
                     if( $ProfilePayment->lob == '02' ){

@@ -288,8 +288,10 @@
                         <tr>
                             @if( auth()->user()->getUserGroup->GroupCode != 'USER_RMFEE' )
                             <td class="clickable-td">
-                                <input type="checkbox" name="check_budget[]" id="" class="check_budget"
+                                @if($Budget->STATUS_BUDGET == 'WAITING APPROVAL')
+                                    <input type="checkbox" name="check_budget[]" id="" class="check_budget"
                                     value="" data-voucher_budget="{{ $Budget->VOUCHER }}">
+                                @endif
                             </td>
                             @endif
                             <td>
@@ -361,7 +363,7 @@
                             <td>{{ $Budget->REALIZATION_RMF }}</td>
                             <td>{{ $Budget->REALIZATION_SPONSORSHIP }}</td>
                             <td>{{ $Budget->REMAIN_BUDGET }}</td>
-                            <td>{!! $Budget->STATUS_BUDGET !!}</td>
+                            <td>{!! $Budget->STATUS_BUDGET_DISPLAY !!}</td>
                             <td>{{ $Budget->STATUS_REALIZATION }}</td>
                             <td style="display:none;">{{ $Budget->ProposedTo }}</td>
                             <td style="display:none;">{{ $Budget->LAST_EDITED_BY }}</td>

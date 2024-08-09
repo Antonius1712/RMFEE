@@ -142,27 +142,27 @@ class BudgetController extends Controller
             $data->REMAIN_BUDGET = number_format($data->REMAIN_BUDGET, 2);
 
             if( $data->STATUS_BUDGET == 'NEW' ){
-                $data->STATUS_BUDGET =  '<div class="badge badge-pill badge-info" style="font-size: 16px;">
+                $data->STATUS_BUDGET_DISPLAY =  '<div class="badge badge-pill badge-info" style="font-size: 16px;">
                     <li>'.$data->STATUS_BUDGET.'</li>
                 </div>';
             } else if ( $data->STATUS_BUDGET == BudgetStatus::DRAFT ){
-                $data->STATUS_BUDGET =  '<div class="badge badge-pill badge-info" style="font-size: 16px;">
+                $data->STATUS_BUDGET_DISPLAY =  '<div class="badge badge-pill badge-info" style="font-size: 16px;">
                     <li>'.$data->STATUS_BUDGET.'</li>
                 </div>'; 
             } else if ( $data->STATUS_BUDGET == BudgetStatus::WAITING_APPROVAL ){
-                $data->STATUS_BUDGET =  '<div class="badge badge-pill badge-warning" style="font-size: 16px;">
+                $data->STATUS_BUDGET_DISPLAY =  '<div class="badge badge-pill badge-warning" style="font-size: 16px;">
                     <li>'.$data->STATUS_BUDGET.'</li>
                 </div>'; 
             } else if ( $data->STATUS_BUDGET == BudgetStatus::ARCHIVED ){
-                $data->STATUS_BUDGET =  '<div class="badge badge-pill badge-danger" style="font-size: 16px;">
+                $data->STATUS_BUDGET_DISPLAY =  '<div class="badge badge-pill badge-danger" style="font-size: 16px;">
                     <li>'.$data->STATUS_BUDGET.'</li>
                 </div>'; 
             } else if ( $data->STATUS_BUDGET == BudgetStatus::APPROVED ){
-                $data->STATUS_BUDGET =  '<div class="badge badge-pill badge-success" style="font-size: 16px;">
+                $data->STATUS_BUDGET_DISPLAY =  '<div class="badge badge-pill badge-success" style="font-size: 16px;">
                     <li>'.$data->STATUS_BUDGET.'</li>
                 </div>'; 
             } else if ( $data->STATUS_BUDGET == BudgetStatus::REJECTED ){
-                $data->STATUS_BUDGET =  '<div class="badge badge-pill badge-danger" style="font-size: 16px;">
+                $data->STATUS_BUDGET_DISPLAY =  '<div class="badge badge-pill badge-danger" style="font-size: 16px;">
                     <li>'.$data->STATUS_BUDGET.'</li>
                 </div>'; 
             }
@@ -175,17 +175,17 @@ class BudgetController extends Controller
         return view('pages.budget.list', compact('NBRN', 'branchList', 'statusPremi', 'statusRealisasi', 'statusBudget', 'Budgets'));
     }
 
-    public function show($voucher, $archived = 0){
-        $voucher = str_replace('~', '/', $voucher);
-        $Budget = Budget::GetBudget($voucher, $archived);
-        $Logs = Logger::GetLog(LogStatus::BUDGET, $voucher);
-        $BudgetInAmount = ($Budget->Budget/100) * $Budget->LGI_PREMIUM;
-        $VoucherId = str_replace("/", "~", $Budget->VOUCHER);
-        $BrokerId = explode('-', $Budget->BROKERNAME, 2)[0];
-        $BrokerName = explode('-', $Budget->BROKERNAME, 2)[1];
-        $StatusBudgetWhenEditBudgetAfterApprovalShouldBe = BudgetStatus::APPROVED;
-        return view('pages.budget.show', compact('Budget', 'BudgetInAmount', 'VoucherId', 'BrokerName', 'BrokerId', 'Logs', 'StatusBudgetWhenEditBudgetAfterApprovalShouldBe'));
-    }
+    // public function show($voucher, $archived = 0){
+    //     $voucher = str_replace('~', '/', $voucher);
+    //     $Budget = Budget::GetBudget($voucher, $archived);
+    //     $Logs = Logger::GetLog(LogStatus::BUDGET, $voucher);
+    //     $BudgetInAmount = ($Budget->Budget/100) * $Budget->LGI_PREMIUM;
+    //     $VoucherId = str_replace("/", "~", $Budget->VOUCHER);
+    //     $BrokerId = explode('-', $Budget->BROKERNAME, 2)[0];
+    //     $BrokerName = explode('-', $Budget->BROKERNAME, 2)[1];
+    //     $StatusBudgetWhenEditBudgetAfterApprovalShouldBe = BudgetStatus::APPROVED;
+    //     return view('pages.budget.show', compact('Budget', 'BudgetInAmount', 'VoucherId', 'BrokerName', 'BrokerId', 'Logs', 'StatusBudgetWhenEditBudgetAfterApprovalShouldBe'));
+    // }
 
     public function edit($voucher, $archived = 0){
         $voucher = str_replace('~', '/', $voucher);
@@ -386,6 +386,9 @@ class BudgetController extends Controller
     public function multipleApprove(Request $request){
         $UrlParameter = http_build_query($request->query());
         $Vouchers = json_decode($request->vouchers);
+        if( count($Vouchers) == 0 ){
+            return redirect()->back()->with("notification", "There's no Vouchers Selected.");
+        }
         foreach($Vouchers as $voucher){
             Budget::UpdateBudgetOnlyStatus('approve', $voucher, null);
             Logger::SaveLog(LogStatus::BUDGET, $voucher, 'Approved');
