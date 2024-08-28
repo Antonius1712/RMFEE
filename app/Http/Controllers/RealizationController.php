@@ -379,7 +379,10 @@ class RealizationController extends Controller
         return view('pages.realization.show', compact('RealizationData', 'Currencies', 'TypeOfInvoice', 'TypeOfPayment', 'BrokerData', 'PaymentToData', 'TotalAmountRealization', 'TotalRealizationRMF', 'TotalRealizationSponsorship', 'ApprovalBU', 'ApprovalBUName', 'ApprovalFinance', 'ApprovalFinanceName', 'EpoChecker', 'EpoApproval', 'Logs'));
     }
 
-    public function approve($invoice_no){
+    public function approve(Request $request, $invoice_no){
+        $UrlParameter = http_build_query($request->query());
+        $route = route('realization.index') . '?' . $UrlParameter;
+
         $invoice_no_real = str_replace('~', '/', $invoice_no);
         $AuthUserGroup = Auth()->user()->getUserGroup->GroupCode;
         $RealizationData = Realization::GetRealization($invoice_no_real)[0];
@@ -471,10 +474,13 @@ class RealizationController extends Controller
         $Realization_id = ReportGenerator_Realization_Group::where('invoice_no', $invoice_no_real)->value('id');
         Logger::SaveLog(LogStatus::REALIZATION, $Realization_id, 'APPROVE');
 
-        return redirect()->back()->with('noticication', 'Invoice <b>'.$invoice_no_real.'</b> Successfully Approved');
+        return redirect()->to($route)->with('noticication', 'Invoice <b>'.$invoice_no_real.'</b> Successfully Approved');
     }
 
-    public function propose($invoice_no){
+    public function propose(Request $request, $invoice_no){
+        $UrlParameter = http_build_query($request->query());
+        $route = route('realization.index') . '?' . $UrlParameter;
+
         $invoice_no_real = str_replace('~', '/', $invoice_no);
         try {
             Realization::UpdateRealizationGroupStatus(RealizationStatus::WAITING_APPROVAL_BU, $invoice_no_real);
@@ -485,10 +491,13 @@ class RealizationController extends Controller
         $Realization_id = ReportGenerator_Realization_Group::where('invoice_no', $invoice_no_real)->value('id');
         Logger::SaveLog(LogStatus::REALIZATION, $Realization_id, 'PROPOSE');
 
-        return redirect()->back()->with('noticication', 'Invoice <b>'.$invoice_no_real.'</b> Successfully Proposed');
+        return redirect()->to($route)->with('noticication', 'Invoice <b>'.$invoice_no_real.'</b> Successfully Proposed');
     }
 
-    public function reject($invoice_no){
+    public function reject(Request $request, $invoice_no){
+        $UrlParameter = http_build_query($request->query());
+        $route = route('realization.index') . '?' . $UrlParameter;
+
         $invoice_no_real = str_replace('~', '/', $invoice_no);
         try {
             Realization::UpdateRealizationGroupStatus(RealizationStatus::REJECTED, $invoice_no_real);
@@ -499,6 +508,6 @@ class RealizationController extends Controller
         $Realization_id = ReportGenerator_Realization_Group::where('invoice_no', $invoice_no_real)->value('id');
         Logger::SaveLog(LogStatus::REALIZATION, $Realization_id, 'REJECT');
 
-        return redirect()->back()->with('noticication', 'Invoice <b>'.$invoice_no_real.'</b> Successfully Rejected');
+        return redirect()->to($route)->with('noticication', 'Invoice <b>'.$invoice_no_real.'</b> Successfully Rejected');
     }
 }
