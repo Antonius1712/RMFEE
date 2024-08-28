@@ -186,6 +186,21 @@
                                     <a href="{{ route('realization.index') }}" style="width: 100%; height: 60px;" class="btn btn-primary radius-100 mt-2">
                                         <b style="font-size: 18px;">Back</b>
                                     </a>
+
+                                    <hr/>
+
+                                    @php
+                                    $AuthUserGroup = Auth()->user()->getUserGroup->GroupCode;
+                                    @endphp
+                                    @if( $AuthUserGroup == config('GroupCodeApplication.HEAD_FINANCE_RMFEE') )
+                                        <a href="{{ route('realization.approve', $RealizationData->Invoice_No) }}" style="width: 100%; height: 60px;" class="btn btn-outline-primary radius-100">
+                                            <b style="font-size: 18px;">Approve</b>
+                                        </a>
+                            
+                                        <a href="{{ route('realization.reject', $RealizationData->Invoice_No) }}" style="width: 100%; height: 60px;" class="btn btn-primary radius-100 mt-2">
+                                            <b style="font-size: 18px;">Reject</b>
+                                        </a>    
+                                    @endif
                                 </div>
                             </div>
                         </div>
