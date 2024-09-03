@@ -41,9 +41,9 @@
 
     <div class="card">
         <div class="card-body table-responsive">
-            <table class="table table-compact" style="border-radius: 100px;">
+            <table class="table table-compact table-bordered table-striped" style="border-radius: 100px; position: relative;">
                 <thead>
-                    <tr class="default">
+                    <tr class="bg-primary text-white">
                         <th>Action</th>
                         <th>Class</th>
                         <th>SOB</th>
@@ -64,7 +64,6 @@
                 </thead>
                 <tbody>
                     @foreach ($DetailRealization as $val)
-                    {{-- {{ dd($val) }} --}}
                         <tr>
                             <td>
                                 <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
@@ -102,16 +101,28 @@
                             <td>{{ $val->POLICYNO }}</td>
                             <td>{{ $val->STATUS_BUDGET }}</td>
                             <td>{{ $val->STATUS_REALIZATION }}</td>
-                            <td>{{ number_format($val->PREMIUM) }}</td>
-                            <td>{{ $val->Persentage }}</td>
-                            <td>{{ number_format($val->Budget) }}</td>
-                            <td>{{ number_format($val->amount_realization) }}</td>
+                            <td class="text-right">{{ number_format($val->PREMIUM) }}</td>
+                            <td class="text-right">{{ number_format($val->Persentage, 2) }}</td>
+                            <td class="text-right">{{ number_format($val->Budget) }}</td>
+                            <td class="text-right">{{ number_format($val->amount_realization) }}</td>
                             <td>{{ $val->currency_realization }}</td>
-                            <td>{{ number_format($val->exchange_rate_realization) }}</td>
-                            <td>{{ number_format($val->total_amount_realization) }}</td>
+                            <td class="text-right">{{ number_format($val->exchange_rate_realization) }}</td>
+                            <td class="text-right">{{ number_format($val->total_amount_realization) }}</td>
                         </tr>
                     @endforeach
                 </tbody>
+                <tfoot class="bg-primary text-white w-full" style="position: fixed; bottom: 0; right: 0;">
+                    <tr>
+                        <td colspan="15" class="text-right">
+                            Total Amount Realization :
+                        </td>
+                        <td class="text-right border-bottom-black border-top-black">
+                            <b class="font-medium-1">
+                                {{ number_format($SumTotalAmountRealizaton, 2) }}
+                            </b>
+                        </td>
+                    </tr>
+                </tfoot>
             </table>
         </div>
     </div>
