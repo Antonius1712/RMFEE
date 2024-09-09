@@ -11,6 +11,8 @@
 |
 */
 
+use App\Http\Controllers\DocumentController;
+
 Auth::routes();
 
 Route::get('/sf', 'HomeController@sf')->name('sf');
@@ -24,6 +26,9 @@ Route::middleware(['breadcrumbs', 'auth'])->group(function () {
         // Lists
         Route::get('/archive', 'BudgetController@archiveList')->name('budget.archive-list');
         Route::get('/list-budget', 'BudgetController@index')->name('budget.list');
+
+        // Show
+        // Route::get('/{voucher}', 'BudgetController@show')->name('budget.show');
 
         // Edit & Update
         Route::get('/edit-budget-archived/{voucher}/{archived}', 'BudgetController@edit')->name('budget-archived.edit');
@@ -91,7 +96,7 @@ Route::middleware(['breadcrumbs', 'auth'])->group(function () {
         });
 
         //? Data Table Realization.
-        Route::get('/data-table', 'Realization@RealizationDataTable')->name('realization.data-table');
+        // Route::get('/data-table', 'Realization@RealizationDataTable')->name('realization.data-table');
     });
 
     //? Report Budget & Realization.
@@ -104,6 +109,8 @@ Route::middleware(['breadcrumbs', 'auth'])->group(function () {
         Route::post('/realization', 'Report\ReportRealizationController@GenerateReport')->name('realization.generate');
         Route::post('/os', 'Report\ReportOsController@GenerateReport')->name('os.generate');
     });
+
+    Route::resource('documents', 'DocumentController', ['middleware' => 'only.timmie.access']);
 
     //? Setting Budget Group & User Module.
     Route::prefix('setting')->as('setting.')->group(function () {

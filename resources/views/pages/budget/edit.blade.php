@@ -200,7 +200,7 @@
                     <tr class="default">
                         <th>Name</th>
                         <th>Status</th>
-                        <th>Desc</th>
+                        <th>Desc / Budget</th>
                         <th>Date</th>
                         <th>Time</th>
                     </tr>
@@ -282,18 +282,23 @@
             // Calculate Budget in Amount.
             budgetInAmount = budgetPercent * clear_number_format(lgiPremi);
 
+            let StatusBudget = `{{ $Budget->STATUS_BUDGET }}`;
+            let StatusBudgetWhenEditBudgetAfterApprovalShouldBe = `{{ $StatusBudgetWhenEditBudgetAfterApprovalShouldBe }}`;
             let CurrentBudget = parseInt(`{{ $Budget->Budget }}`);
 
-            if (CurrentBudget > 0) {
-                if (budgetInAmount < CurrentBudget) {
-                    swal(
-                        'Whoops!',
-                        `Budget must be higher than current budget.`,
-                        'warning'
-                    );
-                    return false;
+            if( StatusBudget == StatusBudgetWhenEditBudgetAfterApprovalShouldBe ){
+                if (CurrentBudget > 0) {
+                    if (budgetInAmount < CurrentBudget) {
+                        swal(
+                            'Whoops!',
+                            `Budget must be higher than current budget.`,
+                            'warning'
+                        );
+                        return false;
+                    }
                 }
             }
+
             // Show Calculation Result of Budget in Amount
             $('#budget_in_amount').val(number_format(budgetInAmount));
         });
