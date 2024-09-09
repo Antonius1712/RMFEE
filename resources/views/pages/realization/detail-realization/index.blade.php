@@ -23,6 +23,19 @@
                 <span class="text-white">Propose</span>
             </a>
             @endif
+
+            @php
+            $AuthUserGroup = Auth()->user()->getUserGroup->GroupCode;
+            @endphp
+            @if( $AuthUserGroup == config('GroupCodeApplication.HEAD_FINANCE_RMFEE') )
+            <a href="{{ route('realization.approve', $invoice_no) }}" class="btn btn-primary pull-right radius-100 mr-2" style="font-size: 18px;">
+                <span class="text-white">Approve</span>
+            </a>
+
+            <a href="{{ route('realization.reject', $invoice_no) }}" class="btn btn-primary pull-right radius-100 mr-2" style="font-size: 18px;">
+                <span class="text-white">Reject</span>
+            </a>
+            @endif
         </div>
     </div>
 
