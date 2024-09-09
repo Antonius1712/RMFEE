@@ -145,7 +145,7 @@
                             <div class="form-group row">
                                 <label for="exchange_rate" class="col-lg-3 col-form-label-lg">Exchange Rate</label>
                                 <label class="col-lg-1 col-form-label-lg">:</label>
-                                <input type="text" name="exchange_rate" id="exchange_rate" class="form-control col-lg-8" placeholder="Exchange Rate" readonly>
+                                <input type="text" name="exchange_rate" id="exchange_rate" class="form-control col-lg-8" placeholder="Exchange Rate" value="1" readonly>
                             </div>
                             <div class="form-group row">
                                 <label for="total_amount_realization" class="col-lg-3 col-form-label-lg">Total Amount Realization</label>
@@ -231,14 +231,14 @@
                 $('#date_of_premium_paid').val(data.PAYMENT_DATE);
                 $('#premium_note').val(data.COMMENT);
                 $('#budget').val(data.Persentage);
-                $('#budget_in_amount').val(number_format(data.Budget));
+                
                 if( data.CURRENCY == 'IDR' ){
                     $('#remain_budget').val(number_format(data.REMAIN_BUDGET, 2));
-                    console.log(number_format(data.REMAIN_BUDGET, 2));
+                    $('#budget_in_amount').val(number_format(data.Budget, 2));
                 }else{
                     originalCurrencyIDR = false;
                     $('#remain_budget').val(number_format(data.REMAIN_BUDGET, 4));
-                    console.log(number_format(data.REMAIN_BUDGET, 4));
+                    $('#budget_in_amount').val(number_format(data.Budget, 4));
                 }
                 $('#voucher').val(data.VOUCHER);
 
@@ -292,6 +292,14 @@
             tax_original = amount_realization * tax;
             vat_original = amount_realization * vat;
             amount_realization_after_tax = (amount_realization - tax_original) + vat_original;
+            
+            if( data.CURRENCY == 'IDR' ){
+                amount_realization_after_tax = number_format(amount_realization_after_tax, 2);
+            }else{
+                amount_realization_after_tax = number_format(amount_realization_after_tax, 4);
+            }
+
+            
             $('#amount_realization_after_tax').val(amount_realization_after_tax);
             /* ?END TOTAL ORIGINAL CURRENCY AFTER TAX. */
 

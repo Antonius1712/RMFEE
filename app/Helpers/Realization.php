@@ -162,7 +162,7 @@ class Realization {
             // dd('xx');
 
             if( $DocumentPath_upload_invoice == null || $DocumentPath_upload_survey_report == null ) {
-                $RealizationFileData = DB::connection(Database::REPORT_GENERATOR)->select("EXECUTE [dbo].[SP_Get_Group_Realization_Engineering_Fee] '$invoice_no_real', '', '', '', '', ''")[0];
+                $RealizationFileData = DB::connection(Database::REPORT_GENERATOR)->select("EXECUTE [dbo].[SP_Get_Group_Realization_Engineering_Fee] '$invoice_no_real', '', '', '', ''")[0];
 
                 if( $DocumentPath_upload_invoice == null ) {
                     $DocumentPath_upload_invoice = $RealizationFileData->Upload_Invoice_Path;
@@ -220,19 +220,18 @@ class Realization {
 
         $IsOverLimit = false;
         foreach( $DetailRealizationData as $val ){
-            if( ($val->total_amount_realization  / $val->exchange_rate_realization) > $val->REMAIN_BUDGET ) {
+            if( $val->total_amount_realization > $val->REMAIN_BUDGET ) {
                 $IsOverLimit = true;
                 break;
             }
         }
         
         if( $IsOverLimit ) {
-            // return BudgetStatus::OVERLIMIT;
+            return BudgetStatus::OVERLIMIT;
         }
         
         foreach( $DetailRealizationData as $val ){
-            // dd($val, $ProfilePayment);
-            // $IsOverLimit = false;
+            $IsOverLimit = false;
             switch ($TypeOfInvoice) {
                 case 'RMF':
                     $OriginalAmountRealization = ($val->total_amount_realization  / $val->exchange_rate_realization);
@@ -256,9 +255,9 @@ class Realization {
 
                     $IsOverLimit = $OriginalAmountRealization > $val->REMAIN_BUDGET ? true : false;
                     try {
-                        $RemainBudget = ($val->REMAIN_BUDGET - $OriginalAmountRealization);
+                        $RemainBudget = ($val->REMAIN_BUDGET - $val->total_amount_realization);
 
-                        DB::connection(Database::REPORT_GENERATOR)->statement("EXECUTE [dbo].[SP_Update_Budget_Realization_RMF_Engineering_Fee] $OriginalAmountRealization, '$val->VOUCHER', '' ");
+                        DB::connection(Database::REPORT_GENERATOR)->statement("EXECUTE [dbo].[SP_Update_Budget_Realization_RMF_Engineering_Fee] $val->total_amount_realization, '$val->VOUCHER', '' ");
 
                         DB::connection(Database::REPORT_GENERATOR)->statement("EXECUTE [dbo].[SP_Update_Budget_Realization_Remain_Budget_Engineering_Fee] $RemainBudget, '$val->VOUCHER', '' ");
                     } catch (Exception $e) {
@@ -267,12 +266,11 @@ class Realization {
                     
                     break;
                 case 'Sponsorship':
-                    $OriginalAmountRealization = ($val->total_amount_realization  / $val->exchange_rate_realization);
-                    $IsOverLimit = $OriginalAmountRealization > $val->REMAIN_BUDGET ? true : false;
+                    $IsOverLimit = $val->total_amount_realization > $val->REMAIN_BUDGET ? true : false;
                     try {
-                        $RemainBudget = ($val->REMAIN_BUDGET - $OriginalAmountRealization);
+                        $RemainBudget = ($val->REMAIN_BUDGET - $val->total_amount_realization);
 
-                        DB::connection(Database::REPORT_GENERATOR)->statement("EXECUTE [dbo].[SP_Update_Budget_Realization_Sponsorship_Engineering_Fee] $OriginalAmountRealization, '$val->VOUCHER', '' ");
+                        DB::connection(Database::REPORT_GENERATOR)->statement("EXECUTE [dbo].[SP_Update_Budget_Realization_Sponsorship_Engineering_Fee] $val->total_amount_realization, '$val->VOUCHER', '' ");
 
                         DB::connection(Database::REPORT_GENERATOR)->statement("EXECUTE [dbo].[SP_Update_Budget_Realization_Remain_Budget_Engineering_Fee] $RemainBudget, '$val->VOUCHER', '' ");
                     } catch (Exception $e) {
@@ -283,8 +281,6 @@ class Realization {
                 break;
             }
         }
-
-        // dd('qwe');
 
         return BudgetStatus::NOTOVERLIMIT;
     }
