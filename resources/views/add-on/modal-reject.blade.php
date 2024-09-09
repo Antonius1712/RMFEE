@@ -8,7 +8,7 @@
                 <div class="modal-header" style="background-color:white;">
                     <h2 class="modal-title font-weight-bold">Reject this?</h2>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body" id="modal-body">
                     <p>Once you reject this, the maker still can do approval again.</p>
                     <input type="text" name="comment" id="comment" class="form-control"
                         placeholder="Additional Note">

@@ -57,6 +57,14 @@ class Utils {
         }
     }
 
+    public static function GetCOB(){
+        try {
+            return DB::connection(Database::REPORT_GENERATOR)->select("EXECUTE [dbo].[SP_Get_COB_Engineering_Fee]");
+        } catch (Exception $e) {
+            return [];
+        }
+    }
+
     // ! Function Search.
     public static function SearchProfile($keywords, $currency = null){
         try {
@@ -149,6 +157,27 @@ class Utils {
         $negation = ($number < 0) ? (-1) : 1;
         $coefficient = 10 ** $decimals;
         return $negation * floor((string)(abs($number) * $coefficient)) / $coefficient;
+    }
+
+    public static function Decrypt($password){
+        $iv = base64_decode( env('PASSWORD_IV_ENCODE_LGI_GLOBAL') );
+        $key = base64_decode( env('PASSWORD_KEY_ENCODE_LGI_GLOBAL') );
+
+        $decrypttext = @mcrypt_decrypt(MCRYPT_RIJNDAEL_128, $key,  base64_decode($password), MCRYPT_MODE_CBC, $iv);
+
+        $result = preg_replace('/[\x00-\x09\x0B\x0C\x0E-\x1F\x7F]/u', '', $decrypttext);// remove unwanted bytes from encrypting binary data
+
+        return $result;
+    }
+
+    public static function ValidateStatusBudget($arr, &$errorKey = null) {
+        foreach ($arr as $key => $value) {
+            if ($value !== 'APPROVED') {
+                $errorKey = $key;
+                return false;
+            }
+        }
+        return true;
     }
 }
 ?>

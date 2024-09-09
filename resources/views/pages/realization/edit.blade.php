@@ -72,6 +72,11 @@
                                 <input type="text" name="payment_to" id="payment_to" class="form-control col-lg-8" placeholder="Payment To" value="{{ isset($PaymentToData) && $PaymentToData != '' ? $PaymentToData->ID : ''}}">
                             </div>
                             <div class="form-group row">
+                                <label for="date_of_request" class="col-lg-3 col-form-label-lg">Date of Request</label>
+                                <label class="col-lg-1 col-form-label-lg">:</label>
+                                <input type="text" name="date_of_request" id="date_of_request" class="form-control col-lg-8" placeholder="Date of Request" value="{{ isset($RealizationData->Date_Of_Request) ? $RealizationData->Date_Of_Request : '' }}">
+                            </div>
+                            <div class="form-group row">
                                 <label for="account_name" class="col-lg-3 col-form-label-lg">Account Name</label>
                                 <label class="col-lg-1 col-form-label-lg">:</label>
                                 <input type="text" name="account_name" id="account_name" class="form-control col-lg-8" placeholder="Account Name" readonly value="{{ isset($PaymentToData) && $PaymentToData != '' ? $PaymentToData->BankAccount : ''}}">
@@ -109,7 +114,7 @@
                             <div class="form-group row">
                                 <label for="upload_invoice" class="col-lg-3 col-form-label-lg">Upload Invoice</label>
                                 <label class="col-lg-1 col-form-label-lg">:</label>
-                                <input type="file" name="upload_invoice" id="upload_invoice" class="form-control {{ $RealizationData->Upload_Invoice_Path ? 'col-lg-6' : 'col-lg-8' }}" placeholder="Upload Invoice" value="">
+                                <input type="file" name="upload_invoice" id="upload_invoice" class="form-control {{ $RealizationData->Upload_Invoice_Path ? 'col-lg-6' : 'col-lg-8' }}" placeholder="Upload Invoice" value="" {{ auth()->user()->getUserGroup->GroupCode != config('GroupCodeApplication.USER_RMFEE') ? 'disabled' : '' }}>
                                 {{-- <a href="javascript:;" data-path="{{ $RealizationData->Upload_Invoice_Path }}" class="primary ViewDocumentRealizationModal col-lg-2">
                                     <i class="feather icon-eye"></i>
                                     Show
@@ -124,7 +129,7 @@
                             <div class="form-group row">
                                 <label for="upload_survey_report" class="col-lg-3 col-form-label-lg">Upload Survey Report</label>
                                 <label class="col-lg-1 col-form-label-lg">:</label>
-                                <input type="file" name="upload_survey_report" id="upload_survey_report" class="form-control {{ $RealizationData->Upload_Survey_Report_Path ? 'col-lg-6' : 'col-lg-8' }}" placeholder="Upload Survey Report" value="">
+                                <input type="file" name="upload_survey_report" id="upload_survey_report" class="form-control {{ $RealizationData->Upload_Survey_Report_Path ? 'col-lg-6' : 'col-lg-8' }}" placeholder="Upload Survey Report" value="" {{ auth()->user()->getUserGroup->GroupCode != config('GroupCodeApplication.USER_RMFEE') ? 'disabled' : '' }}>
                                 {{-- <a href="javascript:;" data-path="{{ $RealizationData->Upload_Survey_Report_Path }}" class="primary ViewDocumentRealizationModal col-lg-2">
                                     <i class="feather icon-eye"></i>
                                     Show
@@ -220,6 +225,32 @@
             </div>
             <input type="hidden" name="from" value="edit"/>
         </form>
+
+        <div class="card-body default text-center">Log Activity</div>
+        <table class="table table-bordered">
+            <thead>
+                <tr class="default">
+                    <th>Name</th>
+                    <th>Status</th>
+                    <th>Desc</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if( isset($Logs) )
+                    @foreach ($Logs as $Log)
+                    <tr class="text-center">
+                        <td>{{ $Log->NIK.' - '.$Log->getUser->Name }}</td>
+                        <td>{{ $Log->Status }}</td>
+                        <td>{{ $Log->Description }}</td>
+                        <td>{{ date('Y-m-d', strtotime($Log->Date)) }}</td>
+                        <td>{{ $Log->Time }}</td>
+                    </tr>
+                    @endforeach
+                @endif
+            </tbody>
+        </table>
     </div>
 </div>
 @include('add-on.modal-view-file-realization')
@@ -236,7 +267,7 @@
             });
         }); 
         // ! Datepicker Invoice Date
-        $('#invoice_date').datepicker({
+        $('#invoice_date, #date_of_request').datepicker({
             dateFormat: 'dd M yy',
             autoclose: true,
             todayHighlight: true,

@@ -5,6 +5,7 @@ namespace App\Helpers;
 use App\Enums\BudgetStatus;
 use App\Enums\Database;
 use App\Enums\RealizationStatus;
+use App\Model\SeaReport_Profile;
 use App\Pipeline\Pipes;
 use Exception;
 use Illuminate\Pipeline\Pipeline;
@@ -27,10 +28,14 @@ class Realization {
         }
     }
 
-    public static function GetRealization($invoice_no = null){
+    public static function GetRealization($invoice_no = null, $FilterStatusRealization = null, $FilterBrokerName = null, $FilterLastUpdate = null, $FilterCOB = null, $FilterTypeOfPayment = null){
+        // dd($invoice_no, $FilterStatusRealization, $FilterBrokerName, $FilterLastUpdate, $FilterCOB, $FilterTypeOfPayment);
         $UserGroup = auth()->user()->getUserGroup->GroupCode;
         try {
-            $RealizationData = DB::connection(Database::REPORT_GENERATOR)->select("EXECUTE [dbo].[SP_Get_Group_Realization_Engineering_Fee] '$invoice_no'");
+            $RealizationData = DB::connection(Database::REPORT_GENERATOR)->select("EXECUTE [dbo].[SP_Get_Group_Realization_Engineering_Fee] '$invoice_no', '$FilterStatusRealization', '$FilterBrokerName', '$FilterLastUpdate', '$FilterCOB', '$FilterTypeOfPayment'");
+
+            // dd($RealizationData);
+            
             $CountRealization = count($RealizationData);
 
             switch ($CountRealization) {
@@ -47,6 +52,7 @@ class Realization {
                     break;
             }
         } catch (Exception $e) {
+            // dd($e->getMessage());
             return $e->getMessage();
         }
     }
@@ -79,6 +85,7 @@ class Realization {
             $CreatedDate = now()->format('Y-m-d');
             $lastUpdateBy = auth()->user()->UserId;
             $lastUpdate = now()->format('Y-m-d');
+            $date_of_request = $param->date_of_request;
 
             // $upload_invoice = $param->upload_invoice;
             // $upload_survey_report = $param->upload_survey_report;
@@ -101,7 +108,7 @@ class Realization {
                 $DocumentPath_upload_survey_report = 'images/Realization/Survey_Report/'.$filename;
             }
 
-            DB::connection(Database::REPORT_GENERATOR)->select("EXECUTE [dbo].[SP_Insert_Group_Realization_Engineering_Fee] '$invoice_no', '$type_of_invoice', '$type_of_payment', '$currency', '$invoice_date', '$broker_id', '$payment_to', '$DocumentPath_upload_invoice', '$DocumentPath_upload_survey_report', '$approval_bu', '$approval_finance', '$epo_checker', '$epo_approval', '$status_realization', '$remarks', '$CreatedBy', '$CreatedDate', '$lastUpdateBy', '$lastUpdate'");
+            DB::connection(Database::REPORT_GENERATOR)->statement("EXECUTE [dbo].[SP_Insert_Group_Realization_Engineering_Fee] '$invoice_no', '$type_of_invoice', '$type_of_payment', '$currency', '$invoice_date', '$broker_id', '$payment_to', '$DocumentPath_upload_invoice', '$DocumentPath_upload_survey_report', '$approval_bu', '$approval_finance', '$epo_checker', '$epo_approval', '$status_realization', '$remarks', '$CreatedBy', '$CreatedDate', '$lastUpdateBy', '$lastUpdate', '$date_of_request'");
 
             // dd($lastUpdateBy, $lastUpdate);
 
@@ -113,6 +120,7 @@ class Realization {
     public static function UpdateRealizationGroup($param = null, $InvoiceNumber = null, $status_realization = RealizationStatus::DRAFT){
         try {
             $invoice_no = isset($param->invoice_no) ? $param->invoice_no : (isset($InvoiceNumber) ? $InvoiceNumber : null);
+            $invoice_no_real = str_replace('~', '/', $invoice_no);
             $type_of_invoice = isset($param->type_of_invoice) ? $param->type_of_invoice : null;
             $type_of_payment = isset($param->type_of_payment) ? $param->type_of_payment : null;
             $currency = isset($param->currency) ? $param->currency : null;
@@ -127,6 +135,7 @@ class Realization {
             $remarks = $param->remarks;
             $lastUpdateBy = auth()->user()->UserId;
             $lastUpdate = now()->format('Y-m-d');
+            $date_of_request = $param->date_of_request;
 
 
             $DocumentPath_upload_invoice = null;
@@ -153,7 +162,7 @@ class Realization {
             // dd('xx');
 
             if( $DocumentPath_upload_invoice == null || $DocumentPath_upload_survey_report == null ) {
-                $RealizationFileData = DB::connection(Database::REPORT_GENERATOR)->select("EXECUTE [dbo].[SP_Get_Group_Realization_Engineering_Fee] '$InvoiceNumber'")[0];
+                $RealizationFileData = DB::connection(Database::REPORT_GENERATOR)->select("EXECUTE [dbo].[SP_Get_Group_Realization_Engineering_Fee] '$invoice_no_real', '', '', '', '', ''")[0];
 
                 if( $DocumentPath_upload_invoice == null ) {
                     $DocumentPath_upload_invoice = $RealizationFileData->Upload_Invoice_Path;
@@ -164,23 +173,29 @@ class Realization {
                 }
             }
 
+            
             //! INI UNTUK SAVE PATH UPLOAD_INVOICE
             try {
                 DB::connection(Database::REPORT_GENERATOR)->statement("EXECUTE [dbo].[SP_Update_Invoice_Group_Realization_Engineering_Fee] '$invoice_no', '$DocumentPath_upload_invoice'");
             } catch(Exception $e) {
                 Log::error('Error Update Realization Invoice Exception = ' . $e->getMessage());
             }
-
+            
             //! INI UNTUK SAVE PATH UPLOAD_SURBEY_REPORT 
             try {
                 DB::connection(Database::REPORT_GENERATOR)->statement("EXECUTE [dbo].[SP_Update_Survey_Group_Realization_Engineering_Fee] '$invoice_no', '$DocumentPath_upload_survey_report'");   
             } catch(Exception $e) {
                 Log::error('Error Update Realization Survey Exception = ' . $e->getMessage());
             }
-
+            
+            // dd('zz', $DocumentPath_upload_invoice, $DocumentPath_upload_survey_report);
             //! INI UNTUK UPDATE REALISASI TANPA UPDATE KOLOM UPLOAD_INVOICE DAN UPLOAD_SURVEY.
             //? KOLOM UPLOAD _INVOICE DAN _SURVEY DI UPDATE DI ATAS.
-            return DB::connection(Database::REPORT_GENERATOR)->statement("EXECUTE [dbo].[SP_Update_Group_Realization_Engineering_Fee] '$InvoiceNumber', '$type_of_invoice', '$type_of_payment', '$currency', '$invoice_date', '$broker_id', '$payment_to', '$approval_bu', '$approval_finance', '$epo_checker', '$epo_approval', '$status_realization', '$remarks', '$lastUpdateBy', '$lastUpdate'");
+            $test = DB::connection(Database::REPORT_GENERATOR)->statement("EXECUTE [dbo].[SP_Update_Group_Realization_Engineering_Fee] '$InvoiceNumber', '$type_of_invoice', '$type_of_payment', '$currency', '$invoice_date', '$broker_id', '$payment_to', '$approval_bu', '$approval_finance', '$epo_checker', '$epo_approval', '$status_realization', '$remarks', '$lastUpdateBy', '$lastUpdate', '$date_of_request'");
+
+            // dd('xc');
+
+            return 'ok';
         } catch (Exception $e) {
             Log::error('Error Update Realization Group on Realization Helper Update Exception = ' . $e->getMessage());
         }
@@ -201,27 +216,49 @@ class Realization {
         $TypeOfInvoice = $RealizationData->Type_Of_Invoice;
         $DetailRealizationData = DetailRealization::GetDetailRealization($RealizationData->ID);
 
+        $ProfilePayment = SeaReport_Profile::where('ID', $RealizationData->Payment_To_ID)->select('LOB', 'TAX', 'VAT', 'ID', 'VATSubsidiesF')->first();
+
         $IsOverLimit = false;
         foreach( $DetailRealizationData as $val ){
-            if( $val->total_amount_realization > $val->REMAIN_BUDGET ) {
+            if( ($val->total_amount_realization  / $val->exchange_rate_realization) > $val->REMAIN_BUDGET ) {
                 $IsOverLimit = true;
                 break;
             }
         }
         
         if( $IsOverLimit ) {
-            return BudgetStatus::OVERLIMIT;
+            // return BudgetStatus::OVERLIMIT;
         }
         
         foreach( $DetailRealizationData as $val ){
-            $IsOverLimit = false;
+            // dd($val, $ProfilePayment);
+            // $IsOverLimit = false;
             switch ($TypeOfInvoice) {
                 case 'RMF':
-                    $IsOverLimit = $val->total_amount_realization > $val->REMAIN_BUDGET ? true : false;
-                    try {
-                        $RemainBudget = ($val->REMAIN_BUDGET - $val->total_amount_realization);
+                    $OriginalAmountRealization = ($val->total_amount_realization  / $val->exchange_rate_realization);
 
-                        DB::connection(Database::REPORT_GENERATOR)->statement("EXECUTE [dbo].[SP_Update_Budget_Realization_RMF_Engineering_Fee] $val->total_amount_realization, '$val->VOUCHER', '' ");
+                    if( $ProfilePayment->lob == '02' ){
+                        /*?VatSubsidies = nilai VAT yang di subsidi.*/
+                        $vat = 0;
+                        if( $ProfilePayment->VATSubsidiesF != 1 ){
+                            $vat = $ProfilePayment->vat;
+                        }
+                        $vat = ($vat / 100) * 0.2;
+                    }else{
+                        $vat = $ProfilePayment->vat / 100;
+                    }
+
+                    $tax = ($ProfilePayment->tax / 100);
+
+                    $total_vat = $OriginalAmountRealization * $vat;
+                    $total_tax = $OriginalAmountRealization * $tax;
+                    $OriginalAmountRealization = ($OriginalAmountRealization - $total_tax) + $total_vat;
+
+                    $IsOverLimit = $OriginalAmountRealization > $val->REMAIN_BUDGET ? true : false;
+                    try {
+                        $RemainBudget = ($val->REMAIN_BUDGET - $OriginalAmountRealization);
+
+                        DB::connection(Database::REPORT_GENERATOR)->statement("EXECUTE [dbo].[SP_Update_Budget_Realization_RMF_Engineering_Fee] $OriginalAmountRealization, '$val->VOUCHER', '' ");
 
                         DB::connection(Database::REPORT_GENERATOR)->statement("EXECUTE [dbo].[SP_Update_Budget_Realization_Remain_Budget_Engineering_Fee] $RemainBudget, '$val->VOUCHER', '' ");
                     } catch (Exception $e) {
@@ -230,11 +267,12 @@ class Realization {
                     
                     break;
                 case 'Sponsorship':
-                    $IsOverLimit = $val->total_amount_realization > $val->REMAIN_BUDGET ? true : false;
+                    $OriginalAmountRealization = ($val->total_amount_realization  / $val->exchange_rate_realization);
+                    $IsOverLimit = $OriginalAmountRealization > $val->REMAIN_BUDGET ? true : false;
                     try {
-                        $RemainBudget = ($val->REMAIN_BUDGET - $val->total_amount_realization);
+                        $RemainBudget = ($val->REMAIN_BUDGET - $OriginalAmountRealization);
 
-                        DB::connection(Database::REPORT_GENERATOR)->statement("EXECUTE [dbo].[SP_Update_Budget_Realization_Sponsorship_Engineering_Fee] $val->total_amount_realization, '$val->VOUCHER', '' ");
+                        DB::connection(Database::REPORT_GENERATOR)->statement("EXECUTE [dbo].[SP_Update_Budget_Realization_Sponsorship_Engineering_Fee] $OriginalAmountRealization, '$val->VOUCHER', '' ");
 
                         DB::connection(Database::REPORT_GENERATOR)->statement("EXECUTE [dbo].[SP_Update_Budget_Realization_Remain_Budget_Engineering_Fee] $RemainBudget, '$val->VOUCHER', '' ");
                     } catch (Exception $e) {
@@ -246,6 +284,8 @@ class Realization {
             }
         }
 
+        // dd('qwe');
+
         return BudgetStatus::NOTOVERLIMIT;
     }
 
@@ -256,6 +296,20 @@ class Realization {
             Log::error('Error Update Realization Group on Realization Helper Update Epo_No Exception = ' . $e->getMessage());
         }
     }
+
+
+    // // ! Report
+    // public static function GetReportRealizationSummary($start_date, $end_date, $status_realization){
+    //     $start_date = str_replace('/', '-', $start_date);
+    //     $end_date = str_replace('/', '-', $end_date);
+    //     return DB::connection(Database::REPORT_GENERATOR)->select("EXECUTE [dbo].[SP_Report_Realization_Summary_Engineering_Fee] '$start_date', '$end_date', '$status_realization'");
+    // }
+
+    // public static function GetReportRealizationDetail($start_date, $end_date, $status_realization){
+    //     $start_date = str_replace('/', '-', $start_date);
+    //     $end_date = str_replace('/', '-', $end_date);
+    //     return DB::connection(Database::REPORT_GENERATOR)->select("EXECUTE [dbo].[SP_Report_Realization_Detail_Engineering_Fee] '$start_date', '$end_date', '$status_realization'");
+    // }
 
 
     // ! Untuk EPO
@@ -291,10 +345,16 @@ class Realization {
         }else{
             $Survey_Report = 0;
         }
+
+        // dd($InvoiceNo, $TotalRealization, $FileSizeInvoice, $Invoice, $LinkApproval, $LinkChecker, $FileSizeSurvey_Report, $Survey_Report);
         
         try {
-            DB::connection("EPO114")->statement("EXECUTE [dbo].[SP_Insert_ePO_Engineering_Fee] '$InvoiceNo', $TotalRealization, $FileSizeInvoice, $Invoice, '$LinkApproval', '$LinkChecker', $FileSizeSurvey_Report, $Survey_Report ");
-            return ['status' => true, 'message' => 'ok',];
+            $results  = DB::connection("EPO114")->select("EXECUTE [dbo].[SP_Insert_ePO_Engineering_Fee] '$InvoiceNo', $TotalRealization, $FileSizeInvoice, $Invoice, '$LinkApproval', '$LinkChecker', $FileSizeSurvey_Report, $Survey_Report");
+
+            if( !empty($results ) ){
+                return ['status' => true, 'message' => 'ok', 'pid' => $results[0]->pid];
+            }
+            return ['status' => true, 'message' => 'ok', 'pid' => 0];
         } catch (Exception $e) {
             Log::error('Error While Inserting EPO When Finance Approve Invoice ' .$InvoiceNo . ' Exception = ' . $e->getMessage());
             return ['status' => false, 'message' => $e->getMessage()];

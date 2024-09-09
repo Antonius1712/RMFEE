@@ -117,7 +117,7 @@
                             <div class="form-group row">
                                 <label for="remain_budget" class="col-lg-3 col-form-label-lg">Remain Budget</label>
                                 <label class="col-lg-1 col-form-label-lg">:</label>
-                                <input type="text" name="remain_budget" id="remain_budget" class="form-control col-lg-8" placeholder="Remain Budget" readonly value="{{ number_format($DetailRealization->REMAIN_BUDGET) }}">
+                                <input type="text" name="remain_budget" id="remain_budget" class="form-control col-lg-8" placeholder="Remain Budget" readonly value="{{ $DetailRealization->CURRENCY == 'IDR' ? number_format($DetailRealization->REMAIN_BUDGET, 2) : number_format($DetailRealization->REMAIN_BUDGET, 4) }}">
                             </div>
                             <div class="form-group row">
                                 <label for="ending_balance" class="col-lg-3 col-form-label-lg">Ending Balance</label>
@@ -225,7 +225,13 @@
             $('#premium_note').val(data.COMMENT);
             $('#budget').val(data.Persentage);
             $('#budget_in_amount').val(number_format(data.Budget));
-            $('#remain_budget').val(number_format(data.REMAIN_BUDGET));
+            if( data.CURRENCY == 'IDR' ){
+                $('#remain_budget').val(number_format(data.REMAIN_BUDGET, 2));
+                console.log(number_format(data.REMAIN_BUDGET, 2));
+            }else{
+                $('#remain_budget').val(number_format(data.REMAIN_BUDGET, 4));
+                console.log(number_format(data.REMAIN_BUDGET, 4));
+            }
             $('#voucher').val(data.VOUCHER);
 
             $('#amount_realization').attr('readonly', false);
@@ -243,6 +249,7 @@
         let vat = `{{ $PaymentTo->VAT }}`;
         let tax = `{{ $PaymentTo->TAX }}`;
         let lob = `{{ $PaymentTo->LOB }}`;
+        let VatSubsidies = `{{ $PaymentTo->VATSubsidies }}`;
 
         let total_vat = 0;
         let total_tax = 0;
@@ -254,6 +261,8 @@
         total_amount_realization = amount_realization * exchange_rate;
 
         if( lob == '02' ){
+            /* VatSubsidies = nilai VAT yang di subsidi. */
+            vat = vat - VatSubsidies;
             vat = (vat / 100) * 0.2
         }else{
             vat = vat / 100;
@@ -266,7 +275,7 @@
         total_tax = total_amount_realization * tax;
 
         total_amount_realization = (total_amount_realization - total_tax) + total_vat;
-
+        
         if( total_amount_realization > remain_budget ) {
             swal(
                 'Whoops!',

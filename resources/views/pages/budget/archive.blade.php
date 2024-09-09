@@ -20,6 +20,7 @@
                         <th id="th_branch">BRANCH</th>
                         <th id="th_policy_number">POLICY NUMBER</th>
                         <th id="th_holder_name">HOLDER NAME</th>
+                        <th id="th_booking_date">BOOKING DATE</th>
                         <th id="th_start_date">START DATE</th>
                         <th id="th_end_date">END DATE</th>
                         <th id="th_currency">CURRENCY</th>
@@ -47,7 +48,78 @@
                     </tr>
                 </thead>
                 <tbody>
-                    
+                    @foreach ($Budgets as $Budget)
+                        {{-- {{ dd($Budget) }} --}}
+                        <tr>
+                            <td>
+                                {!! $Budget->Action !!}
+                            </td>
+                            <td>{{ $Budget->CLASS }}</td>
+                            <td>{{ $Budget->BROKERNAME }}</td>
+                            <td>{{ $Budget->TYPE }}</td>
+                            <td>{{ $Budget->BRANCH }}</td>
+                            <td>{{ $Budget->POLICYNO }}</td>
+                            <td>{{ $Budget->Holder_Name }}</td>
+                            <td>{{ $Budget->ADATE }}</td>
+                            <td>{{ $Budget->Start_Date }}</td>
+                            <td>{{ $Budget->End_Date }}</td>
+                            <td>{{ $Budget->CURRENCY }}</td>
+                            <td>{{ $Budget->LGI_PREMIUM }}</td>
+                            <td>{{ $Budget->PREMIUM }}</td>
+                            <td>{{ $Budget->ADMIN }}</td>
+                            <td>{{ $Budget->DISCOUNT }}</td>
+                            <td>{{ $Budget->OTHERINCOME }}</td>
+                            <td>{{ $Budget->PAYMENT }}</td>
+                            <td>{{ $Budget->PAYMENT_DATE }}</td>
+                            <td>{{ $Budget->OS }}</td>
+                            <td>{{ $Budget->Status_Premium }}</td>
+                            <td>{{ $Budget->VOUCHER }}</td>
+                            <td>{{ $Budget->OCCUPATION }}</td>
+                            <td class="td_comment" data-comment="{{ $Budget->COMMENT }}">
+                                @php
+                                    $arrayOfWord = explode(' ', $Budget->COMMENT);
+                                    $displayText = '';
+
+                                    if (count($arrayOfWord) >= 15) {
+                                        foreach ($arrayOfWord as $key => $val) {
+                                            if ($key <= 10) {
+                                                $displayText .= $val . ' ';
+                                            }
+                                        }
+                                        $displayText = rtrim($displayText, ' ');
+                                        $displayText .= '...';
+                                    } else {
+                                        $displayText = $Budget->COMMENT;
+                                    }
+                                @endphp
+                                {{ $displayText }}
+                            </td>
+                            <td>{{ $Budget->CAEP }}</td>
+                            <td>{{ $Budget->Persentage }}</td>
+                            <td>{{ $Budget->AGING_REALIZATION }}</td>
+                            <td>{{ $Budget->Budget }}</td>
+                            <td>{{ $Budget->REALIZATION_RMF }}</td>
+                            <td>{{ $Budget->REALIZATION_SPONSORSHIP }}</td>
+                            <td>{{ $Budget->REMAIN_BUDGET }}</td>
+                            <td>{!! $Budget->STATUS_BUDGET !!}</td>
+                            <td>{{ $Budget->STATUS_REALIZATION }}</td>
+                            <td style="display:none;">{{ $Budget->ProposedTo }}</td>
+                            <td style="display:none;">{{ $Budget->LAST_EDITED_BY }}</td>
+                        </tr>
+                    @endforeach
+                    <input type="hidden" name="filter_broker_name" id="filter_broker_name">
+                    <input type="hidden" name="filter_branch" id="filter_branch">
+                    <input type="hidden" name="filter_status_pembayaran_premi" id="filter_status_pembayaran_premi">
+                    <input type="hidden" name="filter_start_date" id="filter_start_date">
+                    <input type="hidden" name="filter_no_polis" id="filter_no_polis">
+                    <input type="hidden" name="filter_aging_rmf" id="filter_aging_rmf">
+                    <input type="hidden" name="filter_nb_rn" id="filter_nb_rn">
+                    <input type="hidden" name="filter_holder_name" id="filter_holder_name">
+                    <input type="hidden" name="filter_status_realisasi" id="filter_status_realisasi">
+                    <input type="hidden" name="filter_class" id="filter_class">
+                    <input type="hidden" name="filter_status_budget" id="filter_status_budget">
+                    <input type="hidden" name="filter_booking_date_from" id="filter_booking_date_from">
+                    <input type="hidden" name="filter_booking_date_to" id="filter_booking_date_to">
                 </tbody>
             </table>
         </div>
@@ -58,145 +130,6 @@
 
 @section('script')
     <script>
-        // Define Variable Datatable Budget.
-        var DataTableBudget = '';
-
-        // Document Ready
-        $(document).ready(function() {
-            // Datatable Budget
-                DataTableBudget = $('.dataTable').DataTable({
-                    processing: true, /* GIVE PROCESSING LOADING LABEL WHEN LOAD DATA. */
-                    language: {
-                        processing: ImageLoading /* CHANGE TEXT PROCESSING.. TO IMAGE LOADING.. */
-                    },
-                    /* SERVERSIDE = TRUE => TO LOAD DATA PER CHUNK. ONLY ON FIRST LOAD AND PAGE CLICK. */
-                    /* IF THIS TRUE, COLUMN.SEARCH() WITH REGEX DOESN'T WORK. SET TO FALSE IF HAVE SEARCH WITH REGEX. */
-                    serverSide: false, 
-                    responsive: true,
-                    scrollX: true, /* PAGINATION STAY ON THE BOTTOM RIGHT. */
-                    search: {
-                        caseInsensitive: true,
-                        regex: true,
-                    },
-                    // searching : false, /* IF THIS Searching: false active, search by individual column below will not working. */
-                    lengthMenu: [
-                        [ 10, 25, 50, -1 ],
-                        [ '10 rows', '25 rows', '50 rows', 'Show All' ]
-                    ],
-                    dom: 'Blfrtip',
-                    buttons: [
-                        {
-                            extend: 'csvHtml5',
-                            text: 'Export to CSV',
-                            className: 'btn-primary btn-spacing',
-                            exportOptions: {
-                                modifier: {
-                                    search: 'none'
-                                }
-                            }
-                        },
-                        // {
-                        //     extend: 'excelHtml5',
-                        //     text: 'Export to Excel',
-                        //     className: 'btn-primary btn-spacing',
-                        //     exportOptions: {
-                        //         modifier: {
-                        //             search: 'none'
-                        //         }
-                        //     }
-                        // },
-                        // {
-                        //     extend: 'pdfHtml5',
-                        //     text: 'Export to PDF',
-                        //     className: 'btn-primary',
-                        //     exportOptions: {
-                        //         modifier: {
-                        //             search: 'none'
-                        //         }
-                        //     }
-                        // }
-                    ],
-                    // select: {
-                    //     style: 'multi'
-                    // },
-                    ajax: {
-                        url: '{!! Route('budget.data-table') !!}',
-                        type: 'get',
-                        data: {
-                            type: `{{ $BudgetStatus }}`
-                        }
-                    },
-                    columns: [
-                        { data: 'ACTION' },
-                        { data: 'CLASS' },
-                        { data: 'BROKERNAME' },
-                        { data: 'TYPE' },
-                        { data: 'BRANCH' },
-                        { data: 'POLICYNO' },
-                        { data: 'Holder_Name' },
-                        { data: 'Start_Date' },
-                        { data: 'End_Date' },
-                        { data: 'CURRENCY' },
-                        { data: 'LGI_PREMIUM' },
-                        { data: 'PREMIUM' },
-                        { data: 'ADMIN' },
-                        { data: 'DISCOUNT' },
-                        { data: 'OTHERINCOME' },
-                        { data: 'PAYMENT' },
-                        { data: 'PAYMENT_DATE' },
-                        { data: 'OS' },
-                        { data: 'Status_Premium' },
-                        { data: 'VOUCHER' },
-                        { data: 'OCCUPATION' },
-                        { data: 'COMMENT' },
-                        { data: 'CAEP' },
-                        { data: 'Persentage' },
-                        { data: 'AGING_REALIZATION' },
-                        { data: 'Budget' },
-                        { data: 'REALIZATION_RMF' },
-                        { data: 'REALIZATION_SPONSORSHIP' },
-                        { data: 'REMAIN_BUDGET' },
-                        { data: 'STATUS_BUDGET' },
-                        { data: 'STATUS_REALIZATION' },
-                    ]
-                }).on('select', function(e, dt, node, config){
-                    let selectedData = dt.rows('.selected').data();
-                });
-
-            // This function runs after 0.05 seconds.
-                setTimeout(() => {
-                    // Remove Class Secondary to change colors.
-                    $('.buttons-csv').removeClass('btn-secondary');
-                        $('.buttons-excel').removeClass('btn-secondary');
-                        $('.buttons-pdf').removeClass('btn-secondary');
-                    
-                    // Remove Search Input on Datatable, we use custom search to filter.
-                        $('#DataTables_Table_0_filter').children().remove(); /* Removing Search Input on Datatable */
-
-                    // Showing label for Server Side Datatable. if commented => ServerSide = false. if uncommented ServerSide = true.
-                        // $('#DataTables_Table_0_length').append('<label> <strong style="color: red; margin-left: 25px;"> *Please Show All if you want to export all data.</strong> </label>'); /* Uncomment this if serverSide = true. */
-
-                    // Change font size of Show <10, 25, 50, Show All> Entries
-                        $('#DataTables_Table_0_length').children().eq(0).css("font-size", "16px");
-                        $('#DataTables_Table_0_length').children().eq(0).children().css("font-size", "16px");
-                        $('#DataTables_Table_0_length').children().eq(1).css("font-size", "16px");
-
-                    // Check ToDoList to filter data after Datatable loaded.
-                        if( $('#to_do_list').is(':checked') && UserGroup != 'USER_RMFEE' ){
-                            $('#to_do_list_check_proposed_to').val(AuthUser);
-                        }else if( $('#to_do_list').is(':checked') && UserGroup == 'USER_RMFEE' ){
-                            $('#to_do_list_check_last_edited_by').val(AuthUser);
-                            // $('#status_budget').val('NEW');
-                        }else{
-                            $('#to_do_list_check_proposed_to').val('');
-                            $('#to_do_list_check_last_edited_by').val('');
-                        }
-                    
-                    // Run Search Datatable.
-                        SearchDataTable();
-                }, 5);
-        });
-
         // Button View Document to show Document on Modal Bootstrap.
         $('body').on('click', '.btnViewDocumentBudget', function(e){
             e.preventDefault();

@@ -72,6 +72,11 @@
                                 <input type="text" name="payment_to" id="payment_to" class="form-control col-lg-8" placeholder="Payment To" value="{{ isset($PaymentToData) && $PaymentToData != '' ? $PaymentToData->ID : ''}}" readonly>
                             </div>
                             <div class="form-group row">
+                                <label for="date_of_request" class="col-lg-3 col-form-label-lg">Date of Request</label>
+                                <label class="col-lg-1 col-form-label-lg">:</label>
+                                <input type="text" name="date_of_request" id="date_of_request" class="form-control col-lg-8" placeholder="Date of Request" value="{{ isset($RealizationData->Date_Of_Request) ? $RealizationData->Date_Of_Request : '' }}" readonly>
+                            </div>
+                            <div class="form-group row">
                                 <label for="account_name" class="col-lg-3 col-form-label-lg">Account Name</label>
                                 <label class="col-lg-1 col-form-label-lg">:</label>
                                 <input type="text" name="account_name" id="account_name" class="form-control col-lg-8" placeholder="Account Name" readonly value="{{ isset($PaymentToData) && $PaymentToData != '' ? $PaymentToData->BankAccount : ''}}">
@@ -109,11 +114,7 @@
                             <div class="form-group row">
                                 <label for="upload_invoice" class="col-lg-3 col-form-label-lg">Upload Invoice</label>
                                 <label class="col-lg-1 col-form-label-lg">:</label>
-                                <input type="file" name="upload_invoice" id="upload_invoice" class="form-control {{ $RealizationData->Upload_Invoice_Path ? 'col-lg-6' : 'col-lg-8' }}" placeholder="Upload Invoice" value="">
-                                {{-- <a href="javascript:;" data-path="{{ $RealizationData->Upload_Invoice_Path }}" class="primary ViewDocumentRealizationModal col-lg-2">
-                                    <i class="feather icon-eye"></i>
-                                    Show
-                                </a> --}}
+                                <input type="file" name="upload_invoice" id="upload_invoice" class="form-control {{ $RealizationData->Upload_Invoice_Path ? 'col-lg-6' : 'col-lg-8' }}" placeholder="Upload Invoice" value="" {{ auth()->user()->getUserGroup->GroupCode != config('GroupCodeApplication.USER_RMFEE') ? 'disabled' : '' }}>
                                 @if( $RealizationData->Upload_Invoice_Path != '' )
                                 <a href="{{ $RealizationData->Upload_Invoice_Path ? asset($RealizationData->Upload_Invoice_Path) : 'javascript:;' }}" class="primary col-lg-2" target="_Blank" download="">
                                     {{-- Download --}}
@@ -124,17 +125,18 @@
                             <div class="form-group row">
                                 <label for="upload_survey_report" class="col-lg-3 col-form-label-lg">Upload Survey Report</label>
                                 <label class="col-lg-1 col-form-label-lg">:</label>
-                                <input type="file" name="upload_survey_report" id="upload_survey_report" class="form-control {{ $RealizationData->Upload_Survey_Report_Path ? 'col-lg-6' : 'col-lg-8' }}" placeholder="Upload Survey Report" value="">
-                                {{-- <a href="javascript:;" data-path="{{ $RealizationData->Upload_Survey_Report_Path }}" class="primary ViewDocumentRealizationModal col-lg-2">
-                                    <i class="feather icon-eye"></i>
-                                    Show
-                                </a> --}}
+                                <input type="file" name="upload_survey_report" id="upload_survey_report" class="form-control {{ $RealizationData->Upload_Survey_Report_Path ? 'col-lg-6' : 'col-lg-8' }}" placeholder="Upload Survey Report" value="" {{ auth()->user()->getUserGroup->GroupCode != config('GroupCodeApplication.USER_RMFEE') ? 'disabled' : '' }}>
                                 @if( $RealizationData->Upload_Survey_Report_Path != '' )
                                 <a href="{{ $RealizationData->Upload_Survey_Report_Path ? asset($RealizationData->Upload_Survey_Report_Path) : 'javascript:;' }}" class="primary col-lg-2" target="_Blank" download="">
                                     {{-- Download --}}
                                     <i class='feather icon-download' style="font-size: 24px;"></i>
                                 </a>
                                 @endif
+                            </div>
+                            <div class="form-group row">
+                                <label for="tax" class="col-lg-3 col-form-label-lg">Remarks</label>
+                                <label class="col-lg-1 col-form-label-lg">:</label>
+                                <textarea name="remarks" id="remarks" cols="30" rows="10" class="form-control col-lg-8" readonly>{{ $RealizationData->Remarks }}</textarea>
                             </div>
                         </div>
                     </div>
@@ -183,7 +185,7 @@
                             </div>
                             <div class="row">
                                 <div class="col-lg-12 mb-2">
-                                    <a href="{{ route('realization.detail-realization.index', $RealizationData->Invoice_No) }}" style="width: 100%; height: 60px;" class="btn btn-outline-primary radius-100">
+                                    <a href="{{ route('realization.detail-realization.index', str_replace('/', '~', $RealizationData->Invoice_No)) }}" style="width: 100%; height: 60px;" class="btn btn-outline-primary radius-100">
                                         <b style="font-size: 18px;">View Detail</b>
                                     </a>
                                     <a href="{{ route('realization.index') }}" style="width: 100%; height: 60px;" class="btn btn-primary radius-100 mt-2">
@@ -197,6 +199,32 @@
             </div>
             <input type="hidden" name="from" value="edit"/>
         </form>
+
+        <div class="card-body default text-center">Log Activity</div>
+        <table class="table table-bordered">
+            <thead>
+                <tr class="default">
+                    <th>Name</th>
+                    <th>Status</th>
+                    <th>Desc</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if( isset($Logs) )
+                    @foreach ($Logs as $Log)
+                    <tr class="text-center">
+                        <td>{{ $Log->NIK.' - '.$Log->getUser->Name }}</td>
+                        <td>{{ $Log->Status }}</td>
+                        <td>{{ $Log->Description }}</td>
+                        <td>{{ date('Y-m-d', strtotime($Log->Date)) }}</td>
+                        <td>{{ $Log->Time }}</td>
+                    </tr>
+                    @endforeach
+                @endif
+            </tbody>
+        </table>
     </div>
 </div>
 @include('add-on.modal-view-file-realization')
@@ -214,7 +242,7 @@
         }); 
         
         // ! Datepicker Invoice Date
-        $('#invoice_date').datepicker({
+        $('#invoice_date, #date_of_request').datepicker({
             dateFormat: 'dd M yy',
             autoclose: true,
             todayHighlight: true,

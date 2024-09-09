@@ -125,7 +125,12 @@
                             <div class="form-group row">
                                 <label for="amount_realization" class="col-lg-3 col-form-label-lg">Amount Realization</label>
                                 <label class="col-lg-1 col-form-label-lg">:</label>
-                                <input type="text" name="amount_realization" id="amount_realization" class="form-control col-lg-8" placeholder="Amount Realization" reaonly>
+                                <input type="text" name="amount_realization" id="amount_realization" class="form-control col-lg-8" placeholder="Amount Realization">
+                            </div>
+                            <div class="form-group row">
+                                <label for="amount_realization_after_tax" class="col-lg-3 col-form-label-lg">Amount Realization After Tax (+VAT -TAX)</label>
+                                <label class="col-lg-1 col-form-label-lg">:</label>
+                                <input type="text" name="amount_realization_after_tax" id="amount_realization_after_tax" class="form-control col-lg-8" placeholder="Amount Realization" readonly>
                             </div>
                             <div class="form-group row">
                                 <label for="currency_realization" class="col-lg-3 col-form-label-lg">Currency Realization</label>
@@ -172,6 +177,7 @@
         var broker_name = '{!! $BrokerName !!}';
         
         var RealizationDataId = `{{ $RealizationData->ID }}`;
+        var originalCurrencyIDR = true;
 
         $(document).ready(function(){
             $('#start_date, #end_date, #date_of_premium_paid').datepicker({
@@ -198,10 +204,9 @@
                         RealizationDataId: RealizationDataId
                     },
                     success: function( data ) {
-                        console.log(data);
                         res($.map(data, function (item) {
                             return {
-                                label: `${item.POLICYNO}`,
+                                label: `${item.POLICYNO} - ${item.VOUCHER}`,
                                 value: item.POLICYNO,
                                 data: item
                             };
@@ -227,7 +232,14 @@
                 $('#premium_note').val(data.COMMENT);
                 $('#budget').val(data.Persentage);
                 $('#budget_in_amount').val(number_format(data.Budget));
-                $('#remain_budget').val(number_format(data.REMAIN_BUDGET));
+                if( data.CURRENCY == 'IDR' ){
+                    $('#remain_budget').val(number_format(data.REMAIN_BUDGET, 2));
+                    console.log(number_format(data.REMAIN_BUDGET, 2));
+                }else{
+                    originalCurrencyIDR = false;
+                    $('#remain_budget').val(number_format(data.REMAIN_BUDGET, 4));
+                    console.log(number_format(data.REMAIN_BUDGET, 4));
+                }
                 $('#voucher').val(data.VOUCHER);
 
                 $('#amount_realization').attr('readonly', false);
@@ -245,6 +257,8 @@
             let vat = `{{ $PaymentTo->VAT }}`;
             let tax = `{{ $PaymentTo->TAX }}`;
             let lob = `{{ $PaymentTo->LOB }}`;
+            let VatSubsidies = `{{ $PaymentTo->VATSubsidies }}`;
+            let amount_realization_after_tax = 0;
 
             let total_vat = 0;
             let total_tax = 0;
@@ -256,6 +270,8 @@
             total_amount_realization = amount_realization * exchange_rate;
 
             if( lob == '02' ){
+                /* VatSubsidies = nilai VAT yang di subsidi. */
+                vat = vat - VatSubsidies;
                 vat = (vat / 100) * 0.2
             }else{
                 vat = vat / 100;
@@ -264,25 +280,50 @@
             tax = (tax / 100);
 
             total_vat = total_amount_realization * vat;
-            
             total_tax = total_amount_realization * tax;
 
             total_amount_realization = (total_amount_realization - total_tax) + total_vat;
 
-            if( total_amount_realization > remain_budget ) {
-                swal(
-                    'Whoops!',
-                    `Total Amount Realization Exceeding Remain Budget.`,
-                    'warning'
-                );
-                amount_realization = 0;
-                exchange_rate = 0;
-                total_amount_realization = 0;
+            /* Remove Trailing decimals. example : 123.4500000032 -> 123.45 */
+            total_amount_realization = parseInt('' + (total_amount_realization * 100)) / 100;
+
+
+            /* ?TOTAL ORIGINAL CURRENCY AFTER TAX. */
+            tax_original = amount_realization * tax;
+            vat_original = amount_realization * vat;
+            amount_realization_after_tax = (amount_realization - tax_original) + vat_original;
+            $('#amount_realization_after_tax').val(amount_realization_after_tax);
+            /* ?END TOTAL ORIGINAL CURRENCY AFTER TAX. */
+
+            
+            if( !originalCurrencyIDR ){
+                if( amount_realization_after_tax > remain_budget ){
+                    swal(
+                        'Whoops!',
+                        `Total Amount Realization Exceeding Remain Budget. <br/> Total =  ${number_format(amount_realization_after_tax, 2)}`,
+                        'warning'
+                    );
+                    amount_realization = 0;
+                    amount_realization_after_tax = 0;
+                    exchange_rate = 0;
+                    total_amount_realization = 0;
+                }
+            }else{
+                if( total_amount_realization > remain_budget ) {
+                    swal(
+                        'Whoops!',
+                        `Total Amount Realization Exceeding Remain Budget. <br/> Total =  ${number_format(total_amount_realization, 2)}`,
+                        'warning'
+                    );
+                    amount_realization = 0;
+                    exchange_rate = 0;
+                    total_amount_realization = 0;
+                }
             }
 
-            amount_realization = number_format(amount_realization);
+            amount_realization = number_format(amount_realization, 2);
             exchange_rate = number_format(exchange_rate, 2);
-            total_amount_realization = number_format(total_amount_realization);
+            total_amount_realization = number_format(total_amount_realization, 2);
 
             $('#amount_realization').val(amount_realization);
             $('#exchange_rate').val(exchange_rate);

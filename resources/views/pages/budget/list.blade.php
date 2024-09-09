@@ -3,20 +3,16 @@
 @endsection
 
 @section('content')
-{{-- {{ dd(session()->all()) }} --}}
     <div class="row">
         <div class="col-lg-6 mb-2">
-            {{-- <a class="btn btn-primary pull-left" style="border-radius: 100px; font-size: 18px;" aria-expanded="false" data-toggle="collapse" data-target="#FilterCollapse">
-                <i class="feather icon-filter text-white"></i>
-                <span class="text-white">Filter</span>
-            </a> --}}
-
             <label>
+                {{-- <input type="checkbox" name="to_do_list" id="to_do_list" class="to-do-list"
+                    style="width: 30px; height: 30px; vertical-align: middle;" value=""
+                    {{ request()->get('to_do_list_filter') == 'Yes' ? 'checked' : '' }}> --}}
                 <input type="checkbox" name="to_do_list" id="to_do_list" class="to-do-list"
-                    style="width: 30px; height: 30px; vertical-align: middle;" value="" checked>
+                    style="width: 30px; height: 30px; vertical-align: middle;"
+                    {{ request()->get('to_do_list_filter') == 'true' ? 'checked' : '' }} />
                 <b style="font-size: 20px; vertical-align: middle;" class="ml-1">To do List</b>
-                <input type="hidden" id="to_do_list_check_proposed_to" name="to_do_list_check_proposed_to" value=""/>
-                <input type="hidden" id="to_do_list_check_last_edited_by" name="to_do_list_check_last_edited_by" value=""/>
             </label>
         </div>
 
@@ -30,140 +26,226 @@
     </div>
 
     <div class="card collapse" id="FilterCollapse">
-        <div class="card-body row">
-            <div class="col-lg-4">
-                <div class="form-group">
-                    <label for="broker_name">Broker Name</label>
-                    <input type="text" name="broker_name" id="broker_name" class="form-control radius" value="{{ session()->get('broker_name') }}"
-                        placeholder="Type Here..">
+        <form action="{{ route('budget.list') }}" method="get">
+            <input type="hidden" id="to_do_list_filter" name="to_do_list_filter"
+                value="{{ request()->get('to_do_list_filter') == 'true' ? 'checked' : 'false' }}" />
+            <div class="card-body row" id="card-filter">
+                <div class="col-lg-4">
+                    <div class="form-group">
+                        <label for="broker_name">Broker Name</label>
+                        <input type="text" name="broker_name" id="broker_name" class="form-control radius"
+                            value="{{ request()->get('broker_name') }}" placeholder="Type Here..">
+                    </div>
                 </div>
-            </div>
-            <div class="col-lg-4">
-                <div class="form-group">
-                    <label for="branch">Branch</label>
-                    <select name="branch" id="branch" class="form-control radius">
-                        <option value="">All</option>
-                        @foreach ($branch as $val)
-                            <option {{ session()->get('branch') == $val->Branch ? 'selected' : '' }} value="{{ $val->Branch }}">{{ $val->Branch }}</option>
-                        @endforeach
-                    </select>
+                <div class="col-lg-4">
+                    <div class="form-group">
+                        <label for="branch">Branch</label>
+                        <select name="branch" id="branch" class="form-control radius">
+                            <option value="">All</option>
+                            @if (count($branchList) > 0)
+                                @foreach ($branchList as $val)
+                                    <option {{ request()->get('branch') == $val->Branch ? 'selected' : '' }}
+                                        value="{{ $val->Branch }}">{{ $val->Branch }}</option>
+                                @endforeach
+                            @endif
+                        </select>
+                    </div>
                 </div>
-            </div>
-            <div class="col-lg-4">
-                <div class="form-group">
-                    <label for="status_pembayaran_premi">Status Pembayaran Premi</label>
-                    {{-- <input type="text" name="status_pembayaran_premi" id="status_pembayaran_premi"
+                <div class="col-lg-4">
+                    <div class="form-group">
+                        <label for="status_pembayaran_premi">Status Pembayaran Premi</label>
+                        {{-- <input type="text" name="status_pembayaran_premi" id="status_pembayaran_premi"
                         class="form-control radius" placeholder="Type Here.."> --}}
-                    <select name="status_pembayaran_premi" id="status_pembayaran_premi" class="form-control radius">
-                        <option value="">All</option>
-                        @foreach ($statusPremi as $val)
-                            <option {{ session()->get('status_pembayaran_premi') == $val ? 'selected' : '' }} value="{{ $val }}">{{ $val }}</option>
-                        @endforeach
-                    </select>
+                        <select name="status_pembayaran_premi" id="status_pembayaran_premi" class="form-control radius">
+                            <option value="">All</option>
+                            @foreach ($statusPremi as $val)
+                                <option {{ request()->get('status_pembayaran_premi') == $val ? 'selected' : '' }}
+                                    value="{{ $val }}">{{ $val }}</option>
+                            @endforeach
+                        </select>
+                    </div>
                 </div>
-            </div>
 
-            <div class="clearfix"></div>
+                <div class="clearfix"></div>
 
-            <div class="col-lg-4">
-                <div class="form-group">
-                    <label for="start_date">Start Date</label>
-                    <input type="text" name="start_date" id="start_date" class="form-control radius" value="{{ session()->get('start_date') }}"
-                        placeholder="Type Here..">
+                <div class="col-lg-4">
+                    <div class="form-group">
+                        <label for="start_date">Start Date</label>
+                        <input type="text" name="start_date" id="start_date" class="form-control radius"
+                            value="{{ request()->get('start_date') }}" placeholder="Type Here..">
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="form-group">
+                        <label for="no_policy">No Policy</label>
+                        <input type="text" name="no_policy" id="no_policy" class="form-control radius"
+                            value="{{ request()->get('no_policy') }}" placeholder="Type Here..">
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="form-group">
+                        <label for="aging_rmf">Aging RMF</label>
+                        <input type="text" name="aging_rmf" id="aging_rmf" class="form-control radius"
+                            value="{{ request()->get('aging_rmf') }}" placeholder="Type Here..">
+                    </div>
+                </div>
+                <div class="clearfix"></div>
+                <div class="col-lg-4">
+                    <div class="form-group">
+                        <label for="booking_date_from">Booking Date From</label>
+                        <input type="text" name="booking_date_from" class="form-control" id="booking_date_from"
+                            value="{{ request()->get('booking_date_from') }}">
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="form-group">
+                        <label for="nb_rn">NB/RN</label>
+                        <select name="nb_rn" id="nb_rn" class="form-control radius">
+                            <option value="">All</option>
+                            @foreach ($NBRN as $val)
+                                <option {{ request()->get('nb_rn') == $val ? 'selected' : '' }}
+                                    value="{{ $val }}">{{ $val }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="form-group">
+                        <label for="holder_name">Holder Name</label>
+                        <input type="text" name="holder_name" id="holder_name" class="form-control radius"
+                            value="{{ request()->get('holder_name') }}" placeholder="Type Here..">
+                    </div>
+                </div>
+                <div class="clearfix"></div>
+                <div class="col-lg-4">
+                    <div class="form-group">
+                        <label for="booking_date_to">Booking Date To</label>
+                        <input type="text" name="booking_date_to" id="booking_date_to" class="form-control"
+                            value="{{ request()->get('booking_date_to') }}">
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="form-group">
+                        <label for="ClassBusiness">Class</label>
+                        <select name="ClassBusiness" id="ClassBusiness" class="form-control radius">
+                            <option value="">All</option>
+                            <option {{ request()->get('ClassBusiness') == '02-MOTOR VEHICLE' ? 'selected' : '' }}
+                                value="02-MOTOR VEHICLE">02-MOTOR VEHICLE</option>
+                            <option {{ request()->get('ClassBusiness') == '01-PROPERTY' ? 'selected' : '' }}
+                                value="01-PROPERTY">01-PROPERTY</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="form-group">
+                        <label for="status_realisasi">Status Realisasi</label>
+                        <select name="status_realisasi" id="status_realisasi" class="form-control radius">
+                            <option value="">All</option>
+                            @foreach ($statusRealisasi as $val)
+                                <option {{ request()->get('status_realisasi') == $val ? 'selected' : '' }}
+                                    value="{{ $val }}">{{ $val }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+                <div class="clearfix"></div>
+                <div class="col-lg-4"></div>
+                <div class="col-lg-4"></div>
+                <div class="col-lg-4">
+                    <div class="form-group">
+                        <label for="status_budget">Status Budget</label>
+                        <select name="status_budget" id="status_budget" class="form-control radius">
+                            <option value="">All</option>
+                            @foreach ($statusBudget as $val)
+                                <option {{ request()->get('status_budget') == $val ? 'selected' : '' }}
+                                    value="{{ $val }}">{{ $val }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+                <div class="clearfix"></div>
+                <div class="col-lg-6">
+                    <button id="btn_reset_filter" name="btn_reset_filter" value="btn_reset_filter"
+                        class="btn btn-outline-primary waves-effect waves-light radius-100" style="width: 100%;">
+                        Reset Filter
+                    </button>
+                </div>
+                <div class="col-lg-6">
+                    <button type="submit" id="btn_apply_filter"
+                        class="btn btn-primary waves-effect waves-light radius-100" style="width: 100%;">
+                        Apply Filter
+                    </button>
                 </div>
             </div>
-            <div class="col-lg-4">
-                <div class="form-group">
-                    <label for="no_policy">No Policy</label>
-                    <input type="text" name="no_policy" id="no_policy" class="form-control radius" value="{{ session()->get('no_policy') }}"
-                        placeholder="Type Here..">
-                </div>
-            </div>
-            <div class="col-lg-4">
-                <div class="form-group">
-                    <label for="aging_rmf">Aging RMF</label>
-                    <input type="text" name="aging_rmf" id="aging_rmf" class="form-control radius" value="{{ session()->get('aging_rmf') }}"
-                        placeholder="Type Here..">
-                </div>
-            </div>
-            <div class="clearfix"></div>
-            <div class="col-lg-4">
-                <div class="form-group">
-                    <label for="nb_rn">NB/RN</label>
-                    <select name="nb_rn" id="nb_rn" class="form-control radius">
-                        <option value="">All</option>
-                        @foreach ($NBRN as $val)
-                            <option {{ session()->get('nb_rn') == $val ? 'selected' : '' }} value="{{ $val }}">{{ $val }}</option>
-                        @endforeach
-                    </select>
-                </div>
-            </div>
-            <div class="col-lg-4">
-                <div class="form-group">
-                    <label for="holder_name">Holder Name</label>
-                    <input type="text" name="holder_name" id="holder_name" class="form-control radius" value="{{ session()->get('holder_name') }}"
-                        placeholder="Type Here..">
-                </div>
-            </div>
-            <div class="col-lg-4">
-                <div class="form-group">
-                    <label for="status_realisasi">Status Realisasi</label>
-                    <select name="status_realisasi" id="status_realisasi" class="form-control radius">
-                        <option value="">All</option>
-                        @foreach ($statusRealisasi as $val)
-                            <option {{ session()->get('status_realisasi') == $val ? 'selected' : '' }} value="{{ $val }}">{{ $val }}</option>
-                        @endforeach
-                    </select>
-                </div>
-            </div>
-            <div class="clearfix"></div>
-            <div class="col-lg-4">
-                <div class="form-group">
-                    <label for="ClassBusiness">Class</label>
-                    <select name="ClassBusiness" id="ClassBusiness" class="form-control radius">
-                        <option value="">All</option>
-                        <option {{ session()->get('ClassBusiness') == '02-MOTOR VEHICLE' ? 'selected' : '' }} value="02-MOTOR VEHICLE">02-MOTOR VEHICLE</option>
-                        <option {{ session()->get('ClassBusiness') == '01-PROPERTY' ? 'selected' : '' }} value="01-PROPERTY">01-PROPERTY</option>
-                    </select>
-                </div>
-            </div>
-            <div class="col-lg-4"></div>
-            <div class="col-lg-4">
-                <div class="form-group">
-                    <label for="status_budget">Status Budget</label>
-                    <select name="status_budget" id="status_budget" class="form-control radius">
-                        <option value="">All</option>
-                        @foreach ($statusBudget as $val)
-                            <option {{ session()->get('status_budget') == $val ? 'selected' : '' }} value="{{ $val }}">{{ $val }}</option>
-                        @endforeach
-                    </select>
-                </div>
-            </div>
-            <div class="clearfix"></div>
-            <div class="col-lg-6">
-                <button id="btn_reset_filter" class="btn btn-outline-primary waves-effect waves-light radius-100" style="width: 100%;">
-                    Reset Filter
-                </button>
-            </div>
-            <div class="col-lg-6">
-                <button id="btn_apply_filter" class="btn btn-primary waves-effect waves-light radius-100" style="width: 100%;">
-                    Apply Filter
-                </button>
-            </div>
-        </div>
+        </form>
     </div>
 
-    @if( session()->has('noticication') )
-    <div class="alert alert-success text-center">
-        {!! session()->get('noticication') !!}
+    @if (session()->has('notification'))
+        <div class="alert alert-success text-center">
+            {!! session()->get('notification') !!}
+        </div>
+    @endif
+
+    @if( auth()->user()->getUserGroup->GroupCode != 'USER_RMFEE' )
+    <div class="row">
+        <div class="col-lg-12 mb-2">
+            <form id="multiple_approve_budget_form" action="{{ route('budget.multiple_approve') }}" method="GET"
+                style="display:none;">
+                {{ csrf_field() }}
+                <div id="appendFormForMultipleApprove">
+
+                </div>
+                <input type="hidden" name="vouchers" id="vouchersInput">
+            </form>
+
+            <button id="btn_approve_selected_voucher" class="btn btn-success pull-right"
+                style="border-radius: 100px; font-size: 18px;">
+                Approve
+            </button>
+        </div>
     </div>
     @endif
 
     <div class="card">
-        <div class="card-body table-responsive">
-            <table class="table  table-budget dataTable" style="overflow-x: auto; overflow-y: none; height:">
+        <div class="card-body table-responsive" style="overflow-x: auto; overflow-y: auto; height: 600px;">
+            <form method="GET" action="{{ route('budget.list') }}" id="recordsPerPageForm">
+                <label for="recordsPerPage">Show</label>
+                <select name="per_page" id="recordsPerPage"
+                    onchange="document.getElementById('recordsPerPageForm').submit();">
+                    <option value="10" {{ request()->get('per_page') == 10 ? 'selected' : '' }}>10</option>
+                    <option value="20" {{ request()->get('per_page') == 20 ? 'selected' : '' }}>20</option>
+                    <option value="30" {{ request()->get('per_page') == 30 ? 'selected' : '' }}>30</option>
+                </select>
+                <label for="recordsPerPage">data</label>
+
+                <!-- Hidden inputs to carry over filter values -->
+                <input type="hidden" name="broker_name" value="{{ request()->get('broker_name') }}">
+                <input type="hidden" name="branch" value="{{ request()->get('branch') }}">
+                <input type="hidden" name="status_pembayaran_premi"
+                    value="{{ request()->get('status_pembayaran_premi') }}">
+                <input type="hidden" name="start_date" value="{{ request()->get('start_date') }}">
+                <input type="hidden" name="no_policy" value="{{ request()->get('no_policy') }}">
+                <input type="hidden" name="aging_rmf" value="{{ request()->get('aging_rmf') }}">
+                <input type="hidden" name="booking_date_from" value="{{ request()->get('booking_date_from') }}">
+                <input type="hidden" name="nb_rn" value="{{ request()->get('nb_rn') }}">
+                <input type="hidden" name="holder_name" value="{{ request()->get('holder_name') }}">
+                <input type="hidden" name="booking_date_to" value="{{ request()->get('booking_date_to') }}">
+                <input type="hidden" name="ClassBusiness" value="{{ request()->get('ClassBusiness') }}">
+                <input type="hidden" name="status_realisasi" value="{{ request()->get('status_realisasi') }}">
+                <input type="hidden" name="status_budget" value="{{ request()->get('status_budget') }}">
+            </form>
+            <table class="table table-budget dataTable">
+                {{-- 
+                    TODO use this styling if want the table header stick to the top.
+                    TODO <thead style="position: sticky; top: 0; background-color: #f8f9fa; z-index: 999;"> 
+                --}}
                 <thead>
                     <tr class="default tr-budget">
+                        @if( auth()->user()->getUserGroup->GroupCode != 'USER_RMFEE' )
+                        <th id="th_check">
+                            <input type="checkbox" id="select_all" /> All
+                        </th>
+                        @endif
                         <th>Action</th>
                         <th id="th_class">CLASS</th>
                         <th id="th_broker_name">BROKER NAME</th>
@@ -171,6 +253,7 @@
                         <th id="th_branch">BRANCH</th>
                         <th id="th_policy_number">POLICY NUMBER</th>
                         <th id="th_holder_name">HOLDER NAME</th>
+                        <th id="th_booking_date">BOOKING DATE</th>
                         <th id="th_start_date">START DATE</th>
                         <th id="th_end_date">END DATE</th>
                         <th id="th_currency">CURRENCY</th>
@@ -200,6 +283,92 @@
                     </tr>
                 </thead>
                 <tbody>
+                    @foreach ($Budgets as $Budget)
+                        {{-- {{ dd($Budget) }} --}}
+                        <tr>
+                            @if( auth()->user()->getUserGroup->GroupCode != 'USER_RMFEE' )
+                            <td class="clickable-td">
+                                @if($Budget->STATUS_BUDGET == 'WAITING APPROVAL')
+                                    <input type="checkbox" name="check_budget[]" id="" class="check_budget"
+                                    value="" data-voucher_budget="{{ $Budget->VOUCHER }}">
+                                @endif
+                            </td>
+                            @endif
+                            <td>
+                                {!! $Budget->Action !!}
+                            </td>
+                            <td>{{ $Budget->CLASS }}</td>
+                            <td>{{ $Budget->BROKERNAME }}</td>
+                            <td>{{ $Budget->TYPE }}</td>
+                            <td>{{ $Budget->BRANCH }}</td>
+                            <td>{{ $Budget->POLICYNO }}</td>
+                            <td>{{ $Budget->Holder_Name }}</td>
+                            <td>{{ $Budget->ADATE }}</td>
+                            <td>{{ $Budget->Start_Date }}</td>
+                            <td>{{ $Budget->End_Date }}</td>
+                            <td>{{ $Budget->CURRENCY }}</td>
+                            <td>{{ $Budget->LGI_PREMIUM }}</td>
+                            <td>{{ $Budget->PREMIUM }}</td>
+                            <td>{{ $Budget->ADMIN }}</td>
+                            <td>{{ $Budget->DISCOUNT }}</td>
+                            <td>{{ $Budget->OTHERINCOME }}</td>
+                            <td>{{ $Budget->PAYMENT }}</td>
+                            <td>{{ $Budget->PAYMENT_DATE }}</td>
+                            <td>{{ $Budget->OS }}</td>
+                            <td>{{ $Budget->Status_Premium }}</td>
+                            <td>{{ $Budget->VOUCHER }}</td>
+                            <td class="td_occupation" data-occupation="{{ $Budget->OCCUPATION }}">
+                                {{-- {{ $Budget->OCCUPATION }} --}}
+                                @php
+                                    $arrayOfWord = explode(' ', $Budget->OCCUPATION);
+                                    $displayTextOccupation = '';
+
+                                    if (count($arrayOfWord) >= 15) {
+                                        foreach ($arrayOfWord as $key => $val) {
+                                            if ($key <= 10) {
+                                                $displayTextOccupation .= $val . ' ';
+                                            }
+                                        }
+                                        $displayTextOccupation = rtrim($displayTextOccupation, ' ');
+                                        $displayTextOccupation .= '...';
+                                    } else {
+                                        $displayTextOccupation = $Budget->OCCUPATION;
+                                    }
+                                @endphp
+                                {{ $displayTextOccupation }}
+                            </td>
+                            <td class="td_comment" data-comment="{{ $Budget->COMMENT }}">
+                                @php
+                                    $arrayOfWord = explode(' ', $Budget->COMMENT);
+                                    $displayTextComment = '';
+
+                                    if (count($arrayOfWord) >= 15) {
+                                        foreach ($arrayOfWord as $key => $val) {
+                                            if ($key <= 10) {
+                                                $displayTextComment .= $val . ' ';
+                                            }
+                                        }
+                                        $displayTextComment = rtrim($displayTextComment, ' ');
+                                        $displayTextComment .= '...';
+                                    } else {
+                                        $displayTextComment = $Budget->COMMENT;
+                                    }
+                                @endphp
+                                {{ $displayTextComment }}
+                            </td>
+                            <td>{{ $Budget->CAEP }}</td>
+                            <td>{{ $Budget->Persentage }}</td>
+                            <td>{{ $Budget->AGING_REALIZATION }}</td>
+                            <td>{{ $Budget->Budget }}</td>
+                            <td>{{ $Budget->REALIZATION_RMF }}</td>
+                            <td>{{ $Budget->REALIZATION_SPONSORSHIP }}</td>
+                            <td>{{ $Budget->REMAIN_BUDGET }}</td>
+                            <td>{!! $Budget->STATUS_BUDGET_DISPLAY !!}</td>
+                            <td>{{ $Budget->STATUS_REALIZATION }}</td>
+                            <td style="display:none;">{{ $Budget->ProposedTo }}</td>
+                            <td style="display:none;">{{ $Budget->LAST_EDITED_BY }}</td>
+                        </tr>
+                    @endforeach
                     <input type="hidden" name="filter_broker_name" id="filter_broker_name">
                     <input type="hidden" name="filter_branch" id="filter_branch">
                     <input type="hidden" name="filter_status_pembayaran_premi" id="filter_status_pembayaran_premi">
@@ -211,360 +380,204 @@
                     <input type="hidden" name="filter_status_realisasi" id="filter_status_realisasi">
                     <input type="hidden" name="filter_class" id="filter_class">
                     <input type="hidden" name="filter_status_budget" id="filter_status_budget">
+                    <input type="hidden" name="filter_booking_date_from" id="filter_booking_date_from">
+                    <input type="hidden" name="filter_booking_date_to" id="filter_booking_date_to">
                 </tbody>
             </table>
         </div>
+        <div class="mt-2 p-2">
+            @php
+                $total = $Budgets->total();
+                $currentPage = $Budgets->currentPage();
+                $perPage = $Budgets->perPage();
+
+                $from = ($currentPage - 1) * $perPage + 1;
+                $to = min($currentPage * $perPage, $total);
+            @endphp
+            <div class="mb-2">
+                Showing {{ $from }} to {{ $to }} of {{ number_format($Budgets->total()) }} data
+            </div>
+            {{ $Budgets->appends(request()->query())->links('pagination::bootstrap-4') }}
+        </div>
     </div>
+
+    <style>
+        .td_comment,
+        .td_occupation,
+        .clickable-td,
+        #th_check 
+        {
+            cursor: pointer;
+        }
+    </style>
 
     <!-- Modal Reject-->
     @include('add-on.modal-reject')
     @include('add-on.modal-view-document-budget')
+
+    @php
+        // $toDoListVal =
+        //     request()->has('to_do_list') && request()->get('to_do_list') != '' ? request()->get('to_do_list') : 'No';
+        // dd($toDoListVal);
+    @endphp
 @endsection
 
 @section('script')
     <script>
-        $('body').on('click', '#RejectModal', function(e){
+        $('#btn_approve_selected_voucher').on('click', function() {
+            var selectedVouchers = [];
+
+            $('.check_budget:checked').each(function() {
+                selectedVouchers.push($(this).data('voucher_budget'));
+            });
+
+            $('#vouchersInput').val(JSON.stringify(selectedVouchers));
+            $('#multiple_approve_budget_form').submit();
+        });
+
+        $('.clickable-td').click(function(event) {
+            if (event.target.tagName !== 'INPUT') {
+                const checkbox = $(this).find('input[type="checkbox"]');
+                checkbox.prop('checked', !checkbox.prop('checked'));
+            }
+
+            let Filters = `{{ http_build_query(request()->query()) }}`;
+            let AddHiddenInputForFilters = '';
+            let ArrayFilter = @json(request()->query());
+
+            
+            $.each(ArrayFilter, function(x, y){
+                if( y != null && y != 'null' ){
+                    AddHiddenInputForFilters += `
+                    <input type="hidden" name="${x}" value="${y}" />
+                    `;
+                }
+            });
+
+            console.log(Filters, AddHiddenInputForFilters, ArrayFilter);
+
+            $('#appendFormForMultipleApprove').html(AddHiddenInputForFilters);
+        });
+
+        $('#th_check').click(function(event) {
+            if (event.target.tagName !== 'INPUT') {
+                const checkbox = $(this).find('#select_all');
+                checkbox.prop('checked', !checkbox.prop('checked'));
+
+                var isChecked = checkbox.is(':checked');
+                $('.check_budget').prop('checked', isChecked);
+            }
+        })
+
+        $('#select_all').on('click', function() {
+            // Check or uncheck all checkboxes based on the state of the Select All checkbox
+            var isChecked = $(this).is(':checked');
+            $('.check_budget').prop('checked', isChecked);
+
+            let Filters = `{{ http_build_query(request()->query()) }}`;
+            let AddHiddenInputForFilters = '';
+            let ArrayFilter = @json(request()->query());
+
+            
+            $.each(ArrayFilter, function(x, y){
+                if( y != null && y != 'null' ){
+                    AddHiddenInputForFilters += `
+                    <input type="hidden" name="${x}" value="${y}" />
+                    `;
+                }
+            });
+
+            console.log(Filters, AddHiddenInputForFilters, ArrayFilter);
+
+            $('#appendFormForMultipleApprove').html(AddHiddenInputForFilters);
+            
+            // $('body').find('#append').html(AddHiddenInputForFilters);
+        });
+
+        var data_table_budget = '';
+        $('body').on('click', '#RejectModal', function(e) {
             e.preventDefault();
             let Voucher = $(this).data('voucher');
             let Action = `${url}/budget/reject/${Voucher}`;
-            let Filters = AssignValueFilter(true);
+            let Filters = `{{ http_build_query(request()->query()) }}`;
             let AddHiddenInputForFilters = '';
-
-            $.each(Filters, function(key, val){
-                AddHiddenInputForFilters += `
-                    <input type="hidden" name="${key}" value="${val}" />
-                `;
+            let ArrayFilter = @json(request()->query());
+            $.each(ArrayFilter, function(x, y){
+                if( y != null && y != 'null' ){
+                    AddHiddenInputForFilters += `
+                        <input type="hidden" name="${x}" value="${y}" />
+                    `;
+                }
             });
 
-            $('#form-reject-budget').attr('action', Action);
-            $('#append').html(AddHiddenInputForFilters);
+            $('body').find('#append').html(AddHiddenInputForFilters);
+
+            let FullUrl = `${Action}?${Filters}`;
+
+            $('#form-reject-budget').attr('action', FullUrl);
             $('#ModalReject').modal('toggle');
         });
-        // Define Variable of Auth User NIK, Group Code, Datatable of Budget.
-            var DataTableBudget = '';
 
-        // Document Ready
+        $('body').on('click', '.td_comment', function() {
+            let thisClass = $(this);
+            let comment = thisClass.data('comment');
+            swal({
+                title: 'Full Comment',
+                html: `<p style="font-size: 20px; word-spacing: 10px; padding: 15px; line-height: 1.6"><strong>${comment}</strong></p>`,
+                icon: 'info',
+                width: '800px'
+            });
+        });
+
+        $('body').on('click', '.td_occupation', function() {
+            let thisClass = $(this);
+            let occupation = thisClass.data('occupation');
+            swal({
+                title: 'Full Occupation',
+                html: `<p style="font-size: 20px; word-spacing: 10px; padding: 15px; line-height: 1.6"><strong>${occupation}</strong></p>`,
+                icon: 'info',
+                width: '800px'
+            });
+        });
+
+        $('body').on('click', '#to_do_list', function() {
+            if ($(this).is(':checked')) {
+                $('#to_do_list_filter').val(true);
+            } else {
+                $('#to_do_list_filter').val(false);
+            }
+
+            console.log($('#to_do_list_filter').val());
+        });
+
+        $('body').on('click', '#btn_reset_filter', function(e) {
+            e.preventDefault();
+            $('#broker_name').val('');
+            $('#start_date').val('');
+            $('#booking_date_from').val('');
+            $('#booking_date_to').val('');
+            $('#no_policy').val('');
+            $('#aging_rmf').val('');
+            $('#holder_name').val('');
+            $('#branch').val('').trigger('change');
+            $('#nb_rn').val('').trigger('change');
+            $('#class').val('').trigger('change');
+            $('#status_pembayaran_premi').val('').trigger('change');
+            $('#status_realisasi').val('').trigger('change');
+            $('#status_budget').val('').trigger('change');
+
+            $('#btn_apply_filter').trigger('click');
+        });
+
         $(document).ready(function() {
             // Datepicker Start Date
-            $('#start_date').datepicker({
+            $('#start_date, #booking_date_from, #booking_date_to').datepicker({
                 dateFormat: 'dd-M-yy',
-                // format: 'd-M-Y',
                 autoclose: true,
                 todayHighlight: true,
+                changeMonth: true,
+                changeYear: true
             });
-
-            // Datatable Budget
-            DataTableBudget = $('.dataTable').DataTable({
-                processing: true, /* GIVE PROCESSING LOADING LABEL WHEN LOAD DATA. */
-                language: { /* TO MODIFY PROCESSING WHEN LOAD DATA. */
-                    processing: ImageLoading /* CHANGE TEXT PROCESSING.. TO IMAGE LOADING.. */
-                },
-                /* SERVERSIDE = TRUE => TO LOAD DATA PER CHUNK. ONLY ON FIRST LOAD AND PAGE CLICK. */
-                /* IF THIS TRUE, COLUMN.SEARCH() WITH REGEX DOESN'T WORK. SET TO FALSE IF HAVE SEARCH WITH REGEX. */
-                serverSide: false, 
-                responsive: true,
-                scrollX: true, /* PAGINATION STAY ON THE BOTTOM RIGHT. */
-                search: {
-                    caseInsensitive: true,
-                    regex: true,
-                },
-                statesave: true,
-                stateLoadParams: function(settings, data){
-                    console.log('stateLoadParams : ',data);
-                },
-                // searching : false, /* IF THIS Searching: false active, search by individual column below will not working. */
-                lengthMenu: [
-                    [ 10, 25, 50, -1 ],
-                    [ '10 rows', '25 rows', '50 rows', 'Show All' ]
-                ],
-                dom: 'Blfrtip',
-                buttons: [
-                    {
-                        extend: 'csvHtml5',
-                        text: 'Export to CSV',
-                        className: 'btn-primary btn-spacing',
-                        exportOptions: {
-                            modifier: {
-                                search: 'none'
-                            }
-                        }
-                    }
-                    // {
-                    //     extend: 'excelHtml5',
-                    //     text: 'Export to Excel',
-                    //     className: 'btn-primary btn-spacing',
-                    //     exportOptions: {
-                    //         modifier: {
-                    //             search: 'none'
-                    //         }
-                    //     }
-                    // },
-                    // {
-                    //     extend: 'pdfHtml5',
-                    //     text: 'Export to PDF',
-                    //     className: 'btn-primary',
-                    //     exportOptions: {
-                    //         modifier: {
-                    //             search: 'none'
-                    //         }
-                    //     }
-                    // }
-                ],
-                // select: {
-                //     style: 'multi' /* To Select rows. */
-                // },
-                ajax: '{!! Route('budget.data-table') !!}',
-                columns: [
-                    { data: 'ACTION' },
-                    { data: 'CLASS' },
-                    { data: 'BROKERNAME' },
-                    { data: 'TYPE' },
-                    { data: 'BRANCH' },
-                    { data: 'POLICYNO' },
-                    { data: 'Holder_Name' },
-                    { data: 'Start_Date' },
-                    { data: 'End_Date' },
-                    { data: 'CURRENCY' },
-                    { data: 'LGI_PREMIUM' },
-                    { data: 'PREMIUM' },
-                    { data: 'ADMIN' },
-                    { data: 'DISCOUNT' },
-                    { data: 'OTHERINCOME' },
-                    { data: 'PAYMENT' },
-                    { data: 'PAYMENT_DATE' },
-                    { data: 'OS' },
-                    { data: 'Status_Premium' },
-                    { data: 'VOUCHER' },
-                    { data: 'OCCUPATION' },
-                    { data: 'COMMENT' },
-                    { data: 'CAEP' },
-                    { data: 'Persentage' },
-                    { data: 'AGING_REALIZATION' },
-                    { data: 'Budget' },
-                    { data: 'REALIZATION_RMF' },
-                    { data: 'REALIZATION_SPONSORSHIP' },
-                    { data: 'REMAIN_BUDGET' },
-                    { data: 'STATUS_BUDGET' },
-                    { data: 'STATUS_REALIZATION' },
-                    { data: 'ProposedTo', searchable: true, visible: false },
-                    { data: 'LAST_EDITED_BY', searchable: true, visible: false }
-                ],
-            }).on('select', function(e, dt, node, config){
-                let selectedData = dt.rows('.selected').data();
-            });
-
-            // This function runs after 0.05 seconds.
-            setTimeout(() => {
-                // Remove Class Secondary to change colors.
-                $('.buttons-csv').removeClass('btn-secondary');
-                $('.buttons-excel').removeClass('btn-secondary');
-                $('.buttons-pdf').removeClass('btn-secondary');
-                
-                // Remove Search Input on Datatable, we use custom search to filter.
-                $('#DataTables_Table_0_filter').children().remove(); /* Removing Search Input on Datatable */
-
-                // Showing label for Server Side Datatable. if commented => ServerSide = false. if uncommented ServerSide = true.
-                // $('#DataTables_Table_0_length').append('<label> <strong style="color: red; margin-left: 25px;"> *Please Show All if you want to export all data.</strong> </label>'); /* Uncomment this if serverSide = true. */
-
-                // Change font size of Show <10, 25, 50, Show All> Entries
-                $('#DataTables_Table_0_length').children().eq(0).css("font-size", "16px");
-                $('#DataTables_Table_0_length').children().eq(0).children().css("font-size", "16px");
-                $('#DataTables_Table_0_length').children().eq(1).css("font-size", "16px");
-
-                // Check ToDoList to filter data after Datatable loaded.
-                if( $('#to_do_list').is(':checked') && AuthUserGroup != 'USER_RMFEE' ){
-                    $('#to_do_list_check_proposed_to').val(AuthUser);
-                }else if( $('#to_do_list').is(':checked') && AuthUserGroup == 'USER_RMFEE' ){
-                    $('#to_do_list_check_last_edited_by').val(AuthUser);
-                    // $('#status_budget').val('NEW');
-                }else{
-                    $('#to_do_list_check_proposed_to').val('');
-                    $('#to_do_list_check_last_edited_by').val('');
-                }
-                
-                // Run Search Datatable.
-                SearchDataTable();
-                $('body').find('#btn_apply_filter').trigger('click');
-            }, 5);
         });
-
-        // // Show Loader when exports.
-        // $('body').on('click', '.buttons-csv', function(){
-        //     $('#loading').show();
-        // });
-
-        // Button View Document to show Document on Modal Bootstrap.
-        $('body').on('click', '.btnViewDocumentBudget', function(e){
-            e.preventDefault();
-
-            // Path of Document file.
-                let path = `${url}/${$(this).data('path')}`;
-
-            // Append Path to <img src="" />
-                $('#imgDocumentBudget').attr('src', path);
-
-            // Show Bootstrap Modal
-                $('#ViewDocumentBudgetModal').modal('show');
-        });
-
-        // Button to Apply Filter on Datatable.
-        $('#btn_apply_filter').click(function(){
-            let returned = AssignValueFilter();
-            SearchDataTable();
-            setTimeout(() => {
-                AddQueryUrlParameterToButtons(returned);
-            }, 500);
-        });
-
-        // Checkbox to Apply Specific filters.
-        $('#to_do_list').click(function(){
-            if( $(this).is(':checked') && AuthUserGroup != 'USER_RMFEE' ){
-                $('#to_do_list_check_proposed_to').val(AuthUser);
-            }else if( $(this).is(':checked') && AuthUserGroup == 'USER_RMFEE' ){
-                $('#to_do_list_check_last_edited_by').val(AuthUser);
-                // $('#th_status_budget').val('NEW');
-            }else{
-                $('#to_do_list_check_proposed_to').val('');
-                $('#to_do_list_check_last_edited_by').val('');
-            }
-            SearchDataTable();
-        });
-
-        // Button to Reset Filter on Datatable.
-        $('#btn_reset_filter').click(function(){
-            $('#broker_name').val('');
-            $('#branch').val('');
-            $('#nb_rn').val('');
-            $('#start_date').val('');
-            $('#start_date').val('');
-            $('#no_policy').val('');
-            $('#holder_name').val('');
-            $('#status_pembayaran_premi').val('');
-            $('#aging_rmf').val('');
-            $('#status_realisasi').val('');
-            $('#status_budget').val('');
-            $('#to_do_list_check_proposed_to').val('');
-            
-            SearchDataTable();
-        });
-
-        // Function Search / Filter Datatable.
-        function SearchDataTable(){
-            let broker_name = $('#broker_name').val();
-            let branch = $('#branch').val();
-            let nb_rn = $('#nb_rn').val();
-            let start_date = moment($('#start_date').val(), 'DD-MMM-YYYY').format('DD-MMM-YYYY'); // contoh: 01-jan-2024
-            let no_policy = $('#no_policy').val();
-            let holder_name = $('#holder_name').val();
-            let status_pembayaran_premi = $('#status_pembayaran_premi').val();
-            let aging_rmf = $('#aging_rmf').val();
-            let status_realisasi = $('#status_realisasi').val();
-            let status_budget = $('#status_budget').val();
-            let to_do_list_check_proposed_to = $('#to_do_list_check_proposed_to').val();     
-            let to_do_list_check_last_edited_by = $('#to_do_list_check_last_edited_by').val();     
-            let ClassBusiness = $('#ClassBusiness').val();
-
-            if( start_date == 'Invalid date' ){
-                start_date = '';
-            }
-
-            DataTableBudget.column('#th_branch').search(branch).draw();
-            DataTableBudget.column('#th_broker_name').search(broker_name).draw();
-            DataTableBudget.column('#th_type').search(nb_rn).draw();
-            DataTableBudget.column('#th_policy_number').search(no_policy).draw();
-            DataTableBudget.column('#th_holder_name').search(holder_name).draw();
-            DataTableBudget.column('#th_start_date').search(start_date).draw();
-            DataTableBudget.column('#th_aging_realization').search(aging_rmf).draw();
-            DataTableBudget.column('#th_status_budget').search(status_budget).draw();
-            DataTableBudget.column('#th_proposed_to').search(to_do_list_check_proposed_to).draw();
-            DataTableBudget.column('#th_last_edited_by').search(to_do_list_check_last_edited_by).draw();
-            DataTableBudget.column('#th_class').search(ClassBusiness).draw();
-
-            /* IF DATATABLE SERVER SIDE ABOVE = TRUE, THIS SEARCH WITH REGEX DOESN'T WORK.  */
-            /* WITH REGEX */
-            DataTableBudget.column('#th_status_premium').search(status_pembayaran_premi ? '^'+status_pembayaran_premi+'$' : '', true, false, false).draw();
-            DataTableBudget.column('#th_status_realisasi').search(status_realisasi ? '^'+status_realisasi+'$' : '', true, false, false).draw();
-
-            /* WITHOUT REGEX */
-            // DataTableBudget.column('#th_status_premium').search(status_pembayaran_premi).draw();
-            // DataTableBudget.column('#th_status_realisasi').search(status_realisasi).draw();
-        }
-
-        function AssignValueFilter(isReturnObject = false){
-            // alert('assignValue');
-            var obj_filter = {}; /* HARUS OBJECT {} BUKAN ARRAY [], KALAU ARRAY KEY BUKAN [0,1,2,..] TETAPI STRING SEPERTI DIBAWAH, JIKA MENGGUNAKAN ARRAY MAKA TIDAK BISA $.EACH LOOP.  */
-            var filter = '';
-            var broker_name = $('#broker_name').val();
-            var branch = $('#branch').val();
-            var status_pembayaran_premi = $('#status_pembayaran_premi').val();
-            var start_date = $('#start_date').val();
-            var no_policy = $('#no_policy').val();
-            var aging_rmf = $('#aging_rmf').val();
-            var nb_rn = $('#nb_rn').val();
-            var holder_name = $('#holder_name').val();
-            var status_realisasi = $('#status_realisasi').val();
-            var ClassBusiness = $('#ClassBusiness').val();
-            var status_budget = $('#status_budget').val();
-
-            obj_filter['broker_name'] = broker_name;
-            obj_filter['branch'] = branch;
-            obj_filter['status_pembayaran_premi'] = status_pembayaran_premi;
-            obj_filter['start_date'] = start_date;
-            obj_filter['no_policy'] = no_policy;
-            obj_filter['aging_rmf'] = aging_rmf;
-            obj_filter['nb_rn'] = nb_rn;
-            obj_filter['holder_name'] = holder_name;
-            obj_filter['status_realisasi'] = status_realisasi;
-            obj_filter['ClassBusiness'] = ClassBusiness;
-            obj_filter['status_budget'] = status_budget;
-
-            /* CONVERT OBJECT TO QUERY URL PARAMETERS. */
-            $.each(obj_filter, function(key, val){
-                if( val != '' ){
-                    filter += `${key}=${val}&`;
-                }
-            });
-
-            /* REMOVE LAST CHARACTER FROM QUERY URL PARAMETERS. (&) */
-            filter = filter.substring(0, filter.length - 1);
-
-            if( isReturnObject ){
-                return obj_filter;
-            }
-
-            return filter;
-        }
-
-        function AddQueryUrlParameterToButtons(filters){
-            /* ?Approve */
-            let hrefApprove = $('body').find('.approve').attr('href'); /*Get Href Value*/
-            if( typeof hrefApprove !== 'undefined' ){
-                hrefApprove = hrefApprove.split('?')[0]; /*Remove Query Parameter from url.*/
-            }
-            hrefApprove = `${hrefApprove}?${filters}`;
-            $('body').find('.approve').attr('href', hrefApprove); /*Assign new url with Query Parameter*/
-            
-
-            /* ?Undo Approve */
-            let hrefUndoApprove = $('body').find('.undo_approve').attr('href'); /*Get Href Value*/
-            if( typeof hrefUndoApprove !== 'undefined' ){
-                hrefUndoApprove = hrefUndoApprove.split('?')[0]; /*Remove Query Parameter from url.*/
-            }
-            hrefUndoApprove = `${hrefUndoApprove}?${filters}`;
-            $('body').find('.undo_approve').attr('href', hrefUndoApprove); /*Assign new url with Query Parameter*/
-
-            
-            // /* ?Reject on different function. */
-            // let hrefReject = $('body').find('#form-reject-budget').attr('action'); /*Get Href Value*/
-            // if( typeof hrefReject !== 'undefined' ){
-            //     hrefReject = hrefReject.split('?')[0]; /*Remove Query Parameter from url.*/
-            // }
-            // hrefReject = `${hrefReject}?${filters}`;
-
-            // console.log(hrefReject, filters, );
-
-            // $('body').find('#form-reject-budget').attr('action', hrefReject); /*Assign new url with Query Parameter*/
-
-        }
     </script>
 @endsection

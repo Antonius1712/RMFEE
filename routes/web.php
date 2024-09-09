@@ -11,19 +11,24 @@
 |
 */
 
+use App\Http\Controllers\DocumentController;
+
 Auth::routes();
 
 Route::get('/sf', 'HomeController@sf')->name('sf');
 Route::get('/logout', 'Auth\LoginController@logout');
 
-Route::middleware(['breadcrumbs', 'auth'])->group(function(){
+Route::middleware(['breadcrumbs', 'auth'])->group(function () {
     Route::get('/', 'HomeController@index')->name('home');
 
     //? Budget Module.
-    Route::prefix('budget')->group(function(){
+    Route::prefix('budget')->group(function () {
         // Lists
         Route::get('/archive', 'BudgetController@archiveList')->name('budget.archive-list');
         Route::get('/list-budget', 'BudgetController@index')->name('budget.list');
+
+        // Show
+        // Route::get('/{voucher}', 'BudgetController@show')->name('budget.show');
 
         // Edit & Update
         Route::get('/edit-budget-archived/{voucher}/{archived}', 'BudgetController@edit')->name('budget-archived.edit');
@@ -48,15 +53,18 @@ Route::middleware(['breadcrumbs', 'auth'])->group(function(){
         // UnArchive
         Route::get('/unarchive/{voucher}', 'BudgetController@unarchive')->name('budget.unarchive');
 
+        // Multiple Approve
+        Route::get('/multiple-approve-budget', 'BudgetController@multipleApprove')->name('budget.multiple_approve');
+
         // !Data Table Budget.
         Route::get('/data-table', 'BudgetController@BudgetDataTable')->name('budget.data-table');
     });
 
     //? Realization & Detail Realization Module.
-    Route::prefix('realization')->group(function(){
+    Route::prefix('realization')->group(function () {
         Route::get('/', 'RealizationController@index')->name('realization.index');
 
-        Route::prefix('form-realization')->group(function(){
+        Route::prefix('form-realization')->group(function () {
             Route::get('/', 'RealizationController@create')->name('realization.create');
             Route::post('/', 'RealizationController@store')->name('realization.store');
 
@@ -70,7 +78,7 @@ Route::middleware(['breadcrumbs', 'auth'])->group(function(){
             Route::get('/reject/{invoice_no}', 'RealizationController@reject')->name('realization.reject');
 
             //? Detail Realization Module.
-            Route::prefix('detail-realization')->group(function(){
+            Route::prefix('detail-realization')->group(function () {
                 Route::get('/{invoice_no}', 'DetailRealizationController@index')->name('realization.detail-realization.index');
 
                 Route::get('/create/{invoice_no}', 'DetailRealizationController@create')->name('realization.detail-realization.create');
@@ -80,24 +88,39 @@ Route::middleware(['breadcrumbs', 'auth'])->group(function(){
 
                 Route::get('/{invoice_no}/edit/{id}', 'DetailRealizationController@edit')->name('realization.detail-realization.edit');
                 Route::post('/{invoice_no}/edit/{id}', 'DetailRealizationController@update')->name('realization.detail-realization.update');
-                
+
+                Route::post('/{id}', 'DetailRealizationController@destroy')->name('realization.detail-realization.destroy');
+
                 // Route::view('/edit', 'pages.realization.detail-realization.edit')->name('realization.detail-realization.edit');
             });
         });
 
         //? Data Table Realization.
-        Route::get('/data-table', 'Realization@RealizationDataTable')->name('realization.data-table');
+        // Route::get('/data-table', 'Realization@RealizationDataTable')->name('realization.data-table');
     });
 
+    //? Report Budget & Realization.
+    Route::prefix('report')->as('report.')->group(function () {
+        Route::get('/budget', 'Report\ReportBudgetController@index')->name('budget');
+        Route::get('/realization', 'Report\ReportRealizationController@index')->name('realization');
+        Route::get('/os', 'Report\ReportOsController@index')->name('os');
+
+        Route::post('/budget', 'Report\ReportBudgetController@GenerateReport')->name('budget.generate');
+        Route::post('/realization', 'Report\ReportRealizationController@GenerateReport')->name('realization.generate');
+        Route::post('/os', 'Report\ReportOsController@GenerateReport')->name('os.generate');
+    });
+
+    Route::resource('documents', 'DocumentController', ['middleware' => 'only.timmie.access']);
+
     //? Setting Budget Group & User Module.
-    Route::prefix('setting')->as('setting.')->group(function(){
+    Route::prefix('setting')->as('setting.')->group(function () {
 
         //? Only User with role HEAD can access User Settings.
-        Route::middleware('head.access')->group(function(){
+        Route::middleware('head.access')->group(function () {
             Route::get('/user', 'SettingController@userIndex')->name('user.index');
             Route::get('/user/create', 'SettingController@userCreate')->name('user.create');
             Route::post('/user/store', 'SettingController@userStore')->name('user.store');
-    
+
             Route::get('/user/edit/{UserID}', 'SettingController@userEdit')->name('user.edit');
             Route::post('user/edit/{UserID}', 'SettingController@userUpdate')->name('user.update');
 
@@ -112,11 +135,18 @@ Route::middleware(['breadcrumbs', 'auth'])->group(function(){
     });
 
     //? Ajax Calls.
-    Route::prefix('utils')->as('utils.')->group(function(){
+    Route::prefix('utils')->as('utils.')->group(function () {
         Route::get('/search_profile', 'UtilsController@SearchProfile')->name('search_profile');
         Route::get('/search_occupation', 'UtilsController@SearchOccupation')->name('search_occupation');
         Route::get('/search_profile_on_setting_budget', 'UtilsController@SearchProfileOnSettingBudget')->name('search_profile_on_setting_budget');
         Route::get('/search_budget_by_policy_no_and_broker_name', 'UtilsController@SearchBudgetByPolicyNoAndBrokerName')->name('search_budget_by_policy_no_and_broker_name');
+        Route::get('/search_profile_on_report_os', 'UtilsController@SearchProfileOnReportOs')->name('search_profile_on_report_os');
+    });
+
+    //? Menu Khusus Tester.
+    Route::prefix('special-menu')->as('special-menu.')->middleware('tester.access')->group(function () {
+        Route::get('/user', 'SpecialMenuController@user')->name('user');
+        Route::post('/user', 'SpecialMenuController@user_search')->name('user-search');
     });
 });
 
@@ -124,6 +154,5 @@ Route::middleware(['breadcrumbs', 'auth'])->group(function(){
 Route::get('/generate-attachment-epo/{PID}', 'GenerateAttachmentEpoController@index')->name('generate-pdf-attachment-epo');
 
 //? SECRET
-Route::middleware(['auth', 'secret'])->group(function(){
-
+Route::middleware(['auth', 'secret'])->group(function () {
 });

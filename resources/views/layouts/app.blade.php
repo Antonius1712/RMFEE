@@ -66,6 +66,16 @@
             opacity: 0.5;
 
         }
+
+        #modalBackground {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgb(0 0 0 / 0.7);
+            z-index: 10;
+        }
     </style>
 
     <div id="loading" style="display:none;"></div>
@@ -159,6 +169,7 @@
         var url = "{{ ENV('APP_URL') }}";
         var ImageLoading = `<img id="imgLoading" style="width: 100%; height: auto; z-index: 1; position: relative; max-width: 100%; max-height: 100vh; margin: auto;" src="{{ asset('images/loader.gif') }}"/>`;
         const serach_profile_url = '{{ route("utils.search_profile") }}';
+        const search_profile_on_report_os = `{{ route('utils.search_profile_on_report_os') }}`;
         const serach_occupation_url = '{{ route("utils.search_occupation") }}';
         const serach_profile_on_setting_budget_url = '{{ route("utils.search_profile_on_setting_budget") }}';
         const AuthUser = "{{ auth()->user()->NIK }}";
@@ -222,6 +233,35 @@
                 }
             });
         }
+
+        function getDatesInRange(startDate, endDate) {
+            var start = moment(startDate).format('YYYY-MM-DD');
+            var end = moment(endDate).format('YYYY-MM-DD');
+            var dates = [];
+
+            if( typeof start !== 'undefined' && typeof end !== 'undefined' ){
+                while (start <= end) {
+                    dates.push(moment(start).format('DD-MMM-YYYY'));
+                    start = moment(start).add(1, 'days').format('YYYY-MM-DD');
+                }
+            }
+
+            return dates;
+        }
+
+        $('body').on('click',
+            '#copy-password-issurance-demo, #copy-password-issurance-live, #copy-password-issurance-api, #copy-password-ebenefit-demo, #copy-password-ebenefit-live, #copy-password-docker-demo, #copy-password-docker-live, #copy-password-gitlab-old, #copy-password-gitlab-new, #copy-password, #copy-password-lgi-global, #copy-password-issurance, #copy-nik',
+            function() {
+                let copy_text = $(this).data('password');
+                // console.log($(this).data('password'));
+                let temp = $("<input>");
+                $('body').append(temp);
+                temp.val(copy_text).select();
+                document.execCommand("copy");
+                temp.remove();
+                alert(`Copied, text = ${copy_text}`);
+            }
+        );
     </script>
 
     @yield('script')
