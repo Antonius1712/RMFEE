@@ -75,8 +75,9 @@ class SendEmailEpo extends Command
             // $LINK = "https://epo.lippoinsurance.com/post.Default2.wgx?param1=1&param2=JESSY&param3=".$PARAM3."&param4=".$PARAM4."&param5=1";
 
             // DEMO
-            $LINK = "http://172.16.0.57/ePO/post.Default2.wgx?param1=1&param2=JESSY&param3=".$PARAM3."&param4=".$PARAM4."&param5=1";
-
+            // $LINK = "http://172.16.0.57/ePO/post.Default2.wgx?param1=1&param2=JESSY&param3=".$PARAM3."&param4=".$PARAM4."&param5=1";
+            $LINK = "http://172.16.0.57/ePO/post.Default2.wgx?param1=1&param2=TIMMIE%20M&param3=".$PARAM3."&param4=".$PARAM4."&param5=1";
+            
             $PARAM = [
                 'PID' => $val->PID,
                 'LINK' => $LINK
@@ -91,7 +92,8 @@ class SendEmailEpo extends Command
                         foreach( $Files as $key => $file ){
                             $mail->attach($file);
                         }
-                        $mail->to('shintawati@lgi.co.id');
+                        $mail->to('timmie@lgi.co.id');
+                        // $mail->to('shintawati@lgi.co.id');
                         // $mail->to($val->Email_To);
                         $mail->bcc(['it-dba01@lgi.co.id', 'it-dba07@lgi.co.id', 'it-dba18@lgi.co.id']);
                         $mail->subject('Purchase Order #'.$val->PID.'# for you to check');

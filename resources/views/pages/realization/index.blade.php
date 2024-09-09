@@ -51,7 +51,6 @@
                             value="{{ $FilterInvoiceNo }}" placeholder="Type Here..">
                     </div>
                 </div>
-
                 <div class="col-lg-4">
                     <div class="form-group">
                         <label for="cob">COB</label>
@@ -59,6 +58,18 @@
                             <option value="">All</option>
                             @foreach ($COB as $key => $val)
                                 <option {{ $FilterCOB == $key ? 'selected' : '' }} value="{{ $key }}">{{ $val }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+
+                <div class="col-lg-4">
+                    <div class="form-group">
+                        <label for="type_of_payment">Type of Payment</label>
+                        <select name="type_of_payment" id="type_of_payment" class="form-control radius">
+                            <option value="">All</option>
+                            @foreach ($TypeOfPayment as $key => $val)
+                                <option {{ $FilterTypeOfPayment == $val ? 'selected' : '' }} value="{{ $val }}">{{ $val }}</option>
                             @endforeach
                         </select>
                     </div>

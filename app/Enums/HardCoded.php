@@ -12,9 +12,18 @@ final class HardCoded {
         'UNPAID'
     ];
 
-    CONST statusRealisasi = [
+    CONST statusRealisasiOnBudget = [
         'PAID',
         'UNPAID'
+    ];
+
+    CONST statusRealisasi = [
+        'NEW',
+        'DRAFT',
+        'WAITING APPROVAL',
+        'APPROVED',
+        'REJECT',
+        'ARCHIVE'
     ];
 
     CONST statusBudget = [

@@ -7,6 +7,7 @@ use App\Helpers\Budget;
 use App\Helpers\DetailRealization;
 use App\Helpers\Realization;
 use App\Helpers\Utils;
+use App\Model\ReportGenerator_Detail_Realization_Group_Engineering_Fee;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -19,7 +20,11 @@ class DetailRealizationController extends Controller
         // dd($invoice_no, $invoice_no_real);
         $RealizationData = Realization::GetRealization($invoice_no_real)[0];
         $DetailRealization = DetailRealization::GetDetailRealization($RealizationData->ID);
-        return view('pages.realization.detail-realization.index', compact('invoice_no', 'RealizationData', 'DetailRealization'));
+
+        $SumTotalAmountRealizaton = ReportGenerator_Detail_Realization_Group_Engineering_Fee::where('realization_id', $RealizationData->ID)->sum('total_amount_realization');
+        // dd($SumTotalAmountRealizaton);
+        
+        return view('pages.realization.detail-realization.index', compact('invoice_no', 'RealizationData', 'DetailRealization', 'SumTotalAmountRealizaton'));
     }
 
     public function create($invoice_no){
@@ -28,6 +33,8 @@ class DetailRealizationController extends Controller
         $RealizationData = Realization::GetRealization($invoice_no_real)[0];
         $Broker = Utils::GetProfile($RealizationData->Broker_ID, $RealizationData->Currency);
         $BrokerName = $Broker != null ? $Broker->Name : "";
+
+        // dd($BrokerName);
 
         $PaymentTo = Utils::GetProfile($RealizationData->Payment_To_ID, $RealizationData->Currency);
         $PaymentToName = $PaymentTo != null ? $PaymentTo->Name : "";
@@ -89,5 +96,9 @@ class DetailRealizationController extends Controller
         $BrokerName = Utils::GetProfile($RealizationData->Broker_ID, $RealizationData->Currency);
         $BrokerName = $BrokerName != null ? $BrokerName->Name : "";
         return view('pages.realization.detail-realization.show', compact('DetailRealization', 'RealizationData', 'BrokerName', 'Currencies', 'invoice_no'));
+    }
+
+    public function destroy($id){
+
     }
 }

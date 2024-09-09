@@ -3,6 +3,7 @@
 namespace App\Model;
 
 use App\Enums\Database;
+use App\Helpers\Utils;
 use App\Model\LGIGlobal_Branch;
 use App\Model\LGIGlobal_Dept;
 use App\Model\LGIGlobal_UserGroup;
@@ -44,5 +45,13 @@ class LGIGlobal_User extends Authenticatable
 
     public function getUserSetting(){
         return $this->hasOne(ReportGenerator_UserSetting::class, 'UserID', 'UserId');
+    }
+
+    public function getIssuranceData(){
+        return $this->hasOne(ISSURANCE_User::class, 'UserId', 'UserId');
+    }
+
+    public function getPasswordAttribute($value){
+        return Utils::Decrypt($value);
     }
 }
