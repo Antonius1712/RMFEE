@@ -1,58 +1,108 @@
-<p align="center"><img src="https://laravel.com/assets/img/components/logo-laravel.svg"></p>
+# RMFEE
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/d/total.svg" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/v/stable.svg" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/license.svg" alt="License"></a>
-</p>
+**RMFEE** is an application designed to manage budget proposals, approvals, and reporting processes within an organization. It is integrated with the **[EPO (LGI Fixed Asset)](https://github.com/Antonius1712/LGI-FIXED-ASSET)** system to facilitate automated asset number generation and email-based director approvals.
 
-## About Laravel
+## Table of Contents
+- [Overview](#overview)
+- [Features](#features)
+- [Technology Stack](#technology-stack)
+- [Installation](#installation)
+- [Configuration](#configuration)
+- [Integration with EPO](#integration-with-epo)
+- [Usage](#usage)
+- [Cron Job Setup](#cron-job-setup)
+- [Contact](#contact)
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel attempts to take the pain out of development by easing common tasks used in the majority of web projects, such as:
+## Overview
+The RMFEE application is a comprehensive tool for managing the entire lifecycle of budget proposals, from submission to approval and reporting. The system is tightly integrated with the **[EPO (LGI Fixed Asset)](https://github.com/Antonius1712/LGI-FIXED-ASSET)** system, enabling automated generation of asset numbers and streamlining the approval process through email notifications to directors.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Features
+- **Budget Proposal Management**: Submit and manage budget proposals with ease.
+- **Approval Workflow**: Streamlined approval process with email notifications for directors.
+- **Automated Asset Number Generation**: Integration with the **[EPO (LGI Fixed Asset)](https://github.com/Antonius1712/LGI-FIXED-ASSET)** system for automatic asset number generation.
+- **Reporting**: Generate detailed reports on budget proposals, approvals, and asset management.
+- **Email Notifications**: Automated email notifications for approvals and other key actions.
 
-Laravel is accessible, yet powerful, providing tools needed for large, robust applications.
+## Technology Stack
+- **Backend**: [Laravel](https://laravel.com/) - A powerful PHP framework for handling server-side logic.
+- **Database**: [MSSQL](https://www.microsoft.com/en-us/sql-server/sql-server-downloads) - A robust relational database management system for storing application data.
+- **Email**: Laravel's built-in email functionality for sending notifications.
+- **Integration**: Tight integration with the **[EPO (LGI Fixed Asset)](https://github.com/Antonius1712/LGI-FIXED-ASSET)** system.
 
-## Learning Laravel
+## Installation
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of any modern web application framework, making it a breeze to get started learning the framework.
+### Prerequisites
+- [PHP](https://www.php.net/) >= 7.4
+- [Composer](https://getcomposer.org/) for dependency management
+- [MSSQL](https://www.microsoft.com/en-us/sql-server/sql-server-downloads) for the database
 
-If you're not in the mood to read, [Laracasts](https://laracasts.com) contains over 1100 video tutorials on a range of topics including Laravel, modern PHP, unit testing, JavaScript, and more. Boost the skill level of yourself and your entire team by digging into our comprehensive video library.
+### Steps
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/Antonius1712/RMFEE
+   cd rmfee
+   ```
+2. **Install backend dependencies**:
+   ```bash
+   composer install
+   ```
+3. **Environment setup**:
+   Copy `.env.example` to `.env`:
+   ```bash
+   cp .env.example .env
+   ```
+   Configure the .env file with your MSSQL database credentials and other environment-specific variables.
 
-## Laravel Sponsors
+4. **Database migration: Run the migrations to set up the required tables in your MSSQL database**:
+   ```bash
+   php artisan migrate
+   ```
+5. **Generate application key**:
+   ```bash
+   php artisan key:generate
+   ```
+6. **Start the development server**:
+   ```bash
+   php artisan serve
+   ```
+7. **Access the application: Open your browser and navigate to http://localhost:8000**
 
-We would like to extend our thanks to the following sponsors for helping fund on-going Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell):
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[British Software Development](https://www.britishsoftware.co)**
-- [Fragrantica](https://www.fragrantica.com)
-- [SOFTonSOFA](https://softonsofa.com/)
-- [User10](https://user10.com)
-- [Soumettre.fr](https://soumettre.fr/)
-- [CodeBrisk](https://codebrisk.com)
-- [1Forge](https://1forge.com)
-- [TECPRESSO](https://tecpresso.co.jp/)
-- [Pulse Storm](http://www.pulsestorm.net/)
-- [Runtime Converter](http://runtimeconverter.com/)
-- [WebL'Agence](https://weblagence.com/)
+## Configuration
 
-## Contributing
+Edit the `.env` file to configure your database connection, mail server, and other environment-specific settings. Ensure the integration with the **[EPO (LGI Fixed Asset)](https://github.com/Antonius1712/LGI-FIXED-ASSET)** system is properly configured.
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## Integration with EPO
 
-## Security Vulnerabilities
+The RMFEE application is integrated with the **[EPO (LGI Fixed Asset)](https://github.com/Antonius1712/LGI-FIXED-ASSET)** system to automate asset number generation and manage the approval process. Make sure the EPO system is up and running, and that the necessary API keys or connection strings are set up in the `.env` file.
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## Usage
 
-## License
+- **Submit Budget Proposals**: Users can submit budget proposals, which will be automatically processed and sent for approval.
+- **Approval Workflow**: Directors receive email notifications for approvals, and the system generates asset numbers through the EPO integration.
+- **Reporting**: Generate reports on all budget activities and asset management.
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## Cron Job Setup
+
+To ensure that the application runs as a scheduled job, set up a cron job on your server:
+
+1. Open the crontab file:
+    ```bash
+    crontab -e
+    ```
+2. Add the following line to schedule the job:
+    ```bash
+    * * * * * php /path-to-your-project/artisan schedule:run >> /dev/null 2>&1
+    ```
+    Replace /path-to-your-project/ with the actual path to your Laravel project. Adjust the cron timing (* * * * *) based on your scheduling needs.
+
+## Contact
+
+For any questions or support, please reach out to:
+
+- **Name**: Antonius Christian
+- **Email**: antonius1712@gmail.com
+- **Phone**: +6281297275563
+- **LinkedIn**: [Antonius Christian](https://www.linkedin.com/in/antonius-christian/)
+
+Feel free to connect with me via email or LinkedIn for any inquiries or further information.
