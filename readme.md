@@ -106,3 +106,71 @@ For any questions or support, please reach out to:
 - **LinkedIn**: [Antonius Christian](https://www.linkedin.com/in/antonius-christian/)
 
 Feel free to connect with me via email or LinkedIn for any inquiries or further information.
+
+## Screenshots
+
+Here are some screenshots of the RMFEE application:
+
+### Login
+![Login](https://raw.githubusercontent.com/Antonius1712/docs-screenshots/master/RMFEE/LOGIN.png)
+*Login page for the RMFEE application.*
+
+### Budget Edit
+![Budget Edit](https://raw.githubusercontent.com/Antonius1712/docs-screenshots/master/RMFEE/BUDGET-EDIT-BUDGET.png)
+*Screenshot showing the budget edit page.*
+
+### Budget Group - Add Budget Group
+![Budget Group - Add Budget Group](https://raw.githubusercontent.com/Antonius1712/docs-screenshots/master/RMFEE/BUDGET-GROUP-ADD-BUDGET-GROUP.png)
+*Page for adding a new budget group.*
+
+### Budget List - Unfiltered
+![Budget List - Unfiltered](https://raw.githubusercontent.com/Antonius1712/docs-screenshots/master/RMFEE/BUDGET-LIST-UNFILTERED.png)
+*Unfiltered view of the budget list.*
+
+### Budget Group
+![Budget Group](https://raw.githubusercontent.com/Antonius1712/docs-screenshots/master/RMFEE/BUDGET-GROUP.png)
+*Overview of budget groups.*
+
+### Detail Realization - Add Detail Realization
+![Detail Realization - Add](https://raw.githubusercontent.com/Antonius1712/docs-screenshots/master/RMFEE/DETAIL-REALIZATION-ADD-DETAIL-REALIZATION.png)
+*Page for adding details to a realization.*
+
+### Detail Realization - After Add Realization
+![Detail Realization - After Add](https://raw.githubusercontent.com/Antonius1712/docs-screenshots/master/RMFEE/DETAIL-REALIZATION-AFTER-ADD-REALIZATION.png)
+*View of the detail realization after adding.*
+
+### Expanded Filter
+![Expanded Filter](https://raw.githubusercontent.com/Antonius1712/docs-screenshots/master/RMFEE/EXPANDED-FILTER.png)
+*Screenshot of the expanded filter options.*
+
+### Home Dashboard
+![Home Dashboard](https://raw.githubusercontent.com/Antonius1712/docs-screenshots/master/RMFEE/HOME-DASHBOARD.png)
+*Dashboard view of the application.*
+
+### Realization - Add New Realization
+![Realization - Add New](https://raw.githubusercontent.com/Antonius1712/docs-screenshots/master/RMFEE/REALIZATION-ADD-NEW-REALIZATION.png)
+*Page for adding new realizations.*
+
+### Realization - Expanded Filter
+![Realization - Expanded Filter](https://raw.githubusercontent.com/Antonius1712/docs-screenshots/master/RMFEE/REALIZATION-EXPANDED-FILTER.png)
+*Expanded filter options for realizations.*
+
+### Realization List - Unfiltered
+![Realization List - Unfiltered](https://raw.githubusercontent.com/Antonius1712/docs-screenshots/master/RMFEE/REALIZATION-LIST-UNFILTERD.png)
+*Unfiltered view of the realization list.*
+
+### Report Budget
+![Report Budget](https://raw.githubusercontent.com/Antonius1712/docs-screenshots/master/RMFEE/REPORT-BUDGET.png)
+*Report page showing budget data.*
+
+### Report Realization
+![Report Realization](https://raw.githubusercontent.com/Antonius1712/docs-screenshots/master/RMFEE/REPORT-REALIZATION.png)
+*Report page showing realization data.*
+
+### User Setting - Edit
+![User Setting - Edit](https://raw.githubusercontent.com/Antonius1712/docs-screenshots/master/RMFEE/USER-SETTING-EDIT.png)
+*Page for editing user settings.*
+
+### User Setting - Only on Head Login
+![User Setting - Only on Head Login](https://raw.githubusercontent.com/Antonius1712/docs-screenshots/master/RMFEE/USER-SETTING-ONLY-ON-HEAD-LOGIN.png)
+*User settings view available only on head login.*
