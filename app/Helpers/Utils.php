@@ -4,7 +4,7 @@ namespace App\Helpers;
 use App\Enums\Database;
 use Exception;
 use Illuminate\Support\Facades\DB;
-
+use JsonException;
 
 // ! Only Put Global Function (Function that used in many places.) Here.
 class Utils {
@@ -178,6 +178,19 @@ class Utils {
             }
         }
         return true;
+    }
+
+    public static function urlFormatter($link){
+        return filter_var($link, FILTER_VALIDATE_URL) ? $link : "https://$link";
+    }
+
+    public static function isJson($value) {
+        if (!is_string($value) || trim($value) === '') {
+            return false;
+        }
+        
+        json_decode($value);
+        return (json_last_error() === JSON_ERROR_NONE);
     }
 }
 ?>

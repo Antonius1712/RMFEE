@@ -86,13 +86,8 @@ class GenerateAttachmentPO extends Command
     public function isReportError($url=false, $data=[])
     {
         if (!$url) return true;
-        $content = $this->curl_get_contents($url);
-        // \Log::info($content);
-        // dd($mime_content_type(filename));
 
-        // Log::info($content);
-        // dd(strpos($content, '<h1>Whoops, looks like something went wrong.</h1>') !== false);
-        // dd($url);
+        $content = $this->curl_get_contents($url);
 
         if (strpos($content, '<h1>Whoops, looks like something went wrong.</h1>') !== false) {
             return true;
@@ -103,14 +98,12 @@ class GenerateAttachmentPO extends Command
     public function curl_get_contents($url)
     {
         $ch = curl_init($url);
-        // dd($ch);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
         $data = curl_exec($ch);
         curl_close($ch);
-        // dd($data);
         return $data;
     }
 }

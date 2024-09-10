@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\Utils;
 use App\Model\LGIGlobal_User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class SpecialMenuController extends Controller
 {
@@ -13,10 +15,14 @@ class SpecialMenuController extends Controller
 
     public function user(){
         // Retrieve users with the specified GroupCode
-        $users = LGIGlobal_User::with('getUserGroup', 'getDept', 'getBranch')->whereHas('getUserGroup', function ($query) {
+        $users = LGIGlobal_User::with(['getUserGroup', 'getDept', 'getBranch'])
+        ->whereHas('getUserGroup', function ($query) {
             $query->where('GroupCode', 'like', '%RMFEE%');
         })
-        ->get();
+        ->get()
+        ->sortBy(function ($user) {
+            return $user->getUserGroup->GroupCode ?? ''; // Sorting by GroupCode in the relationship
+        });
 
         // Return the users to the view or do something else with them
         return view('special-menu.users.index', compact('users'));
