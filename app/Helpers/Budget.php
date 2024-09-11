@@ -2,35 +2,15 @@
 
 namespace App\Helpers;
 
+use App\Enums\BudgetButtons;
 use App\Enums\BudgetStatus;
 use App\Enums\Database;
-use App\Pipeline\Budget\PrepareData;
-use App\Pipeline\Budget\UpdateData;
-use App\Pipeline\Pipes;
 use Exception;
-use Illuminate\Pipeline\Pipeline;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use PDO;
 
 // ! Only Put Function that used only in Budgets. (usuallly method to Select, Insert, Update, Delete, and some customization).
 class Budget {
-    // !For DataTable Purposes only.
-    public static function GetBudgetDataTable($broker_name, $branch, $status_pembayaran_premi, $start_date, $no_policy, $aging_rmf, $booking_date_from, $booking_date_to, $nb_rn, $holder_name, $class_business, $status_realisasi, $status_budget = '', $ProposedTo){
-        $status_budget = strtoupper($status_budget);
-        $archive = $status_budget == BudgetStatus::ARCHIVED ? 1 : 0;
-        // dd($ProposedTo, $status_budget, $booking_date_from, $booking_date_to);
-        try {
-            return DB::connection(Database::REPORT_GENERATOR)
-            ->select("
-                EXECUTE [dbo].[SP_Get_Data_Engineering_Fee] 
-                '$broker_name', '$branch', '$nb_rn', '$start_date', '$no_policy', '$holder_name', '$status_pembayaran_premi', '$aging_rmf', '$status_realisasi', '', '$status_budget', $archive, '$booking_date_from', '$booking_date_to', '$class_business', '$ProposedTo'
-            ");
-        } catch (Exception $e) {
-            return $e->getMessage();
-        }
-    }
-
     public static function GetBudget($voucher = '', $archive = 0){
         $voucher = $voucher != "" ? str_replace("-", "/", $voucher) : "";
         try {
@@ -134,7 +114,7 @@ class Budget {
         }
     }
 
-    public static function ShowHideButtonBudget($status, $role){
+    public static function ShowHideButtonBudget($status, $role) {
         $BtnEdit = false;
         $BtnDownloadDocument = false;
         $BtnArchive = false;
@@ -142,7 +122,7 @@ class Budget {
         $BtnUndoApproval = false;
         $BtnReject = false;
         $BtnUnArchive = false;
-        
+    
         switch ($status) {
             case BudgetStatus::DRAFT:
                 switch ($role) {
@@ -150,235 +130,89 @@ class Budget {
                         $BtnEdit = true;
                         $BtnDownloadDocument = true;
                         $BtnArchive = true;
-                        return [
-                            'BtnEdit' => $BtnEdit,
-                            'BtnDownloadDocument' => $BtnDownloadDocument,
-                            'BtnArchive' => $BtnArchive,
-                            'BtnApprove' => $BtnApprove,
-                            'BtnUndoApproval' => $BtnUndoApproval,
-                            'BtnReject' => $BtnReject,
-                            'BtnUnArchive' => $BtnUnArchive,
-                        ];
                         break;
                     case "HEAD_BU_RMFEE":
                         $BtnDownloadDocument = true;
-                        return [
-                            'BtnEdit' => $BtnEdit,
-                            'BtnDownloadDocument' => $BtnDownloadDocument,
-                            'BtnArchive' => $BtnArchive,
-                            'BtnApprove' => $BtnApprove,
-                            'BtnUndoApproval' => $BtnUndoApproval,
-                            'BtnReject' => $BtnReject,
-                            'BtnUnArchive' => $BtnUnArchive,
-                        ];
-                        break;
-                    default:
-                        return [
-                            'BtnEdit' => $BtnEdit,
-                            'BtnDownloadDocument' => $BtnDownloadDocument,
-                            'BtnArchive' => $BtnArchive,
-                            'BtnApprove' => $BtnApprove,
-                            'BtnUndoApproval' => $BtnUndoApproval,
-                            'BtnReject' => $BtnReject,
-                            'BtnUnArchive' => $BtnUnArchive,
-                        ];
                         break;
                 }
+                break;
+    
             case BudgetStatus::WAITING_APPROVAL:
                 switch ($role) {
                     case "USER_RMFEE":
                         $BtnDownloadDocument = true;
-                        return [
-                            'BtnEdit' => $BtnEdit,
-                            'BtnDownloadDocument' => $BtnDownloadDocument,
-                            'BtnArchive' => $BtnArchive,
-                            'BtnApprove' => $BtnApprove,
-                            'BtnUndoApproval' => $BtnUndoApproval,
-                            'BtnReject' => $BtnReject,
-                            'BtnUnArchive' => $BtnUnArchive,
-                        ];
                         break;
                     case "HEAD_BU_RMFEE":
                         $BtnDownloadDocument = true;
                         $BtnApprove = true;
                         $BtnReject = true;
-                        return [
-                            'BtnEdit' => $BtnEdit,
-                            'BtnDownloadDocument' => $BtnDownloadDocument,
-                            'BtnArchive' => $BtnArchive,
-                            'BtnApprove' => $BtnApprove,
-                            'BtnUndoApproval' => $BtnUndoApproval,
-                            'BtnReject' => $BtnReject,
-                            'BtnUnArchive' => $BtnUnArchive,
-                        ];
-                        break;
-                    default:
-                        return [
-                            'BtnEdit' => $BtnEdit,
-                            'BtnDownloadDocument' => $BtnDownloadDocument,
-                            'BtnArchive' => $BtnArchive,
-                            'BtnApprove' => $BtnApprove,
-                            'BtnUndoApproval' => $BtnUndoApproval,
-                            'BtnReject' => $BtnReject,
-                            'BtnUnArchive' => $BtnUnArchive,
-                        ];
                         break;
                 }
+                break;
+    
             case BudgetStatus::APPROVED:
                 switch ($role) {
                     case "USER_RMFEE":
-                        $BtnDownloadDocument = true;
                         $BtnEdit = true;
-                        return [
-                            'BtnEdit' => $BtnEdit,
-                            'BtnDownloadDocument' => $BtnDownloadDocument,
-                            'BtnArchive' => $BtnArchive,
-                            'BtnApprove' => $BtnApprove,
-                            'BtnUndoApproval' => $BtnUndoApproval,
-                            'BtnReject' => $BtnReject,
-                            'BtnUnArchive' => $BtnUnArchive,
-                        ];
+                        $BtnDownloadDocument = true;
                         break;
                     case "HEAD_BU_RMFEE":
                         $BtnUndoApproval = true;
                         $BtnDownloadDocument = true;
-                        return [
-                            'BtnEdit' => $BtnEdit,
-                            'BtnDownloadDocument' => $BtnDownloadDocument,
-                            'BtnArchive' => $BtnArchive,
-                            'BtnApprove' => $BtnApprove,
-                            'BtnUndoApproval' => $BtnUndoApproval,
-                            'BtnReject' => $BtnReject,
-                            'BtnUnArchive' => $BtnUnArchive,
-                        ];
-                        break;
-                    default:
-                        return [
-                            'BtnEdit' => $BtnEdit,
-                            'BtnDownloadDocument' => $BtnDownloadDocument,
-                            'BtnArchive' => $BtnArchive,
-                            'BtnApprove' => $BtnApprove,
-                            'BtnUndoApproval' => $BtnUndoApproval,
-                            'BtnReject' => $BtnReject,
-                            'BtnUnArchive' => $BtnUnArchive,
-                        ];
                         break;
                 }
+                break;
+    
             case BudgetStatus::REJECTED:
                 switch ($role) {
                     case "USER_RMFEE":
                         $BtnEdit = true;
                         $BtnDownloadDocument = true;
                         $BtnArchive = true;
-                        return [
-                            'BtnEdit' => $BtnEdit,
-                            'BtnDownloadDocument' => $BtnDownloadDocument,
-                            'BtnArchive' => $BtnArchive,
-                            'BtnApprove' => $BtnApprove,
-                            'BtnUndoApproval' => $BtnUndoApproval,
-                            'BtnReject' => $BtnReject,
-                            'BtnUnArchive' => $BtnUnArchive,
-                        ];
                         break;
                     case "HEAD_BU_RMFEE":
                         $BtnDownloadDocument = true;
-                        return [
-                            'BtnEdit' => $BtnEdit,
-                            'BtnDownloadDocument' => $BtnDownloadDocument,
-                            'BtnArchive' => $BtnArchive,
-                            'BtnApprove' => $BtnApprove,
-                            'BtnUndoApproval' => $BtnUndoApproval,
-                            'BtnReject' => $BtnReject,
-                            'BtnUnArchive' => $BtnUnArchive,
-                        ];
-                        break;
-                    default:
-                        return [
-                            'BtnEdit' => $BtnEdit,
-                            'BtnDownloadDocument' => $BtnDownloadDocument,
-                            'BtnArchive' => $BtnArchive,
-                            'BtnApprove' => $BtnApprove,
-                            'BtnUndoApproval' => $BtnUndoApproval,
-                            'BtnReject' => $BtnReject,
-                            'BtnUnArchive' => $BtnUnArchive,
-                        ];
                         break;
                 }
-            case BudgetStatus::ARCHIVED:
-                // $BtnEdit = true;
-                // $BtnDownloadDocument = true;
-                $BtnUnArchive = true;
-                return [
-                    'BtnEdit' => $BtnEdit,
-                    'BtnDownloadDocument' => $BtnDownloadDocument,
-                    'BtnArchive' => $BtnArchive,
-                    'BtnApprove' => $BtnApprove,
-                    'BtnUndoApproval' => $BtnUndoApproval,
-                    'BtnReject' => $BtnReject,
-                    'BtnUnArchive' => $BtnUnArchive,
-                ];
                 break;
-            default :
+    
+            case BudgetStatus::ARCHIVED:
+                $BtnUnArchive = true;
+                break;
+    
+            default:
                 switch ($role) {
                     case "USER_RMFEE":
                         $BtnEdit = true;
                         $BtnDownloadDocument = true;
                         $BtnArchive = true;
-                        return [
-                            'BtnEdit' => $BtnEdit,
-                            'BtnDownloadDocument' => $BtnDownloadDocument,
-                            'BtnArchive' => $BtnArchive,
-                            'BtnApprove' => $BtnApprove,
-                            'BtnUndoApproval' => $BtnUndoApproval,
-                            'BtnReject' => $BtnReject,
-                            'BtnUnArchive' => $BtnUnArchive,
-                        ];
+                        break;
                     case "HEAD_BU_RMFEE":
                         $BtnDownloadDocument = true;
-                        return [
-                            'BtnEdit' => $BtnEdit,
-                            'BtnDownloadDocument' => $BtnDownloadDocument,
-                            'BtnArchive' => $BtnArchive,
-                            'BtnApprove' => $BtnApprove,
-                            'BtnUndoApproval' => $BtnUndoApproval,
-                            'BtnReject' => $BtnReject,
-                            'BtnUnArchive' => $BtnUnArchive,
-                        ];
                         break;
-                    default:
-                    return [
-                        'BtnEdit' => $BtnEdit,
-                        'BtnDownloadDocument' => $BtnDownloadDocument,
-                        'BtnArchive' => $BtnArchive,
-                        'BtnApprove' => $BtnApprove,
-                        'BtnUndoApproval' => $BtnUndoApproval,
-                        'BtnReject' => $BtnReject,
-                        'BtnUnArchive' => $BtnUnArchive,
-                    ];
-                    break;
                 }
+                break;
         }
-
-        // if( $status == 'WAITING_APPROVAL' ){
-        //     dd($BtnEdit, $BtnDownloadDocument, $BtnArchive, $BtnApprove, $BtnUndoApproval, $BtnReject);
-        // }
+    
+        return self::GetButtons($BtnEdit, $BtnDownloadDocument, $BtnArchive, $BtnUnArchive, $BtnApprove, $BtnUndoApproval, $BtnReject);
     }
-
-    // public static function GetReportBudgetSummary($start_date, $end_date, $status_budget){
-    //     $start_date = str_replace('/', '-', $start_date);
-    //     $end_date = str_replace('/', '-', $end_date);
-    //     return DB::connection(Database::REPORT_GENERATOR)->select("EXECUTE [dbo].[SP_Report_Budget_Summary_Engineering_Fee] '$start_date', '$end_date', '$status_budget'");
-    // }
-
-    // public static function GetReportBudgetDetail($start_date, $end_date, $status_budget){
-    //     $start_date = str_replace('/', '-', $start_date);
-    //     $end_date = str_replace('/', '-', $end_date);
-    //     return DB::connection(Database::REPORT_GENERATOR)->select("EXECUTE [dbo].[SP_Report_Budget_Detail_Engineering_Fee] '$start_date', '$end_date', '$status_budget'");
-    // }
 
     //? Private static function, only used here. not outside the class.
     private static function RemoveThousandSeparator($amount){
         return str_replace(',', '', $amount);
+    }
+
+    private static function GetButtons($edit, $download, $archive, $unArchive, $approve, $undoApprove, $reject ){
+        $Buttons = [
+            BudgetButtons::BTN_EDIT => $edit,
+            BudgetButtons::BTN_DOWNLOAD_DOCUMENT => $download,
+            BudgetButtons::BTN_ARCHIVE => $archive,
+            BudgetButtons::BTN_APPROVE => $approve,
+            BudgetButtons::BTN_UNDO_APPROVE => $undoApprove,
+            BudgetButtons::BTN_REJECT => $reject,
+            BudgetButtons::BTN_UNARCHIVE => $unArchive
+        ];
+        return $Buttons;
     }
 }
 

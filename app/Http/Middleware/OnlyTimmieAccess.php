@@ -2,7 +2,9 @@
 
 namespace App\Http\Middleware;
 
+use App\Enums\Nik;
 use Closure;
+use Illuminate\Http\Response;
 
 class OnlyTimmieAccess
 {
@@ -15,11 +17,13 @@ class OnlyTimmieAccess
      */
     public function handle($request, Closure $next)
     {
-        $Validate = Auth()->User()->NIK == '2006041565';
+        /* See on Model/LGIGlobal_User */
+        $Validate = Auth()->User()->isThisTimmie();
         if( $Validate ) {
             return $next($request);
         } else {
-            return abort(404);
+            return abort(Response::HTTP_FORBIDDEN);
+            // return abort(404);
         }
     }
 }

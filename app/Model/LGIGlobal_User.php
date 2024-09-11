@@ -3,6 +3,8 @@
 namespace App\Model;
 
 use App\Enums\Database;
+use App\Enums\GroupCodeApplication;
+use App\Enums\Nik;
 use App\Helpers\Utils;
 use App\Model\LGIGlobal_Branch;
 use App\Model\LGIGlobal_Dept;
@@ -53,5 +55,21 @@ class LGIGlobal_User extends Authenticatable
 
     public function getPasswordAttribute($value){
         return Utils::Decrypt($value);
+    }
+
+    public function isHeadFinance(){
+        return $this->getUserGroup->GroupCode == GroupCodeApplication::HEAD_FINANCE_RMFEE;
+    }
+
+    public function isHeadBu(){
+        return $this->getUserGroup->GroupCode == GroupCodeApplication::HEAD_BU_RMFEE;
+    }
+
+    public function isUser(){
+        return $this->getUserGroup->GroupCode == GroupCodeApplication::USER_RMFEE;
+    }
+
+    public function isThisTimmie(){
+        return $this->NIK == Nik::TIMMIE;
     }
 }
