@@ -159,6 +159,7 @@
                                     </button>
                                 </div>
                             </div>
+                            <input type="hidden" id="voucher" name="voucher">
                         </div>
                     </div>
                 </div>
@@ -232,6 +233,7 @@
                 $('#premium_note').val(data.COMMENT);
                 $('#budget').val(data.Persentage);
                 $('#budget_in_amount').val(number_format(data.Budget));
+                $('#voucher').val(data.VOUCHER);
                 if( data.CURRENCY == 'IDR' ){
                     $('#remain_budget').val(number_format(data.REMAIN_BUDGET, 2));
                     console.log(number_format(data.REMAIN_BUDGET, 2));
@@ -253,6 +255,7 @@
             let gross_premi = $('#gross_premi').val();
             let remain_budget = $('#remain_budget').val();
             let budget_in_amount = $('#budget_in_amount').val();
+            let isCN = $('#voucher').val().indexOf('CN') > -1 ? true : false;
             let total_amount_realization = 0;
             let vat = `{{ $PaymentTo->VAT }}`;
             let tax = `{{ $PaymentTo->TAX }}`;
@@ -297,27 +300,56 @@
 
             
             if( !originalCurrencyIDR ){
-                if( amount_realization_after_tax > remain_budget ){
-                    swal(
-                        'Whoops!',
-                        `Total Amount Realization Exceeding Remain Budget. <br/> Total =  ${number_format(amount_realization_after_tax, 2)}`,
-                        'warning'
-                    );
-                    amount_realization = 0;
-                    amount_realization_after_tax = 0;
-                    exchange_rate = 0;
-                    total_amount_realization = 0;
+                if( isCN ){                    
+                    if( amount_realization_after_tax + remain_budget > 0 ){
+                        swal(
+                            'Whoops!',
+                            `Total Amount Realization Exceeding Remain Budget. <br/> Total =  ${number_format(amount_realization_after_tax, 2)}`,
+                            'warning'
+                        );
+                        amount_realization = 0;
+                        amount_realization_after_tax = 0;
+                        exchange_rate = 0;
+                        total_amount_realization = 0;
+                    }
+                }else{
+                    if( amount_realization_after_tax > remain_budget ){
+                        swal(
+                            'Whoops!',
+                            `Total Amount Realization Exceeding Remain Budget. <br/> Total =  ${number_format(amount_realization_after_tax, 2)}`,
+                            'warning'
+                        );
+                        amount_realization = 0;
+                        amount_realization_after_tax = 0;
+                        exchange_rate = 0;
+                        total_amount_realization = 0;
+                    }
                 }
             }else{
-                if( total_amount_realization > remain_budget ) {
-                    swal(
-                        'Whoops!',
-                        `Total Amount Realization Exceeding Remain Budget. <br/> Total =  ${number_format(total_amount_realization, 2)}`,
-                        'warning'
-                    );
-                    amount_realization = 0;
-                    exchange_rate = 0;
-                    total_amount_realization = 0;
+                if( isCN ){
+                    remain_budget = parseInt(remain_budget);
+                    console.log(total_amount_realization, remain_budget);
+                    if( total_amount_realization + remain_budget > 0 ) {
+                        swal(
+                            'Whoops!',
+                            `Total Amount Realization Exceeding Remain Budget. <br/> Total =  ${number_format(total_amount_realization, 2)}`,
+                            'warning'
+                        );
+                        amount_realization = 0;
+                        exchange_rate = 0;
+                        total_amount_realization = 0;
+                    }
+                }else{
+                    if( total_amount_realization > remain_budget ) {
+                        swal(
+                            'Whoops!',
+                            `Total Amount Realization Exceeding Remain Budget. <br/> Total =  ${number_format(total_amount_realization, 2)}`,
+                            'warning'
+                        );
+                        amount_realization = 0;
+                        exchange_rate = 0;
+                        total_amount_realization = 0;
+                    }
                 }
             }
 

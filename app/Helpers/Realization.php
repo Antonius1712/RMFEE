@@ -5,6 +5,7 @@ namespace App\Helpers;
 use App\Enums\BudgetStatus;
 use App\Enums\Database;
 use App\Enums\RealizationStatus;
+use App\Model\ReportGenerator_Data_Engineering_Fee;
 use App\Model\SeaReport_Profile;
 use App\Pipeline\Pipes;
 use Exception;
@@ -255,8 +256,15 @@ class Realization {
                     $OriginalAmountRealization = ($OriginalAmountRealization - $total_tax) + $total_vat;
 
                     $IsOverLimit = $OriginalAmountRealization > $val->REMAIN_BUDGET ? true : false;
+                    
+                    $isCN = strpos($val->VOUCHER, 'CN') !== false;
+
                     try {
-                        $RemainBudget = ($val->REMAIN_BUDGET - $OriginalAmountRealization);
+                        if( $isCN ){
+                            $RemainBudget = ($val->REMAIN_BUDGET + $OriginalAmountRealization);
+                        }else{
+                            $RemainBudget = ($val->REMAIN_BUDGET - $OriginalAmountRealization);
+                        }
 
                         DB::connection(Database::REPORT_GENERATOR)->statement("EXECUTE [dbo].[SP_Update_Budget_Realization_RMF_Engineering_Fee] $OriginalAmountRealization, '$val->VOUCHER', '' ");
 
@@ -269,8 +277,15 @@ class Realization {
                 case 'Sponsorship':
                     $OriginalAmountRealization = ($val->total_amount_realization  / $val->exchange_rate_realization);
                     $IsOverLimit = $OriginalAmountRealization > $val->REMAIN_BUDGET ? true : false;
+
+                    $isCN = strpos($val->VOUCHER, 'CN') !== false;
+
                     try {
-                        $RemainBudget = ($val->REMAIN_BUDGET - $OriginalAmountRealization);
+                        if( $isCN ){
+                            $RemainBudget = ($val->REMAIN_BUDGET + $OriginalAmountRealization);
+                        }else{
+                            $RemainBudget = ($val->REMAIN_BUDGET - $OriginalAmountRealization);
+                        }
 
                         DB::connection(Database::REPORT_GENERATOR)->statement("EXECUTE [dbo].[SP_Update_Budget_Realization_Sponsorship_Engineering_Fee] $OriginalAmountRealization, '$val->VOUCHER', '' ");
 

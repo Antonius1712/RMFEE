@@ -199,7 +199,7 @@
                 success: function( data ) {
                     res($.map(data, function (item) {
                         return {
-                            label: `${item.POLICYNO}`,
+                            label: `${item.POLICYNO} - ${item.VOUCHER}`,
                             value: item.POLICYNO,
                             data: item
                         };
@@ -225,6 +225,7 @@
             $('#premium_note').val(data.COMMENT);
             $('#budget').val(data.Persentage);
             $('#budget_in_amount').val(number_format(data.Budget));
+            $('#voucher').val(data.VOUCHER);
             if( data.CURRENCY == 'IDR' ){
                 $('#remain_budget').val(number_format(data.REMAIN_BUDGET, 2));
                 console.log(number_format(data.REMAIN_BUDGET, 2));
