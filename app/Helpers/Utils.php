@@ -4,6 +4,7 @@ namespace App\Helpers;
 use App\Enums\Database;
 use Exception;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use JsonException;
 
 // ! Only Put Global Function (Function that used in many places.) Here.
@@ -191,6 +192,16 @@ class Utils {
         
         json_decode($value);
         return (json_last_error() === JSON_ERROR_NONE);
+    }
+
+    public static function GetTimezoneList(){
+        $timezones = timezone_identifiers_list();
+
+        $timezones = collect($timezones)->mapToGroups(function($timezone){
+            return [Str::before($timezone, '/') => $timezone];
+        });
+        
+        return $timezones;
     }
 }
 ?>
