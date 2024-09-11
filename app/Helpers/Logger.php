@@ -42,10 +42,6 @@ class Logger {
             default:
             break;
         }
-
-        
-        
-        // dd($user, $time, $action);
     }
 
     public static function GetLog($type = null, $voucherOrRealizationId = null){

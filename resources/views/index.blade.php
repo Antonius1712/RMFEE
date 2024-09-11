@@ -4,6 +4,11 @@
 @endsection
 
 @section('content')
+    @if( session()->has('notification') )
+    <div class="alert alert-danger text-center">
+        {!! session()->get('notification') !!}
+    </div>
+    @endif
     {{-- <section id="dashboard-analytics">
         <div class="row">
             <div class="col-lg-6 col-md-12 col-sm-12">

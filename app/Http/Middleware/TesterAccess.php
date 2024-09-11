@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Enums\Nik;
 use Closure;
 
 class TesterAccess
@@ -15,7 +16,7 @@ class TesterAccess
      */
     public function handle($request, Closure $next)
     {
-        if( !in_array(Auth()->user()->NIK, ['2021044216']) ){
+        if( !in_array(Auth()->user()->NIK, [Nik::ANTON]) ){
             abort(404);
         }
         return $next($request);
