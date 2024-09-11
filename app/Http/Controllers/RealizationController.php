@@ -44,6 +44,7 @@ class RealizationController extends Controller
     }
 
     public function index(Request $request){
+        $UrlParameter = http_build_query($request->query());
         $FilterStatusRealization = isset($request->status_realization) ? $request->status_realization : null;
         $FilterBrokerName = isset($request->broker_name) ? $request->broker_name : null;
         $FilterLastUpdate = isset($request->last_update) ? $request->last_update : null;
@@ -156,16 +157,16 @@ class RealizationController extends Controller
                         switch ($val->Status_Realization) {
                             case RealizationStatus::WAITING_APPROVAL_FINANCE:
                                 $Action[$key] = "
-                                    <a name='approve' class='dropdown-item success' href='".route('realization.approve', $invoice_no)."'>
+                                    <a name='approve' class='dropdown-item success' href='".route('realization.approve', $invoice_no)."?".$UrlParameter."'>
                                         <i class='feather icon-check'></i>
                                         Approve
                                     </a>
-                                    <a class='dropdown-item success' href='".route('realization.show', $invoice_no)."'>
+                                    <a class='dropdown-item success' href='".route('realization.show', $invoice_no)."?".$UrlParameter."'>
                                         <i class='feather icon-eye'></i>
                                         View
                                     </a>
                                     <div class='dropdown-divider'></div>
-                                    <a class='dropdown-item danger' href='".route('realization.reject', $invoice_no)."'>
+                                    <a class='dropdown-item danger' href='".route('realization.reject', $invoice_no)."?".$UrlParameter."'>
                                         <i class='feather icon-trash'></i>
                                         Reject
                                     </a>
