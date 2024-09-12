@@ -272,20 +272,79 @@
         tax = (tax / 100);
 
         total_vat = total_amount_realization * vat;
-        
         total_tax = total_amount_realization * tax;
-
         total_amount_realization = (total_amount_realization - total_tax) + total_vat;
-        
-        if( total_amount_realization > remain_budget ) {
-            swal(
-                'Whoops!',
-                `Total Amount Realization Exceeding Remain Budget.`,
-                'warning'
-            );
-            amount_realization = 0;
-            exchange_rate = 0;
-            total_amount_realization = 0;
+
+        /* Remove Trailing decimals. example : 123.4500000032 -> 123.45 */
+        total_amount_realization = parseInt('' + (total_amount_realization * 100)) / 100;
+
+        /* ?TOTAL ORIGINAL CURRENCY AFTER TAX. */
+        tax_original = amount_realization * tax;
+        vat_original = amount_realization * vat;
+        amount_realization_after_tax = (amount_realization - tax_original) + vat_original;
+
+        if( real_currency == 'IDR' ){
+            amount_realization_after_tax = number_format(amount_realization_after_tax, 2);
+        }else{
+            amount_realization_after_tax = number_format(amount_realization_after_tax, 4);
+        }
+
+
+        $('#amount_realization_after_tax').val(amount_realization_after_tax);
+        /* ?END TOTAL ORIGINAL CURRENCY AFTER TAX. */
+
+        if( !originalCurrencyIDR ){
+            if( isCN ){                    
+                if( amount_realization_after_tax + remain_budget > 0 ){
+                    swal(
+                        'Whoops!',
+                        `Total Amount Realization Exceeding Remain Budget. <br/> Total =  ${number_format(amount_realization_after_tax, 2)}`,
+                        'warning'
+                    );
+                    amount_realization = 0;
+                    amount_realization_after_tax = 0;
+                    exchange_rate = 0;
+                    total_amount_realization = 0;
+                }
+            }else{
+                if( amount_realization_after_tax > remain_budget ){
+                    swal(
+                        'Whoops!',
+                        `Total Amount Realization Exceeding Remain Budget. <br/> Total =  ${number_format(amount_realization_after_tax, 2)}`,
+                        'warning'
+                    );
+                    amount_realization = 0;
+                    amount_realization_after_tax = 0;
+                    exchange_rate = 0;
+                    total_amount_realization = 0;
+                }
+            }
+        }else{
+            if( isCN ){
+                remain_budget = parseInt(remain_budget);
+                console.log(total_amount_realization, remain_budget);
+                if( total_amount_realization + remain_budget > 0 ) {
+                    swal(
+                        'Whoops!',
+                        `Total Amount Realization Exceeding Remain Budget. <br/> Total =  ${number_format(total_amount_realization, 2)}`,
+                        'warning'
+                    );
+                    amount_realization = 0;
+                    exchange_rate = 0;
+                    total_amount_realization = 0;
+                }
+            }else{
+                if( total_amount_realization > remain_budget ) {
+                    swal(
+                        'Whoops!',
+                        `Total Amount Realization Exceeding Remain Budget. <br/> Total =  ${number_format(total_amount_realization, 2)}`,
+                        'warning'
+                    );
+                    amount_realization = 0;
+                    exchange_rate = 0;
+                    total_amount_realization = 0;
+                }
+            }
         }
 
         amount_realization = number_format(amount_realization);
