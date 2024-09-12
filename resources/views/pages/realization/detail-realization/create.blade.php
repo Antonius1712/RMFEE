@@ -218,6 +218,8 @@
             minLength: 4,
             select: function( event, ui ) {
                 let data = ui.item.data;
+                console.log(data);
+                
                 $('#branch').val(data.BRANCH);
                 $('#policy_no').val(data.POLICYNO);
                 $('#policy_holder').val(data.Holder_Name);
@@ -262,6 +264,7 @@
             let lob = `{{ $PaymentTo->LOB }}`;
             let VatSubsidies = `{{ $PaymentTo->VATSubsidies }}`;
             let amount_realization_after_tax = 0;
+            let real_currency = $('#real_currency').val();
 
             let total_vat = 0;
             let total_tax = 0;
@@ -296,7 +299,7 @@
             vat_original = amount_realization * vat;
             amount_realization_after_tax = (amount_realization - tax_original) + vat_original;
             
-            if( data.CURRENCY == 'IDR' ){
+            if( real_currency == 'IDR' ){
                 amount_realization_after_tax = number_format(amount_realization_after_tax, 2);
             }else{
                 amount_realization_after_tax = number_format(amount_realization_after_tax, 4);
