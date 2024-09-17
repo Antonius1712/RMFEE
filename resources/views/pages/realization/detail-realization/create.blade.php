@@ -159,7 +159,7 @@
                                     </button>
                                 </div>
                             </div>
-                            <input type="hidden" id="voucher" name="voucher">
+                            {{-- <input type="hidden" id="voucher" name="voucher"> --}}
                         </div>
                     </div>
                 </div>
