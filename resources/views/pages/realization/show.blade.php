@@ -51,6 +51,7 @@
                                 <label class="col-lg-1 col-form-label-lg">:</label>
                                 <input type="text" name="broker_id" id="broker_id" class="form-control col-lg-8" placeholder="Broker ID" value="{{ isset($BrokerData) && $BrokerData != '' ? $BrokerData->ID : '' }}" readonly>
                             </div>
+                            
                             <div class="form-group row">
                                 <label for="broker" class="col-lg-3 col-form-label-lg">Broker</label>
                                 <label class="col-lg-1 col-form-label-lg">:</label>

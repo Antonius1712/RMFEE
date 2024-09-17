@@ -112,7 +112,7 @@
                             <div class="form-group row">
                                 <label for="budget_in_amount" class="col-lg-3 col-form-label-lg">Budget in Amount</label>
                                 <label class="col-lg-1 col-form-label-lg">:</label>
-                                <input type="text" name="budget_in_amount" id="budget_in_amount" class="form-control col-lg-8" placeholder="Budget in Amount" readonly value="{{ number_format($DetailRealization->Budget) }}">
+                                <input type="text" name="budget_in_amount" id="budget_in_amount" class="form-control col-lg-8" placeholder="Budget in Amount" readonly value="{{ number_format($DetailRealization->Budget, 2) }}">
                             </div>
                             <div class="form-group row">
                                 <label for="remain_budget" class="col-lg-3 col-form-label-lg">Remain Budget</label>

@@ -58,12 +58,12 @@ class RealizationController extends Controller
         $RealizationStatus = $this->RealizationStatus;
         $COB = $this->COB;
         
-        // buat testing aja ini.
-        // try {
-        //     SeaReport_Profile::all();
-        // } catch (Exception $e) {
-        //     return redirect()->route('home')->with('notification', $e->getMessage());
-        // }
+        
+        // $Data = ReportGenerator_Realization_Group::when($FilterBrokerName != '', function($q) use($FilterBrokerName){
+            
+        // });
+
+
         
         $RealizationData = Realization::GetRealization($FilterInvoiceNo, $FilterStatusRealization, $FilterBrokerName, $FilterLastUpdate, $FilterCOB, $FilterTypeOfPayment);
 
