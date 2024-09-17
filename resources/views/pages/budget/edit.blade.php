@@ -209,7 +209,7 @@
                     @if (isset($Logs))
                         @foreach ($Logs as $Log)
                             <tr class="text-center">
-                                <td>{{ $Log->NIK . ' - ' . $Log->getUser->Name }}</td>
+                                <td>{{ $Log->NIK . ' - ' . isset($Log->getUser) && $Log->getUser != null ? $Log->getUser->Name : '' }}</td>
                                 <td>{{ $Log->Status }}</td>
                                 <td>{{ $Log->Description }}</td>
                                 <td>{{ date('Y-m-d', strtotime($Log->Date)) }}</td>

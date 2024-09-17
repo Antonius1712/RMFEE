@@ -48,14 +48,14 @@ class Logger {
         switch($type){
             case LogStatus::BUDGET:
                 try {
-                    return ReportGenerator_Log_Engineering_Fee::where('Voucher', $voucherOrRealizationId)->orderBy('Date', 'asc')->orderby('Time', 'asc')->get();
+                    return ReportGenerator_Log_Engineering_Fee::with('getUser')->where('Voucher', $voucherOrRealizationId)->orderBy('Date', 'asc')->orderby('Time', 'asc')->get();
                 } catch (Exception $e) {
                     return $e->getMessage();
                 }
                 break;
             case LogStatus::REALIZATION:
                 try {
-                    return ReportGenerator_Log_Realization_Engineering_Fee::where('ID', $voucherOrRealizationId)->orderBy('Date', 'asc')->orderby('Time', 'asc')->get();
+                    return ReportGenerator_Log_Realization_Engineering_Fee::with('getUser')->where('ID', $voucherOrRealizationId)->orderBy('Date', 'asc')->orderby('Time', 'asc')->get();
                 } catch (Exception $e) {
                     return $e->getMessage();
                 }
