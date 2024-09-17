@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Log;
 class DetailRealizationController extends Controller
 {
     public function index($invoice_no){
+        // dd('??');
         $invoice_no = urldecode($invoice_no);
         $invoice_no_real = str_replace('~', '/', $invoice_no);
         // dd($invoice_no, $invoice_no_real);
@@ -99,6 +100,10 @@ class DetailRealizationController extends Controller
     }
 
     public function destroy($id){
-
+        $Detail = ReportGenerator_Detail_Realization_Group_Engineering_Fee::findOrFail($id);
+        $invoice_no = $Detail->RealizationGroup->invoice_no;
+        $Detail->delete();
+        
+        return redirect()->route('realization.detail-realization.index', $invoice_no);
     }
 }

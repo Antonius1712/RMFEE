@@ -13,4 +13,8 @@ class ReportGenerator_Detail_Realization_Group_Engineering_Fee extends Model
     public function DataEngineeringFee(){
         return $this->hasOne(ReportGenerator_Data_Engineering_Fee::class, 'VOUCHER', 'budget_voucher');
     }
+
+    public function RealizationGroup(){
+        return $this->belongsTo(ReportGenerator_Realization_Group::class, 'realization_id', 'id');
+    }
 }

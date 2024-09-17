@@ -89,7 +89,7 @@ Route::middleware(['breadcrumbs', 'auth'])->group(function () {
                 Route::get('/{invoice_no}/edit/{id}', 'DetailRealizationController@edit')->name('realization.detail-realization.edit');
                 Route::post('/{invoice_no}/edit/{id}', 'DetailRealizationController@update')->name('realization.detail-realization.update');
 
-                Route::post('/{id}', 'DetailRealizationController@destroy')->name('realization.detail-realization.destroy');
+                Route::get('/delete/{id}', 'DetailRealizationController@destroy')->name('realization.detail-realization.destroy');
 
                 // Route::view('/edit', 'pages.realization.detail-realization.edit')->name('realization.detail-realization.edit');
             });
