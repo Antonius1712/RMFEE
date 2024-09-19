@@ -45,8 +45,10 @@ class RealizationController extends Controller
     }
 
     public function index(Request $request){
+        $Progress = $this->getRestoreProgress();
         if( $this->isDatabaseRestoring() ){
-            return redirect()->back()->with('notification', 'SEA_REPORT Currently on RESTORING State. Please try again later.');
+            $ProgressInPercent = Utils::numberPrecision($Progress['percent_complete'], 2);
+            return redirect()->back()->with('notification', '<b>SEA_REPORT</b> Currently on RESTORING State on '.$ProgressInPercent.'%. Please try again later.');
         }
 
         $UrlParameter = http_build_query($request->query());
@@ -516,5 +518,30 @@ class RealizationController extends Controller
         }
 
         return false;
+    }
+
+    function getRestoreProgress(): array
+    {
+        $result = DB::connection(Database::REPORT_GENERATOR)->select("
+            SELECT r.session_id,
+                r.command,
+                r.percent_complete,
+                r.start_time,
+                r.total_elapsed_time
+            FROM sys.dm_exec_requests r
+            WHERE r.command = 'RESTORE DATABASE'
+        ");
+
+        if (!empty($result)) {
+            return [
+                'session_id' => $result[0]->session_id,
+                'command' => $result[0]->command,
+                'percent_complete' => $result[0]->percent_complete,
+                'start_time' => $result[0]->start_time,
+                'total_elapsed_time' => $result[0]->total_elapsed_time
+            ];
+        }
+
+        return [];
     }
 }
