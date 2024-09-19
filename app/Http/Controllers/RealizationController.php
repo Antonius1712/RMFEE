@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Enums\BudgetStatus;
+use App\Enums\Database;
 use App\Enums\GroupCodeApplication;
 use App\Enums\HardCoded;
 use App\Enums\LogStatus;
@@ -44,6 +45,10 @@ class RealizationController extends Controller
     }
 
     public function index(Request $request){
+        if( $this->isDatabaseRestoring() ){
+            return redirect()->back()->with('notification', 'SEA_REPORT Currently on RESTORING State. Please try again later.');
+        }
+
         $UrlParameter = http_build_query($request->query());
         $FilterStatusRealization = isset($request->status_realization) ? $request->status_realization : null;
         $FilterBrokerName = isset($request->broker_name) ? $request->broker_name : null;
@@ -51,23 +56,12 @@ class RealizationController extends Controller
         $FilterInvoiceNo = isset($request->invoice_no) ? $request->invoice_no : null;
         $FilterCOB = isset($request->cob) ? $request->cob : null;
         $FilterTypeOfPayment = isset($request->type_of_payment) ? $request->type_of_payment : null;
-        
         $FilterLastUpdate = $FilterLastUpdate != '' ? date('m/d/Y', strtotime($FilterLastUpdate)) : null;
-        
         
         $RealizationStatus = $this->RealizationStatus;
         $COB = $this->COB;
-        
-        
-        // $Data = ReportGenerator_Realization_Group::when($FilterBrokerName != '', function($q) use($FilterBrokerName){
-            
-        // });
 
-
-        
         $RealizationData = Realization::GetRealization($FilterInvoiceNo, $FilterStatusRealization, $FilterBrokerName, $FilterLastUpdate, $FilterCOB, $FilterTypeOfPayment);
-
-        // dd($RealizationData);
 
         $AuthUserGroup = Auth()->user()->getUserGroup->GroupCode;
         
@@ -189,13 +183,9 @@ class RealizationController extends Controller
             }
         }
 
-        // dd($RealizationData);
-
         $RealizationData = collect($RealizationData)->paginate(10);
 
         $TypeOfPayment = $this->TypeOfPayment;
-
-        // dd($RealizationData);
 
         return view('pages.realization.index', compact('RealizationData', 'Action', 'RealizationStatus', 'COB', 'FilterStatusRealization', 'FilterBrokerName', 'FilterLastUpdate', 'FilterInvoiceNo', 'FilterCOB', 'TypeOfPayment', 'FilterTypeOfPayment'));
     }
@@ -515,5 +505,16 @@ class RealizationController extends Controller
         Logger::SaveLog(LogStatus::REALIZATION, $Realization_id, 'REJECT');
 
         return redirect()->to($route)->with('noticication', 'Invoice <b>'.$invoice_no_real.'</b> Successfully Rejected');
+    }
+
+    function isDatabaseRestoring(): bool
+    {
+        $result = DB::connection(Database::REPORT_GENERATOR)->select("SELECT state_desc FROM sys.databases WHERE name = ?", ['SEA_REPORT']);
+        
+        if (!empty($result) && $result[0]->state_desc === 'RESTORING') {
+            return true;
+        }
+
+        return false;
     }
 }
