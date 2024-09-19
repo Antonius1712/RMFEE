@@ -48,7 +48,7 @@ class RealizationController extends Controller
         $Progress = $this->getRestoreProgress();
         if( $this->isDatabaseRestoring() ){
             $ProgressInPercent = Utils::numberPrecision($Progress['percent_complete'], 2);
-            return redirect()->back()->with('notification', '<b>SEA_REPORT</b> Currently on RESTORING State on '.$ProgressInPercent.'%. Please try again later.');
+            return redirect()->back()->with('notification', 'SEA_REPORT is currently in the restoring state at '.$ProgressInPercent.'%. Please try again later.');
         }
 
         $UrlParameter = http_build_query($request->query());
