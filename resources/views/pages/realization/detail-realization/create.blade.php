@@ -309,8 +309,9 @@
             $('#amount_realization_after_tax').val(amount_realization_after_tax);
             /* ?END TOTAL ORIGINAL CURRENCY AFTER TAX. */
 
-            
             if( !originalCurrencyIDR ){
+                amount_realization_after_tax = parseFloat(amount_realization_after_tax);
+                remain_budget = parseFloat(remain_budget);
                 if( isCN ){                    
                     if( amount_realization_after_tax + remain_budget > 0 ){
                         swal(
@@ -323,11 +324,11 @@
                         exchange_rate = 0;
                         total_amount_realization = 0;
                     }
-                }else{
+                }else{                    
                     if( amount_realization_after_tax > remain_budget ){
                         swal(
                             'Whoops!',
-                            `Total Amount Realization Exceeding Remain Budget. <br/> Total =  ${number_format(amount_realization_after_tax, 2)}`,
+                            `Total Amount Realization Exceeding Remain Budget. <br/> Total =  ${number_format(amount_realization_after_tax, 4)} | Remain Budget = ${number_format(remain_budget, 4)}`,
                             'warning'
                         );
                         amount_realization = 0;
@@ -337,9 +338,9 @@
                     }
                 }
             }else{
+                total_amount_realization = parseFloat(total_amount_realization);
+                remain_budget = parseFloat(remain_budget);
                 if( isCN ){
-                    remain_budget = parseInt(remain_budget);
-                    console.log(total_amount_realization, remain_budget);
                     if( total_amount_realization + remain_budget > 0 ) {
                         swal(
                             'Whoops!',
