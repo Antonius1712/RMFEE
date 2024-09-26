@@ -227,10 +227,6 @@ class Realization {
             }
         }
         
-        if( $IsOverLimit ) {
-            // return BudgetStatus::OVERLIMIT;
-        }
-        
         foreach( $DetailRealizationData as $val ){
             // dd($val, $ProfilePayment);
             // $IsOverLimit = false;
@@ -299,7 +295,9 @@ class Realization {
             }
         }
 
-        // dd('qwe');
+        if( $IsOverLimit ) {
+            return BudgetStatus::OVERLIMIT;
+        }
 
         return BudgetStatus::NOTOVERLIMIT;
     }
