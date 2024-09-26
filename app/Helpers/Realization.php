@@ -220,12 +220,12 @@ class Realization {
         $ProfilePayment = SeaReport_Profile::where('ID', $RealizationData->Payment_To_ID)->select('LOB', 'TAX', 'VAT', 'ID', 'VATSubsidiesF')->first();
 
         $IsOverLimit = false;
-        foreach( $DetailRealizationData as $val ){
-            if( ($val->total_amount_realization  / $val->exchange_rate_realization) > $val->REMAIN_BUDGET ) {
-                $IsOverLimit = true;
-                break;
-            }
-        }
+        // foreach( $DetailRealizationData as $val ){
+        //     if( ($val->total_amount_realization  / $val->exchange_rate_realization) > $val->REMAIN_BUDGET ) {
+        //         $IsOverLimit = true;
+        //         break;
+        //     }
+        // }
         
         foreach( $DetailRealizationData as $val ){
             // dd($val, $ProfilePayment);
@@ -252,6 +252,10 @@ class Realization {
                     $OriginalAmountRealization = ($OriginalAmountRealization - $total_tax) + $total_vat;
 
                     $IsOverLimit = $OriginalAmountRealization > $val->REMAIN_BUDGET ? true : false;
+
+                    if( $IsOverLimit ) {
+                        return BudgetStatus::OVERLIMIT;
+                    }
                     
                     $isCN = strpos($val->VOUCHER, 'CN') !== false;
 
@@ -274,6 +278,10 @@ class Realization {
                     $OriginalAmountRealization = ($val->total_amount_realization  / $val->exchange_rate_realization);
                     $IsOverLimit = $OriginalAmountRealization > $val->REMAIN_BUDGET ? true : false;
 
+                    if( $IsOverLimit ) {
+                        return BudgetStatus::OVERLIMIT;
+                    }
+
                     $isCN = strpos($val->VOUCHER, 'CN') !== false;
 
                     try {
@@ -293,10 +301,6 @@ class Realization {
                 default:
                 break;
             }
-        }
-
-        if( $IsOverLimit ) {
-            return BudgetStatus::OVERLIMIT;
         }
 
         return BudgetStatus::NOTOVERLIMIT;
