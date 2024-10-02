@@ -22,7 +22,7 @@ final class HardCoded {
         'DRAFT',
         'WAITING APPROVAL',
         'APPROVED',
-        'REJECT',
+        'REJECTED',
         'ARCHIVE'
     ];
 
@@ -31,7 +31,7 @@ final class HardCoded {
         'DRAFT',
         'WAITING APPROVAL',
         'APPROVED',
-        'REJECT',
+        'REJECTED',
         'ARCHIVE'
     ];
 
