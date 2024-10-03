@@ -59,7 +59,7 @@ class BudgetController extends Controller
         $ProposedTo = $request->to_do_list_filter == 'true' ? auth()->user()->NIK : '';
 
         $Budgets = ReportGenerator_Data_Engineering_Fee::when($broker_name != '', function($q) use ($broker_name){
-            return $q->where('BROKERNAME', $broker_name);
+            return $q->where('BROKERNAME', 'like', '%'.$broker_name.'%');
         })->when($branch != '', function($q) use ($branch) {
             return $q->where('BRANCH', $branch);
         })->when($nb_rn != '', function($q) use ($nb_rn) {
@@ -196,6 +196,7 @@ class BudgetController extends Controller
 
         return view('pages.budget.list', compact('NBRN', 'branchList', 'statusPremi', 'statusRealisasi', 'statusBudget', 'Budgets'));
     }
+    
 
         // public function show($voucher, $archived = 0){
         //     $voucher = str_replace('~', '/', $voucher);
