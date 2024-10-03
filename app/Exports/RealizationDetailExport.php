@@ -46,7 +46,7 @@ class RealizationDetailExport implements FromCollection, WithHeadings, ShouldAut
     {
         return [
             AfterSheet::class => function(AfterSheet $event) {
-                $event->sheet->getStyle('A1:T1')->applyFromArray([
+                $event->sheet->getStyle('A1:U1')->applyFromArray([
                     'font' => [
                         'name'      =>  'Calibri',
                         'size'      =>  15,
@@ -63,7 +63,7 @@ class RealizationDetailExport implements FromCollection, WithHeadings, ShouldAut
                 ]);
 
                 // Auto-size columns.
-                foreach(range('A','T') as $column) {
+                foreach(range('A','U') as $column) {
                     $event->sheet->getColumnDimension($column)->setAutoSize(true);
                 }
             },
