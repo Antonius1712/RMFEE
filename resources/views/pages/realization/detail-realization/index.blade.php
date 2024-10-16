@@ -43,29 +43,30 @@
         <div class="card-body table-responsive">
             <table class="table table-compact table-bordered table-striped" style="border-radius: 100px; position: relative;">
                 <thead>
-                    <tr class="bg-primary text-white">
-                        <th>Action</th>
-                        <th>Class</th>
-                        <th>SOB</th>
-                        <th>Broker Name</th>
-                        <th>Type</th>
-                        <th>Branch</th>
-                        <th>Policy No</th>
-                        <th>Status Budget</th>
-                        <th>Status Realization</th>
-                        <th>Gross Premi</th>
-                        <th>Percentage</th>
-                        <th>Budget in Amount</th>
-                        <th>Amount Realization</th>
-                        <th>Currency Realization</th>
-                        <th>Exchange Rate Realization</th>
-                        <th>Total Amount Realization</th>
+                    <tr class="bg-primary text-white w-auto">
+                        <th class="pl-4 pr-4 text-center" style="vertical-align: middle">Action</th>
+                        <th class="pl-4 pr-4 text-center" style="vertical-align: middle">Class</th>
+                        <th class="pl-4 pr-4 text-center" style="vertical-align: middle">SOB</th>
+                        <th class="pl-4 pr-4 text-center" style="vertical-align: middle">Broker Name</th>
+                        <th class="pl-4 pr-4 text-center" style="vertical-align: middle">Type</th>
+                        <th class="pl-4 pr-4 text-center" style="vertical-align: middle">Branch</th>
+                        <th class="pl-4 pr-4 text-center" style="vertical-align: middle">Policy No</th>
+                        <th class="pl-4 pr-4 text-center" style="vertical-align: middle">Policy Period</th>
+                        <th class="pl-4 pr-4 text-center" style="vertical-align: middle">Status Budget</th>
+                        <th class="pl-4 pr-4 text-center" style="vertical-align: middle">Status Realization</th>
+                        <th class="pl-4 pr-4 text-center" style="vertical-align: middle">Gross Premi</th>
+                        <th class="pl-4 pr-4 text-center" style="vertical-align: middle">Percentage</th>
+                        <th class="pl-4 pr-4 text-center" style="vertical-align: middle">Budget in Amount</th>
+                        <th class="pl-4 pr-4 text-center" style="vertical-align: middle">Amount Realization</th>
+                        <th class="pl-4 pr-4 text-center" style="vertical-align: middle">Currency Realization</th>
+                        <th class="pl-4 pr-4 text-center" style="vertical-align: middle">Exchange Rate Realization</th>
+                        <th class="pl-4 pr-4 text-center" style="vertical-align: middle">Total Amount Realization</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach ($DetailRealization as $val)
                         <tr>
-                            <td>
+                            <td class="text-center">
                                 <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
                                     <div class="btn-group" role="group">
                                         <a href="#" id="BtnActionGroup" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="">
@@ -99,6 +100,7 @@
                             <td>{{ $val->TYPE }}</td>
                             <td>{{ $val->BRANCH }}</td>
                             <td>{{ $val->POLICYNO }}</td>
+                            <td>{{ date('d M Y', strtotime($val->Start_Date)) }} - {{ date('d M Y', strtotime($val->End_Date)) }}</td>
                             <td>{{ $val->STATUS_BUDGET }}</td>
                             <td>{{ $val->STATUS_REALIZATION }}</td>
                             <td class="text-right">{{ number_format($val->PREMIUM) }}</td>

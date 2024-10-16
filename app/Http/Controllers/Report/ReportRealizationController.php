@@ -77,6 +77,9 @@ class ReportRealizationController extends Controller
 
     public function ExportRealizationDetail($start_date, $end_date, $status_realization = ''){
         $data = [];
+
+        set_time_limit(-1);
+        ini_set('memory_limit', '-1');
         $Budgets = Report::GetReportRealizationDetail($start_date, $end_date, $status_realization);
 
         if( !empty($Budgets) ){
