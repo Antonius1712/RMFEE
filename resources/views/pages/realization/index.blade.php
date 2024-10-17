@@ -115,12 +115,37 @@
         </div>
     @endif
 
+    @if( auth()->user()->getUserGroup->GroupCode != 'USER_RMFEE' )
+    <div class="row">
+        <div class="col-lg-12 mb-2">
+            <form id="multiple_approve_realization_form" action="{{ route('realization.multiple_approve') }}" method="GET"
+                style="display:none;">
+                {{ csrf_field() }}
+                <div id="appendFormForMultipleApprove">
+
+                </div>
+                <input type="hidden" name="invoiceNo" id="invoiceNoInput">
+            </form>
+
+            <button id="btn_approve_selected_invoice_no" class="btn btn-success pull-right"
+                style="border-radius: 100px; font-size: 18px;">
+                Approve
+            </button>
+        </div>
+    </div>
+    @endif
+
     <div class="card">
         <div class="card-body">
             <table class="table table-responsive table-realization dataTable"
                 style="overflow-x: auto; overflow-y: none; height: 650px;">
                 <thead>
                     <tr class="default">
+                        @if( auth()->user()->getUserGroup->GroupCode != 'USER_RMFEE' )
+                        <th id="th_check">
+                            <input type="checkbox" id="select_all" /> All
+                        </th>
+                        @endif
                         <th>Action</th>
                         <th>Last Update</th>
                         <th>Class</th>
@@ -138,8 +163,19 @@
                 </thead>
                 <tbody>
                     @if ($RealizationData != null)
-                        @foreach ($RealizationData as $key => $val)
+                        @foreach ($RealizationData as $key => $val) 
                             <tr>
+                                @if( auth()->user()->getUserGroup->GroupCode != 'USER_RMFEE' )
+                                <td class="clickable-td">
+                                    @if(
+                                        $val->Status_Realization == \App\Enums\RealizationStatus::WAITING_APPROVAL_BU
+                                            || $val->Status_Realization == \App\Enums\RealizationStatus::WAITING_APPROVAL_FINANCE
+                                    )
+                                        <input type="checkbox" name="check_realization[]" id="" class="check_realization"
+                                        value="" data-invoice_no="{{ $val->Invoice_No }}">
+                                    @endif
+                                </td>
+                                @endif
                                 <td>
                                     <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
                                         <div class="btn-group" role="group">
@@ -184,6 +220,16 @@
             </div>
         </div>
     </div>
+
+    <style>
+        .td_comment,
+        .td_occupation,
+        .clickable-td,
+        #th_check 
+        {
+            cursor: pointer;
+        }
+    </style>
 @endsection
 
 @section('script')
@@ -208,6 +254,76 @@
         e.preventDefault();
         let url = `{{ route('realization.index') }}`;
         window.location.replace(url);
+    });
+
+    $('#btn_approve_selected_invoice_no').on('click', function() {
+        var selectedInvoiceNo = [];
+
+        $('.check_realization:checked').each(function() {
+            selectedInvoiceNo.push($(this).data('invoice_no'));
+        });
+
+        $('#invoiceNoInput').val(JSON.stringify(selectedInvoiceNo));
+        $('#multiple_approve_realization_form').submit();
+    });
+
+    $('.clickable-td').click(function(event) {
+        if (event.target.tagName !== 'INPUT') {
+            const checkbox = $(this).find('input[type="checkbox"]');
+            checkbox.prop('checked', !checkbox.prop('checked'));
+        }
+
+        let Filters = `{{ http_build_query(request()->query()) }}`;
+        let AddHiddenInputForFilters = '';
+        let ArrayFilter = @json(request()->query());
+
+        
+        $.each(ArrayFilter, function(x, y){
+            if( y != null && y != 'null' ){
+                AddHiddenInputForFilters += `
+                <input type="hidden" name="${x}" value="${y}" />
+                `;
+            }
+        });
+
+        console.log(Filters, AddHiddenInputForFilters, ArrayFilter);
+
+        $('#appendFormForMultipleApprove').html(AddHiddenInputForFilters);
+    });
+
+    $('#th_check').click(function(event) {
+        if (event.target.tagName !== 'INPUT') {
+            const checkbox = $(this).find('#select_all');
+            checkbox.prop('checked', !checkbox.prop('checked'));
+
+            var isChecked = checkbox.is(':checked');
+            $('.check_realization').prop('checked', isChecked);
+        }
+    })
+
+    $('#select_all').on('click', function() {
+        // Check or uncheck all checkboxes based on the state of the Select All checkbox
+        var isChecked = $(this).is(':checked');
+        $('.check_realization').prop('checked', isChecked);
+
+        let Filters = `{{ http_build_query(request()->query()) }}`;
+        let AddHiddenInputForFilters = '';
+        let ArrayFilter = @json(request()->query());
+
+        
+        $.each(ArrayFilter, function(x, y){
+            if( y != null && y != 'null' ){
+                AddHiddenInputForFilters += `
+                <input type="hidden" name="${x}" value="${y}" />
+                `;
+            }
+        });
+
+        console.log(Filters, AddHiddenInputForFilters, ArrayFilter);
+
+        $('#appendFormForMultipleApprove').html(AddHiddenInputForFilters);
+        
+        // $('body').find('#append').html(AddHiddenInputForFilters);
     });
 </script>
 @endsection

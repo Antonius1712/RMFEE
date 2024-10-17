@@ -95,6 +95,9 @@ Route::middleware(['breadcrumbs', 'auth'])->group(function () {
             });
         });
 
+        // Multiple Approve
+        Route::get('/multiple-approve-realization', 'RealizationController@multipleApprove')->name('realization.multiple_approve');
+
         //? Data Table Realization.
         // Route::get('/data-table', 'Realization@RealizationDataTable')->name('realization.data-table');
     });

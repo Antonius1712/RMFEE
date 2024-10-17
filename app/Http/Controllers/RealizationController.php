@@ -65,6 +65,8 @@ class RealizationController extends Controller
 
         $RealizationData = Realization::GetRealization($FilterInvoiceNo, $FilterStatusRealization, $FilterBrokerName, $FilterLastUpdate, $FilterCOB, $FilterTypeOfPayment);
 
+        // dd($RealizationData);
+
         $AuthUserGroup = Auth()->user()->getUserGroup->GroupCode;
         
         $Action = [];
@@ -469,10 +471,138 @@ class RealizationController extends Controller
             Log::error('Error Update Realization Group on Approve Exception = ' . $e->getMessage());
         }
 
-        $Realization_id = ReportGenerator_Realization_Group::where('invoice_no', $invoice_no_real)->value('id');
+        $Realization_id = ReportGenerator_Realization_Group::where('invoice_no', "'.$invoice_no_real.'")->value('id');
         Logger::SaveLog(LogStatus::REALIZATION, $Realization_id, 'APPROVE');
 
         return redirect()->to($route)->with('noticication', 'Invoice <b>'.$invoice_no_real.'</b> Successfully Approved');
+    }
+
+    public function multipleApprove(Request $request){
+        $UrlParameter = http_build_query($request->query());
+        $route = route('realization.index') . '?' . $UrlParameter;
+        $AuthUserGroup = Auth()->user()->getUserGroup->GroupCode;
+        $invoiceNoList = json_decode($request->invoiceNo);
+        $errorOverLimit = [];
+        $successApprovedInvoice = [];
+        // dd($RealizationData);
+        
+        if( count($invoiceNoList) == 0 ){
+            return redirect()->back()->with("notification", "There's no Ivvoice No Selected.");
+        }
+        
+        // dd($request->all(), $invoiceNoList);
+        
+        foreach( $invoiceNoList as $invoiceNo ){
+            $invoiceNo = (string) $invoiceNo;
+            $RealizationData = Realization::GetRealization($invoiceNo)[0];
+            try {
+                switch ($AuthUserGroup) {
+                    case GroupCodeApplication::HEAD_BU_RMFEE:
+                        $StatusRealisasi = RealizationStatus::WAITING_APPROVAL_FINANCE;
+                        break;
+                    case GroupCodeApplication::HEAD_FINANCE_RMFEE:
+                        try {
+                            // dd($invoiceNo);
+                            $StatusBudget = ReportGenerator_Realization_Group::where("invoice_no", "$invoiceNo")
+                            ->with(['DetailRealizationGroupEngineeringFee', 'DetailRealizationGroupEngineeringFee.DataEngineeringFee'])
+                            ->first()
+                            ->DetailRealizationGroupEngineeringFee
+                            ->pluck('DataEngineeringFee.STATUS_BUDGET', 'DataEngineeringFee.VOUCHER')
+                            ->toArray();
+                            
+                            unset($StatusBudget['']);
+                            
+                            $errorKey = null;
+                            if( !Utils::ValidateStatusBudget($StatusBudget, $errorKey) ){
+                                return redirect()->back()->withErrors(
+                                    'There is budget that has not been approved. Invoice. <strong>'.$invoiceNo.'</strong>
+                                    <br/>
+                                    Voucher <strong>'.$errorKey.'</strong>'
+                                );
+                            }
+                            
+                            //---------------------------------------------------------
+                            
+                            $Budget = Realization::UpdateBudgetRealization($RealizationData);
+                            if( $Budget == BudgetStatus::OVERLIMIT ) {
+                                $errorOverLimit[] = $invoiceNo;
+                                continue;
+                                // return redirect()->back()->withErrors('You Have an Overlimit Budget inside this Invoice. <strong>'.$invoiceNo.'</strong>');
+                            }
+                            $StatusRealisasi = RealizationStatus::APPROVED_BY_FINANCE;
+
+                            $UserSetting = ReportGenerator_UserSetting::where('UserID', $RealizationData->CreatedBy)->first();
+                            if( $UserSetting->Type_Of_Payment == 'Reimbursement' ){
+                                $InsertEpo = Realization::InsertEpo($RealizationData);
+                                if( !$InsertEpo['status'] ){
+                                    return redirect()->back()->withErrors($InsertEpo['message']);
+                                }
+                                
+                                $PID = $InsertEpo['pid'];
+                                Realization::UpdateRealizationGroupEpo($invoiceNo, $PID);
+                                
+                                $LogEmailEpo = ReportGenerator_LogEmailEpo::where('PID', $PID)->count();
+                                if( $LogEmailEpo == 0 ){
+                                    ReportGenerator_LogEmailEpo::create([
+                                        'PID' => $PID,
+                                        'Realisasi_ID' => $RealizationData->ID,
+                                        'Email_To' => Utils::GetEmailEpo(),
+                                        'Date' => date('Y-m-d', strtotime(now())),
+                                        'Time' => date('H:i:s', strtotime(now()))
+                                    ]);
+                                }
+                            }
+
+                            $successApprovedInvoice[] = $invoiceNo;
+                        }
+                        catch (Exception $e) {
+                            // dd($e->getMessage());
+                            Log::error('Error Update Realization Group on Approve Exception = ' . $e->getMessage());
+                        }
+                        break;
+                    default:
+                    break;
+                }
+                Realization::UpdateRealizationGroupStatus($StatusRealisasi, $invoiceNo);
+            } catch (Exception $e) {
+                Log::error('Error Update Realization Group on Approve Exception = ' . $e->getMessage());
+            }
+            
+            $Realization_id = ReportGenerator_Realization_Group::where('invoice_no', "'.$invoiceNo.'")->value('id');
+            Logger::SaveLog(LogStatus::REALIZATION, $Realization_id, 'APPROVE');
+        }
+
+        $countError = count($errorOverLimit);
+        $countSuccess = count($successApprovedInvoice);
+
+        switch(true) {
+            case $countError > 0 && $countSuccess > 0:
+                return redirect()->to($route)->with("noticication", 
+                    "Invoice <b> ".implode(', ', $successApprovedInvoice)." </b> Successfully Approved"
+                )->withErrors(
+                    "You Have an Overlimit Budget inside this Invoice. <strong> ".implode(', ', $errorOverLimit)." </strong>"
+                );
+                break;
+            case $countSuccess > 0 && $countError == 0:
+                return redirect()->to($route)->with('noticication', 'Invoice <b>'.implode(', ', $invoiceNoList).'</b> Successfully Approved');
+                break;
+            case $countError > 0 && $countSuccess == 0:
+                return redirect()->to($route)->withErrors(
+                    "You Have an Overlimit Budget inside this Invoice. <strong> ".implode(', ', $errorOverLimit)." </strong>"
+                );
+                break;
+            default:
+            // dd($countError, $countSuccess);
+            break;
+        }
+
+        // if( count($errorOverLimit) > 0 ){
+        //     return redirect()->to($route)->with("noticication", 
+        //         "Invoice <b> ".implode(', ', $successApprovedInvoice)." </b> Successfully Approved And You Have an Overlimit Budget inside this Invoice. <strong> ".implode(', ', $errorOverLimit)." </strong>"
+        //     );    
+        // }
+
+        // return redirect()->to($route)->with('noticication', 'Invoice <b>'.implode(', ', $invoiceNoList).'</b> Successfully Approved');
     }
 
     public function propose(Request $request, $invoice_no){
